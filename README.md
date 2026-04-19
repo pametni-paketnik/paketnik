@@ -1,13 +1,44 @@
-# 🌸 IDEJNI NAČRT – PAMETNI PAKETNIK ZA ROŽE
+# 🌸 SMART FLOWER LOCKER
 
 ## OPIS SISTEMA
-Sistem omogoča uporabnikom, da preko mobilne aplikacije naročijo šopek rož, ki jih na izbran datum dostavi ponudnik v pametni paketnik. Uporabnik nato prejme obvestilo in lahko šopek prevzame v določenem času.
+Smart Flower Locker je inovativna rešitev za dostavo in prevzem cvetja preko pametnih paketnikov. Uporabnikom omogoča enostavno naročanje rož preko mobilne aplikacije in prevzem v bližnjem paketniku, brez potrebe po obisku fizične cvetličarne.
+
+Cilj projekta je poenostaviti proces nakupa rož, povečati dostopnost ter zagotoviti optimalne pogoje za shranjevanje cvetja do trenutka prevzema.
 
 ---
 
 ## CILJNI UPORABNIKI
 - posamezniki (darila)
 - podjetja (poslovna darila)
+
+---
+## GLAVNE FUNKCIONALNOSTI
+
+### 1. 📱 Mobilna aplikacija
+Uporabnik lahko:
+- izbira med različnimi vrstami rož in šopkov  
+- odda naročilo  
+- izbere lokacijo paketnika  
+- prejema obvestila o dostavi in prevzemu  
+
+---
+
+### 2. 📦 Pametni paketnik
+Posebej prilagojen za shranjevanje cvetja.
+
+Vsebuje:
+- senzor za zaznavanje odprtja/zaprtja vrat  
+- notranjo LED osvetlitev (simulacija naravne svetlobe)  
+- sistem za nadzor časa shranjevanja  
+
+---
+
+### 3. 🌼 Optimizirani pogoji za rože
+- samodejni vklop svetlobe ob odprtju vrat  
+
+Možnost nadgradnje:
+- regulacija temperature  
+- nadzor vlage  
 
 ---
 
@@ -18,7 +49,57 @@ Sistem omogoča uporabnikom, da preko mobilne aplikacije naročijo šopek rož, 
 4. Izvede naročilo in plačilo  
 5. Na izbran dan cvetličarna dostavi šopek v paketnik  
 6. Uporabnik prejme obvestilo  
-7. Uporabnik odpre paketnik s prepoznavo obraza in prevzame šopek  
+7. Uporabnik odpre paketnik s prepoznavo obraza in prevzame šopek
+
+Ob prevzemu:
+- paketnik zazna odprtje vrat  
+- vklopi se notranja svetloba  
+
+---
+## ČASOVNI ROK PREVZEMA
+- maksimalni čas za prevzem: **3 dni**
+
+Če paket ni prevzet:
+- sistem samodejno označi paket za odstranitev  
+- uporabnik prejme opozorilo  
+- sproži se obvestilo za upravljalca sistema  
+
+---
+
+## 🔔 OBVESTILA
+Uporabnik prejema:
+- potrditev naročila  
+- obvestilo o dostavi  
+- opomnik za prevzem  
+- opozorilo pred potekom roka  
+- obvestilo o odstranitvi (če paket ni prevzet)  
+
+---
+
+## TEHNOLOŠKE KOMPONENTE
+- IoT senzorji (zaznavanje vrat)  
+- LED svetlobni sistem  
+- backend sistem za upravljanje naročil  
+- mobilna aplikacija (iOS / Android)  
+- sistem za obveščanje (push notifikacije)  
+
+---
+
+## PREDNOSTI REŠITVE
+- prihranek časa (brez iskanja cvetličarn)  
+- dostopnost 24/7  
+- boljša uporabniška izkušnja  
+- optimalni pogoji za ohranjanje svežine rož  
+- zmanjšanje logističnih težav  
+
+---
+
+## MOŽNE NADGRADNJE
+- integracija z lokalnimi cvetličarnami  
+- personalizirana priporočila  
+- možnost darilnih sporočil  
+- sledenje svežini cvetja  
+- pametno hlajenje in vlaženje
 
 ---
 
@@ -58,4 +139,8 @@ Sistem omogoča uporabnikom, da preko mobilne aplikacije naročijo šopek rož, 
 - povezava z backendom  
 - integracija plačil  
 - testiranje sistema  
-- dokumentacija  
+- dokumentacija
+
+
+## 📎 ZAKLJUČEK
+Smart Flower Locker predstavlja sodobno rešitev, ki združuje tehnologijo in praktičnost. Sistem izboljšuje uporabniško izkušnjo pri nakupu rož ter optimizira proces dostave in shranjevanja občutljivih izdelkov.
