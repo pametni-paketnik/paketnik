@@ -1,0 +1,16 @@
+# --- NODE.JS / BACKEND (RAIN) ---
+node_modules/
+.env
+.env.example
+
+# --- ANDROID (RAI) ---
+.gradle/
+local.properties
+.idea/
+build/
+*.iml
+.DS_Store
+
+# --- SISTEMSKO ---
+Thumbs.db
+desktop.ini
