@@ -8,7 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.pametnipaketnik.data.local.AppDatabase
 import com.example.pametnipaketnik.ui.HistoryScreen
+import com.example.pametnipaketnik.ui.screen.MainScreen
 import com.example.pametnipaketnik.viewModel.HistoryViewModel
+import com.example.pametnipaketnik.viewModel.PlantViewModel
 
 class MainActivity : ComponentActivity() {
     private val historyViewModel: HistoryViewModel by lazy {
@@ -29,7 +31,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            HistoryScreen()
+            MainScreen()
         }
     }
 }
