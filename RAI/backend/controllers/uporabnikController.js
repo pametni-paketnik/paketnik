@@ -2,134 +2,142 @@ const Uporabnik = require('../models/Uporabnik.js');
 var moment = require('moment');
 
 module.exports = {
-
-    // seznam uporabnikov 
+    // 1. Seznam uporabnikov 
     list: async function (req, res) {
-        try{
-            const uporabniki = await Uporabnik.find(); 
-            return res.json(uporabniki); 
-        }catch(napaka){
-            return res.status(500).json({sporocilo: "Napaka pri pridobivanju", napaka}); 
-        }
-    },
-
-    // registracija
-    create: async function (req, res) {
-        try{
-            const uporabnik = new Uporabnik ({
-                ime: req.body.ime,
-                priimek: req.body.priimek,
-                email: req.body.email,
-                geslo: req.body.geslo,
-                vloga: req.body.vloga || 'lastnik',
-                slika_obraza: req.body.slika_obraza
-            });
-            const shranjenUporabnik = await uporabnik.save(); 
-            return res.status(201).json(shranjenUporabnik); 
-        }catch(napaka){
-            res.status(500).json({sporocilo: "Napaka pri registraciji", napaka}); 
-        }
-    }, 
-
-    show: async function (req, res) {
-        try{
-            const user = await Uporabnik.findById(req.params.id); 
-            if(!user) return res.status(404).json({sporocilo: "Uporabnik ni najden"}); 
-            return res.json(user); 
-        }catch(napaka){
-            return res.status(500).json({sporocilo: "Napka", napaka}); 
-        }
-    },
-
-    // prijava 
-    login: async function (req, res, next) {
-        Uporabnik.authenticate(req.body.email, req.body.geslo, function (err, user) {
-            if (err || !user) {
-                return res.status(401).json({
-                    message: "Napačen email ali geslo."
-                });
-            }
-            // Shranimo ID uporabnika v sejo (session)
-            req.session.userId = user._id;
-            
-            // Vrnemo uspeh Reactu
-            return res.json({
-                message: "Prijava uspešna",
-                user: {
-                    _id: user._id,
-                    ime: user.ime,
-                    priimek: user.priimek,
-                    email: user.email
-                }
-            });
-        });
-    },
-
-    // profil
-    profile: async function (req, res, next) {
-        Uporabnik.findById(req.session.userId)
-            .exec(function (error, user) {
-                if (error) {
-                    return res.status(500).json({ message: "Napaka na strežniku." });
-                } else {
-                    if (user === null) {
-                        return res.status(401).json({ message: "Niste prijavljeni." });
-                    } else {
-                        // Preoblikujemo v objekt in odstranimo občutljive podatke
-                        var userObj = user.toObject();
-                        delete userObj.geslo;
-                        
-                        // Formatiramo datum s poljem createdAt (ki ga doda timestamps: true)
-                        userObj.datum_registracije = moment(userObj.createdAt).format('DD.MM.YYYY HH:mm:ss');
-
-                        return res.json(userObj);
-                    }
-                }
-            });
-    },
-
-    // posodobitev
-    update: async function (req, res) {
         try {
-            const id = req.params.id;
-            const user = await Uporabnik.findById(id);
-            
-            if (!user) return res.status(404).json({ message: 'Uporabnik ni bil najden.' });
+            const uporabniki = await Uporabnik.find().select('-geslo'); // Ne pošiljaj gesel v seznamu
+            return res.json(uporabniki); 
+        } catch (napaka) {
+            return res.status(500).json({ sporocilo: "Napaka pri pridobivanju", napaka }); 
+        }
+    },
 
-            user.ime = req.body.ime || user.ime;
-            user.priimek = req.body.priimek || user.priimek;
-            user.email = req.body.email || user.email;
-            user.vloga = req.body.vloga || user.vloga;
-            
-            if (req.body.geslo) user.geslo = req.body.geslo;
+    // 2. Registracija (Popravljeno na async/await)
+    create: async function (req, res) {
+    console.log("Prejeti podatki iz Reacta:", req.body); // Preveri, če sploh dobiš podatke!
+    try {
+        var user = new Uporabnik({
+            ime : req.body.ime,
+            priimek : req.body.priimek,
+            email : req.body.email, 
+            geslo: req.body.geslo
+        });
 
-            const updatedUser = await user.save();
-            return res.json(updatedUser);
+        const savedUser = await user.save();
+        console.log("Uporabnik shranjen!");
+        return res.status(201).json({ message: "Registracija uspela" });
+
+    } catch (err) {
+        console.error("Podrobna napaka baze:", err); // TOLE TI BO POVEDALO VSE
+        return res.status(400).json({ message: err.message });
+    }
+    },
+
+    // 3. Prijava (Z dodano diagnostiko za iskanje napake)
+    login: async function (req, res) {
+        console.log("LOGIN FUNKCIJA SE JE ZAGNALA!");
+    try {
+        const { email, geslo } = req.body;
+        console.log("--- DEBUG PRIJAVA ---");
+        console.log("Vpisano v formo:", { email, geslo });
+
+        // Ročno preveri, če email sploh obstaja brez statične metode
+        const preprostIskalnik = await Uporabnik.findOne({ email: email.toLowerCase().trim() });
+        
+        if (!preprostIskalnik) {
+            console.log("NAPAKA: Uporabnik s tem emailom sploh ne obstaja v bazi.");
+            return res.status(401).json({ message: "Napačen email." });
+        }
+
+        console.log("Uporabnik najden. Hash v bazi:", preprostIskalnik.geslo);
+
+        // Ročno preveri bcrypt
+        const bcrypt = require('bcrypt');
+        const match = await bcrypt.compare(geslo, preprostIskalnik.geslo);
+        console.log("Ali se geslo ujema?", match);
+
+        if (!match) {
+            return res.status(401).json({ message: "Napačno geslo." });
+        }
+
+        // Če pride do sem, vse deluje!
+        req.session.userId = preprostIskalnik._id;
+        return res.json({ message: "Uspeh!", user: preprostIskalnik });
+
+    } catch (err) {
+        console.error("Kritična napaka:", err);
+        res.status(500).json({ message: "Napaka na strežniku" });
+    }
+},
+    // 4. Profil
+    profile: async function (req, res) {
+        try {
+            if (!req.session.userId) {
+                return res.status(401).json({ message: "Niste prijavljeni." });
+            }
+            const user = await Uporabnik.findById(req.session.userId).select('-geslo');
+            if (!user) {
+                return res.status(404).json({ message: "Uporabnik ni najden." });
+            }
+            var userObj = user.toObject();
+            userObj.datum_registracije = moment(userObj.createdAt).format('DD.MM.YYYY HH:mm:ss');
+            return res.json(userObj);
+        } catch (error) {
+            return res.status(500).json({ message: "Napaka na strežniku." });
+        }
+    },
+
+    // 5. Prikaži posameznega
+    show: async function (req, res) {
+        try {
+            const uporabnik = await Uporabnik.findById(req.params.id).select('-geslo');
+            if (!uporabnik) return res.status(404).json({ message: "Ni najden" });
+            return res.json(uporabnik);
         } catch (err) {
-            return res.status(500).json({ message: 'Napaka pri posodabljanju.', error: err });
+            return res.status(500).json({ message: "Napaka" });
         }
     },
 
-    // brisanje
+    // 6. Posodabljanje (Popravljeno: varno posodabljanje)
+    update: async function (req, res) {
+    try {
+        const id = req.params.id;
+        const uporabnik = await Uporabnik.findById(id);
+
+        if (!uporabnik) return res.status(404).json({ message: "Ni najden" });
+        if (req.body.ime) uporabnik.ime = req.body.ime;
+        if (req.body.priimek) uporabnik.priimek = req.body.priimek;
+        if (req.body.email) uporabnik.email = req.body.email;
+        if (req.body.geslo) uporabnik.geslo = req.body.geslo; // To bo sprožilo kriptiranje!
+
+        await uporabnik.save(); // Uporabimo .save(), da sprožimo hook za kriptiranje
+        
+        return res.json({ message: "Posodobljeno" });
+    } catch (err) {
+        return res.status(500).json({ message: "Napaka pri posodabljanju" });
+    }
+    },
+
+    // 7. Brisanje
     remove: async function (req, res) {
-        try{
-            const id = req.params.id; 
-            await Uporabnik.findByIdAndDelete(id); 
-            return re.status(204).send(); 
-        } catch(napaka){
-            return res.status(500).json({sporocilo: "Napaka pri brisanju", sporocilo}); 
+        try {
+            await Uporabnik.findByIdAndDelete(req.params.id); 
+            return res.status(204).send(); 
+        } catch (napaka) {
+            return res.status(500).json({ sporocilo: "Napaka pri brisanju" }); 
         }
     },
 
-    logout: function (req, res, next) {
+    // 8. Odjava
+    logout: function (req, res) {
         if (req.session) {
             req.session.destroy(function (err) {
-                if (err) {
-                    return next(err);
-                } else {
-                    return res.status(200).json({ message: "Odjava uspešna" });
-                }
+                if (err) return res.status(500).json({ message: "Napaka pri odjavi" });
+                res.clearCookie('connect.sid'); 
+                return res.status(200).json({ message: "Odjava uspešna" });
             });
+        } else {
+            return res.status(200).json({ message: "Že odjavljeni" });
         }
     }
 };

@@ -1,6 +1,6 @@
 const express = require('express'); 
 const router = express.Router(); 
-const narociloContorller = require('../controllers/narociloController'); 
+const narociloContorller = require('../controllers/narociloController.js'); 
 
 router.post('/', narociloContorller.dodajNarocilo); 
 router.post('/', narociloContorller.pripraviVsaNarocila); 

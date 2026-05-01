@@ -11,3 +11,171 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.uppercase-text {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.register-container {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.register-card {
+  max-width: 850px; 
+  width: 100%;
+  background: white;
+  border-radius: 40px; 
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Levi del - InPlant Zelena */
+.register-visual {
+  background-color: #6F4E37;
+  padding: 50px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.visual-title {
+  font-size: 1.8rem;
+  font-weight: 900;
+  margin-bottom: 20px;
+}
+
+.visual-divider {
+  width: 40px;
+  height: 3px;
+  background: white;
+  margin-bottom: 20px;
+}
+
+/* Desni del */
+.register-form-section {
+  position: relative;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.icon-box {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: transparent;
+  color: #6F4E37;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-header h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #000;
+  margin-bottom: 5px;
+  padding-top: 30px;
+}
+
+.form-header p {
+  font-size: 0.85rem;
+  color: #000;
+  margin-bottom: 30px;
+}
+
+/* Obrazec in vhodi */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input-group-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.clean-input {
+  width: 100%;
+  padding: 15px 20px;
+  border: 1.7px solid #6F4E37;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+}
+
+.clean-input:focus {
+  outline: none;
+  border-color: #6F4E37;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.input-group-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* Razmik zdaj kontrolira margin na inputu */
+}
+
+/* Gumb */
+.submit-btn {
+  margin-top: 15px;
+  background: #6F4E37;
+  color: white;
+  padding: 16px;
+  border: none;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
+}
+
+.submit-btn:hover {
+  background: #6F4E37;
+  transform: translateY(-2px);
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 0.8rem;
+  color: #000;
+}
+
+.login-link a {
+  color: #6F4E37;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  margin-left: 5px;
+}
+
+/* Login */
+.input-group-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0; 
+}

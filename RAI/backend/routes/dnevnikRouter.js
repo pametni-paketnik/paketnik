@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const dnevnikController = require('../controllers/DnevnikOdklepovController');
+const dnevnikController = require('../controllers/dnevnikController.js');
 
 router.post('/', dnevnikController.ustvariZapis);
 router.get('/', dnevnikController.list);
