@@ -1,9 +1,12 @@
 var express = require('express');
-var router = express.Router('../');
+var router = express.Router(); 
 
-/* GET home page. */
 router.get('/', function(req, res, next) {
-    res.render('index', { title: 'Moja prva stran', message: 'Dobrodošli na mojem backendu!' });
+    res.json({ 
+        naslov: 'InPlant API', 
+        status: 'Online',
+        sporocilo: 'Backend uspešno povezan z Reactom!' 
+    });
 });
 
 module.exports = router;

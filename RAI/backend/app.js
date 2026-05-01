@@ -6,30 +6,49 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors'); 
+
+var hbs = require('hbs'); 
+
+// vključimo mongoose in ga povežemo z MongoDB
 var mongoose = require('mongoose');
-var session = require('express-session');
-const MongoStore = require('connect-mongo');
-
-// 1. INICIALIZACIJA APP
-var app = express(); 
-
-// 2. POVEZAVA NA BAZO
-// Prepričaj se, da imaš v .env datoteki: MONGO_URI=mongodb://127.0.0.1:27017/ime_tvoje_baze
 var mongoDB = process.env.MONGO_URI;
 mongoose.connect(mongoDB)
-    .then(() => console.log("Povezano na MongoDB"))
-    .catch(err => console.error("Napaka pri povezavi na bazo:", err)); 
+  .then(() => console.log('Uspesno povezani na MongoDB'))
+  .catch((err) => console.log('Napaka pri povezavi z MongoDB', err)); 
 
 mongoose.Promise = global.Promise;
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-// 3. MIDDLEWARE (Vrstni red je pomemben!)
+// vključimo routerje
+var indexRouter = require('./routes/index');
+var uporabnikRouter = require('./routes/uporabnikRouter');
+var paketnikRouter = require('./routes/paketnikRouter');
+var narociloRouter = require('./routes/narociloRouter');
+var dnevnikRouter = require('./routes/dnevnikRouter');
 
-// CORS nastavitev za React (port 3001)
+var app = express();
+
+const port = process.env.PORT;
+app.listen(port, () => {
+  console.log(`🚀 Strežnik uspešno zagnan na: http://localhost:${port}`);
+});
+
 app.use(cors({
-  origin: 'http://localhost:3001', // Naslov tvojega React frontenda
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true // Nujno za pošiljanje piškotkov/sej
-})); 
+  origin: 'http://localhost:3001', 
+  credentials: true
+}));
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hbs');
+
+hbs.registerHelper('equals', function(arg1, arg2){
+  return String(arg1) === String(arg2); 
+}); 
+hbs.registerHelper('String', function (arg) {
+    return String(arg);
+});
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -37,47 +56,36 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 4. SESSION
+var session = require('express-session');
+var MongoStore = require('connect-mongo');
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'work hard', // Priporočljivo v .env
-  resave: false,
+  secret: 'work hard',
+  resave: true,
   saveUninitialized: false,
-  cookie: {
-    secure: false, // Nastavi na true samo, če uporabljaš HTTPS
-    httpOnly: true, // Varnost: prepreči dostop JS do piškotka na frontendu
-    maxAge: 1000 * 60 * 60 * 24 // 1 dan
-  },
-  store: MongoStore.create({
-    mongoUrl: mongoDB
-  })
+  store: MongoStore.create({mongoUrl: mongoDB})
 }));
+//Shranimo sejne spremenljivke v locals
+//Tako lahko do njih dostopamo v vseh view-ih (glej layout.hbs)
+app.use(function (req, res, next) {
+  res.locals.session = req.session;
+  next();
+});
 
-// 5. ROUTES
-var indexRouter = require('./routes/index');
-var uporabnikRouter = require('./routes/uporabnikRouter');
-var narociloRouter = require('./routes/narociloRouter'); // Dodaj svoje nove poti
-var paketnikRouter = require('./routes/paketnikRouter');
-var dnevnikRouter = require('./routes/dnevnikRouter');
-
-app.use('/', indexRouter);
 app.use('/uporabnik', uporabnikRouter);
-app.use('/narocila', narociloRouter);
-app.use('/paketniki', paketnikRouter);
+app.use('/', indexRouter);
+app.use('/narocilo', narociloRouter);
+app.use('/paketnik', paketnikRouter); 
 app.use('/dnevnik', dnevnikRouter);
 
-// 6. ERROR HANDLING (Prilagojeno za API / React)
-
-// Ulovi 404 in pošlji naprej v error handler
+// catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// Končni error handler - vrača JSON namesto renderiranja strani
+// error handler
 app.use(function(err, req, res, next) {
-  // Nastavi status napake
   res.status(err.status || 500);
   
-  // Reactu vrnemo JSON objekt z napako
   res.json({
     message: err.message,
     error: req.app.get('env') === 'development' ? err : {}

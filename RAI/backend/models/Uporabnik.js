@@ -1,53 +1,43 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt'); // Nujno dodaj to!
+const bcrypt = require('bcrypt');
 const Schema = mongoose.Schema;
 
 const UporabnikSchema = new Schema({
     ime: { type: String, required: true },
     priimek: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     geslo: { type: String, required: true },
-    vloga: { type: String, default: 'lastnik' }, // npr. lastnik, dostavljalec
+    vloga: { type: String, default: 'lastnik' },
     slika_obraza: { type: String } 
 }, { timestamps: true });
 
-// Kriptiranje gesla pred shranjevanjem
-UporabnikSchema.pre('save', function(next) {
-    var user = this;
-    // Preveri, če je bilo geslo spremenjeno (da ne kriptiramo že kriptiranega)
-    if (!user.isModified('geslo')) return next();
+// 1. KRIPTIRANJE GESLA (Brez callbackov, samo async/await)
+UporabnikSchema.pre('save', async function(next) {
+    const uporabnik = this;
 
-    bcrypt.hash(user.geslo, 10, function(err, hash) {
-        if (err) {
-            return next(err);
-        }
-        user.geslo = hash;
-        next();
-    });
+    // Če geslo ni bilo spremenjeno, ne delaj nič in nadaljuj
+    if (!uporabnik.isModified('geslo')) {
+        return next(); 
+    }
+    
+    try {
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(uporabnik.geslo, salt);
+        uporabnik.geslo = hash;
+        next(); // Nujno pokliči next(), da Mongoose ve, da je konec!
+    } catch (err) {
+        next(err); 
+    }
 });
 
-// Metoda za preverjanje prijave (avtentikacija)
-UporabnikSchema.statics.authenticate = function(email, geslo, callback) {
-    // Iščemo po emailu, ker je unikaten
-    this.findOne({ email: email })
-        .exec(function(err, user) {
-            if (err) {
-                return callback(err);
-            } else if (!user) {
-                var err = new Error("Uporabnik ni bil najden.");
-                err.status = 401;
-                return callback(err);
-            }
-            // Primerjava gesel
-            bcrypt.compare(geslo, user.geslo, function(err, result) {
-                if (result === true) {
-                    return callback(null, user);
-                } else {
-                    return callback();
-                }
-            });
-        });
-}
+// 2. METODA ZA AVTENTIKACIJO
+UporabnikSchema.statics.authenticate = async function(email, geslo) {
+    const user = await this.findOne({ email: email.toLowerCase().trim() });
+    if (!user) return null;
 
-// Izvoz modela - uporabi samo eno ime (Uporabnik)
+    const isMatch = await bcrypt.compare(geslo, user.geslo);
+    if (isMatch) return user;
+    return null;
+};
+
 module.exports = mongoose.model('Uporabnik', UporabnikSchema);
