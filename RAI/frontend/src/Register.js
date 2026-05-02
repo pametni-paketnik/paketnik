@@ -19,7 +19,7 @@ function Register() {
 
         try {
             // Prepričaj se, da backend teče na portu 3000
-            const res = await fetch("http://localhost:3000/uporabnik", {
+            const res = await fetch("/uporabnik", {
                 method: 'POST',
                 cache: 'no-store', // Prepreči status 304
                 credentials: 'include',
@@ -33,8 +33,7 @@ function Register() {
                 // Če je registracija uspela, pojdi na login
                 navigate("/login");
             } else {
-                // Če je strežnik vrnil napako (npr. email že obstaja)
-                setError(data.message || "Registracija ni uspela. Preverite podatke.");
+                setError(data.message || "Registracija ni uspela.");
             }
         } catch (err) {
             console.error("Napaka pri povezavi:", err);
@@ -85,14 +84,6 @@ function Register() {
                                 value={ime}
                                 className="clean-input" 
                                 onChange={(e) => setIme(e.target.value)}
-                            />
-                            <input 
-                                type="text" 
-                                placeholder="PRIIMEK" 
-                                required
-                                value={priimek}
-                                className="clean-input" 
-                                onChange={(e) => setPriimek(e.target.value)}
                             />
                             <input 
                                 type="email" 

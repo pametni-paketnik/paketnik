@@ -17,7 +17,7 @@ function Login() {
 
         try {
             // Prepričaj se, da backend teče na portu 3000
-            const response = await axios.post('http://localhost:3000/uporabnik/login', {
+            const response = await axios.post('/uporabnik/login', {
                 email,
                 geslo
             }, { withCredentials: true });
