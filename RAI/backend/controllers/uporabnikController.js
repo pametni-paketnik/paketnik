@@ -38,10 +38,6 @@ module.exports = {
         console.log("LOGIN FUNKCIJA SE JE ZAGNALA!");
     try {
         const { email, geslo } = req.body;
-        console.log("--- DEBUG PRIJAVA ---");
-        console.log("Vpisano v formo:", { email, geslo });
-
-        // Ročno preveri, če email sploh obstaja brez statične metode
         const preprostIskalnik = await Uporabnik.findOne({ email: email.toLowerCase().trim() });
         
         if (!preprostIskalnik) {
@@ -49,9 +45,6 @@ module.exports = {
             return res.status(401).json({ message: "Napačen email." });
         }
 
-        console.log("Uporabnik najden. Hash v bazi:", preprostIskalnik.geslo);
-
-        // Ročno preveri bcrypt
         const bcrypt = require('bcrypt');
         const match = await bcrypt.compare(geslo, preprostIskalnik.geslo);
         console.log("Ali se geslo ujema?", match);
@@ -60,7 +53,6 @@ module.exports = {
             return res.status(401).json({ message: "Napačno geslo." });
         }
 
-        // Če pride do sem, vse deluje!
         req.session.userId = preprostIskalnik._id;
         return res.json({ message: "Uspeh!", user: preprostIskalnik });
 

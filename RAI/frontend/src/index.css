@@ -12,6 +12,88 @@ code {
     monospace;
 }
 
+/* Home Layout */
+.home-container {
+    margin: 0 auto;
+    padding: 0 20px 0 20px;
+}
+
+.hero-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 50px;
+    min-height: 30vh;
+}
+
+.hero-text {
+    flex: 1;
+}
+
+.category-tag {
+    color: var(--primary-brown);
+    font-size: 0.8rem;
+}
+
+.hero-text h1 {
+    font-size: 2.5rem;
+    line-height: 1.1;
+    margin: 20px 0;
+}
+
+.hero-text p {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 30px;
+    max-width: 500px;
+}
+
+/* Vizualni del brez slik */
+.hero-visual-placeholder {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main-circle {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: var(--light-gray);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px dashed var(--primary-brown);
+}
+
+/* Info kartice spodaj */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 50px;
+}
+
+.info-card {
+    padding: 10px;
+    background: var(--light-gray);
+    border-radius: 20px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.info-card.highlight {
+    background: var(--primary-brown);
+    color: white;
+}
+
+.info-card h3 {
+    margin: 15px 0 10px;
+    font-size: 1rem;
+}
+
+/* Registracija */
 .uppercase-text {
   text-transform: uppercase;
   letter-spacing: 2px;
