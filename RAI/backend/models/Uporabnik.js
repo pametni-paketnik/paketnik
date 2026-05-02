@@ -17,16 +17,15 @@ UporabnikSchema.pre('save', async function(next) {
 
     // Če geslo ni bilo spremenjeno, ne delaj nič in nadaljuj
     if (!uporabnik.isModified('geslo')) {
-        return next(); 
+        return; 
     }
     
     try {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(uporabnik.geslo, salt);
         uporabnik.geslo = hash;
-        next(); // Nujno pokliči next(), da Mongoose ve, da je konec!
     } catch (err) {
-        next(err); 
+        throw err; 
     }
 });
 

@@ -1,5 +1,6 @@
 const Uporabnik = require('../models/Uporabnik.js');
 var moment = require('moment');
+var bcrypt = require('bcrypt');
 
 module.exports = {
     // 1. Seznam uporabnikov 
@@ -7,14 +8,13 @@ module.exports = {
         try {
             const uporabniki = await Uporabnik.find().select('-geslo'); // Ne pošiljaj gesel v seznamu
             return res.json(uporabniki); 
-        } catch (napaka) {
-            return res.status(500).json({ sporocilo: "Napaka pri pridobivanju", napaka }); 
+        } catch (err) {
+            return res.status(500).json({ message: "Napaka pri pridobivanju", err }); 
         }
     },
 
     // 2. Registracija (Popravljeno na async/await)
     create: async function (req, res) {
-    console.log("Prejeti podatki iz Reacta:", req.body); // Preveri, če sploh dobiš podatke!
     try {
         var user = new Uporabnik({
             ime : req.body.ime,
@@ -23,13 +23,17 @@ module.exports = {
             geslo: req.body.geslo
         });
 
-        const savedUser = await user.save();
-        console.log("Uporabnik shranjen!");
+        await user.save(); 
         return res.status(201).json({ message: "Registracija uspela" });
 
     } catch (err) {
-        console.error("Podrobna napaka baze:", err); // TOLE TI BO POVEDALO VSE
-        return res.status(400).json({ message: err.message });
+        if(err.code === 11000){
+            return res.status(400).json({ message: "Uporabnik s tem email naslovom je že registriran"}); 
+        }
+        if(err.name === "ValidationError"){
+            return res.status(400).json({ message: "Podatki niso pravilni: " + Object.values(err.errors).map(val => val.message).json(', ')}); 
+        }
+        return res.status(500).json({ message: "Prislo je do napake na strežniku", sporocilo });
     }
     },
 
@@ -38,26 +42,27 @@ module.exports = {
         console.log("LOGIN FUNKCIJA SE JE ZAGNALA!");
     try {
         const { email, geslo } = req.body;
-        const preprostIskalnik = await Uporabnik.findOne({ email: email.toLowerCase().trim() });
-        
-        if (!preprostIskalnik) {
-            console.log("NAPAKA: Uporabnik s tem emailom sploh ne obstaja v bazi.");
-            return res.status(401).json({ message: "Napačen email." });
+        const uporabnik = await Uporabnik.findOne({email: email.toLowerCase().trim()}); 
+
+        if (!uporabnik) {
+            console.log("NAPAKA: Email ne obstaja");
+            return res.status(401).json({ message: "Napačen email ali geslo." });
         }
 
-        const bcrypt = require('bcrypt');
-        const match = await bcrypt.compare(geslo, preprostIskalnik.geslo);
+        const match = await bcrypt.compare(geslo, uporabnik.geslo);
         console.log("Ali se geslo ujema?", match);
 
         if (!match) {
-            return res.status(401).json({ message: "Napačno geslo." });
+            return res.status(401).json({ message: "Napačen email ali geslo." });
         }
 
-        req.session.userId = preprostIskalnik._id;
-        return res.json({ message: "Uspeh!", user: preprostIskalnik });
+        req.session.userId = uporabnik._id;
+        const userResponse = uporabnik.toObject(); 
+        delete userResponse.geslo; 
+
+        return res.json({ message: "Uspeh!", user: userResponse });
 
     } catch (err) {
-        console.error("Kritična napaka:", err);
         res.status(500).json({ message: "Napaka na strežniku" });
     }
 },
