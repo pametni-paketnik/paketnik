@@ -1,26 +1,24 @@
 import React from 'react';
-import { ArrowRight, Package, Star } from 'lucide-react';
+import { ArrowRight, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import './index.css';
-import heroImg from './images/monstera.png'; // Prepričaj se, da je slika v src/images/
-
+import heroImg from './images/monstera.png'; 
+import plant1 from './images/monstera_plant_no_background.png';  
 function Home() {
     return (
         <div className="home-container">
-            {/* Hero Section kot ozadje */}
             <section 
                 className="hero-section-bg" 
                 style={{ 
-                    backgroundImage: `linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url(${heroImg})` 
+                    backgroundImage: `linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.25)), url(${heroImg})` 
                 }}>
                 <div className="hero-content-centered">
                     <h1 className="hero-title-white uppercase-text">
                         Vaš digitalni <br /> 
-                        <span className="italic-text">vrt rastlin</span>
+                        <span>vrt rastlin</span>
                     </h1>
                     <p className="hero-p-white">
-                        Preprost dostop do upravljanja vaših rastlin in pregled nad ponudbo. 
-                        Vse na enem mestu, varno in hitro.
+                        Preprost dostop do upravljanja vaših rastlin in pregled nad ponudbo.
                     </p>
                     <Link to="/register">
                         <button className="submit-btn-white uppercase-text">
@@ -29,25 +27,27 @@ function Home() {
                     </Link>
                 </div>
             </section>
+
+            <section className="product-grid">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
+                    <div className="product-card" key={item}>
+                        <Heart size={24} className="heart-icon" />
+                        <img src={plant1} alt="Plant" />
+                        <div className="product-info">
+                            <h3>Bonsai Bot</h3>
+                            <p className="description">Lorem ipsum is simply dummy text.</p>
+                            
+                            {/* Ta del mora biti v vseh karticah enak */}
+                            <div className="price-row">
+                                <span className="price-dark">$59.99</span>
+                                <button className="add-to-cart-btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </section>
         </div>
     );
 }
-
-// Pomožna komponenta za ikono uporabnika (User icon)
-const User = ({size, strokeWidth, color}) => (
-    <svg 
-        width={size} 
-        height={size} 
-        viewBox="0 0 24 24" 
-        fill="none" 
-        stroke={color || "currentColor"} 
-        strokeWidth={strokeWidth} 
-        strokeLinecap="round" 
-        strokeLinejoin="round"
-    >
-        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
-        <circle cx="12" cy="7" r="4"/>
-    </svg>
-);
 
 export default Home;
