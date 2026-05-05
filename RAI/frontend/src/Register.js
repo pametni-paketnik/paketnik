@@ -86,6 +86,14 @@ function Register() {
                                 onChange={(e) => setIme(e.target.value)}
                             />
                             <input 
+                                type="text" 
+                                placeholder="PRIIMEK" 
+                                required
+                                value={priimek}
+                                className="clean-input" 
+                                onChange={(e) => setPriimek(e.target.value)}
+                            />
+                            <input 
                                 type="email" 
                                 placeholder="E-POŠTA" 
                                 required
