@@ -3,7 +3,15 @@ import { ArrowRight, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import './index.css';
 import heroImg from './images/monstera.png'; 
-import plant1 from './images/monstera_plant_no_background.png';  
+import plant1 from './images_no_background/coffee.png';
+import plant2 from './images_no_background/bonsai_japanese_cherry.png'; 
+import plant3 from './images_no_background/chinese_money_plant.png';   
+import plant4 from './images_no_background/peace_lily.png'; 
+import plant5 from './images_no_background/parlor_palm.png'; 
+import plant6 from './images_no_background/sunflowers.png'; 
+import plant7 from './images_no_background/peperomia.png'; 
+import plant8 from './images_no_background/roses.png'; 
+
 function Home() {
     return (
         <div className="home-container">
@@ -29,8 +37,7 @@ function Home() {
             </section>
 
             <section className="product-grid">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
-                    <div className="product-card" key={item}>
+                    <div className="product-card">
                         <Heart size={24} className="heart-icon" />
                         <img src={plant1} alt="Plant" />
                         <div className="product-info">
@@ -44,7 +51,112 @@ function Home() {
                             </div>
                         </div>
                     </div>
-                ))}
+
+                    <div className="product-card">
+                        <Heart size={24} className="heart-icon" />
+                        <img src={plant2} alt="Plant" />
+                        <div className="product-info">
+                            <h3>Bonsai Bot</h3>
+                            <p className="description">Lorem ipsum is simply dummy text.</p>
+                            
+                            {/* Ta del mora biti v vseh karticah enak */}
+                            <div className="price-row">
+                                <span className="price-dark">$59.99</span>
+                                <button className="add-to-cart-btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="product-card">
+                        <Heart size={24} className="heart-icon" />
+                        <img src={plant3} alt="Plant" />
+                        <div className="product-info">
+                            <h3>Bonsai Bot</h3>
+                            <p className="description">Lorem ipsum is simply dummy text.</p>
+                            
+                            {/* Ta del mora biti v vseh karticah enak */}
+                            <div className="price-row">
+                                <span className="price-dark">$59.99</span>
+                                <button className="add-to-cart-btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="product-card">
+                        <Heart size={24} className="heart-icon" />
+                        <img src={plant4} alt="Plant" />
+                        <div className="product-info">
+                            <h3>Bonsai Bot</h3>
+                            <p className="description">Lorem ipsum is simply dummy text.</p>
+                            
+                            {/* Ta del mora biti v vseh karticah enak */}
+                            <div className="price-row">
+                                <span className="price-dark">$59.99</span>
+                                <button className="add-to-cart-btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="product-card">
+                        <Heart size={24} className="heart-icon" />
+                        <img src={plant5} alt="Plant" />
+                        <div className="product-info">
+                            <h3>Bonsai Bot</h3>
+                            <p className="description">Lorem ipsum is simply dummy text.</p>
+                            
+                            {/* Ta del mora biti v vseh karticah enak */}
+                            <div className="price-row">
+                                <span className="price-dark">$59.99</span>
+                                <button className="add-to-cart-btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="product-card">
+                        <Heart size={24} className="heart-icon" />
+                        <img src={plant6} alt="Plant" />
+                        <div className="product-info">
+                            <h3>Bonsai Bot</h3>
+                            <p className="description">Lorem ipsum is simply dummy text.</p>
+                            
+                            {/* Ta del mora biti v vseh karticah enak */}
+                            <div className="price-row">
+                                <span className="price-dark">$59.99</span>
+                                <button className="add-to-cart-btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="product-card">
+                        <Heart size={24} className="heart-icon" />
+                        <img src={plant7} alt="Plant" />
+                        <div className="product-info">
+                            <h3>Bonsai Bot</h3>
+                            <p className="description">Lorem ipsum is simply dummy text.</p>
+                            
+                            {/* Ta del mora biti v vseh karticah enak */}
+                            <div className="price-row">
+                                <span className="price-dark">$59.99</span>
+                                <button className="add-to-cart-btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="product-card">
+                        <Heart size={24} className="heart-icon" />
+                        <img src={plant8} alt="Plant" />
+                        <div className="product-info">
+                            <h3>Bonsai Bot</h3>
+                            <p className="description">Lorem ipsum is simply dummy text.</p>
+                            
+                            {/* Ta del mora biti v vseh karticah enak */}
+                            <div className="price-row">
+                                <span className="price-dark">$59.99</span>
+                                <button className="add-to-cart-btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
             </section>
         </div>
     );
