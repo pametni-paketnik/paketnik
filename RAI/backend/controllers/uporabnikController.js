@@ -39,33 +39,30 @@ module.exports = {
 
     // 3. Prijava (Z dodano diagnostiko za iskanje napake)
     login: async function (req, res) {
-        console.log("LOGIN FUNKCIJA SE JE ZAGNALA!");
-    try {
-        const { email, geslo } = req.body;
-        const uporabnik = await Uporabnik.findOne({email: email.toLowerCase().trim()}); 
+        try {
+            const { email, geslo } = req.body;
+            const uporabnik = await Uporabnik.findOne({email: email.toLowerCase().trim()}); 
 
-        if (!uporabnik) {
-            console.log("NAPAKA: Email ne obstaja");
-            return res.status(401).json({ message: "Napačen email ali geslo." });
+            if (!uporabnik) {
+                return res.status(401).json({ message: "Napačen email ali geslo." });
+            }
+
+            const match = await bcrypt.compare(geslo, uporabnik.geslo);
+
+            if (!match) {
+                return res.status(401).json({ message: "Napačen email ali geslo." });
+            }
+
+            req.session.userId = uporabnik._id;
+            const userResponse = uporabnik.toObject(); 
+            delete userResponse.geslo; 
+
+            return res.json({authenticated: true, user: userResponse });
+
+        } catch (err) {
+            res.status(500).json({ message: "Napaka na strežniku" });
         }
-
-        const match = await bcrypt.compare(geslo, uporabnik.geslo);
-        console.log("Ali se geslo ujema?", match);
-
-        if (!match) {
-            return res.status(401).json({ message: "Napačen email ali geslo." });
-        }
-
-        req.session.userId = uporabnik._id;
-        const userResponse = uporabnik.toObject(); 
-        delete userResponse.geslo; 
-
-        return res.json({ message: "Uspeh!", user: userResponse });
-
-    } catch (err) {
-        res.status(500).json({ message: "Napaka na strežniku" });
-    }
-},
+    },
     // 4. Profil
     profile: async function (req, res) {
         try {
@@ -129,12 +126,12 @@ module.exports = {
     logout: function (req, res) {
         if (req.session) {
             req.session.destroy(function (err) {
-                if (err) return res.status(500).json({ message: "Napaka pri odjavi" });
+                if (err) return res.status(500).json();
                 res.clearCookie('connect.sid'); 
                 return res.status(200).json({ message: "Odjava uspešna" });
             });
         } else {
-            return res.status(200).json({ message: "Že odjavljeni" });
+            return res.status(200).json();
         }
     }
 };

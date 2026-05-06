@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, ArrowRight } from 'lucide-react';
+import { UserContext } from './userContext';
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -9,6 +10,7 @@ function Login() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { setUserContext } = useContext(UserContext); 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -16,7 +18,6 @@ function Login() {
         setError('');
 
         try {
-            // Prepričaj se, da backend teče na portu 3000
             const response = await axios.post('/uporabnik/login', {
                 email,
                 geslo
@@ -24,7 +25,8 @@ function Login() {
 
             if (response.status === 200) {
                 console.log("Prijava uspela:", response.data);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
+                //localStorage.setItem('user', JSON.stringify(response.data.user));
+                setUserContext(response.data.user || response.data);
                 navigate('/'); 
             }
         } catch (err) {
