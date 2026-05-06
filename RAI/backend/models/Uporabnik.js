@@ -39,4 +39,5 @@ UporabnikSchema.statics.authenticate = async function(email, geslo) {
     return null;
 };
 
-module.exports = mongoose.model('Uporabnik', UporabnikSchema);
+// POPRAVEK: Tretji parameter 'uporabniki' prisili Mongoose, da uporabi točno to ime zbirke
+module.exports = mongoose.model('Uporabnik', UporabnikSchema, 'uporabniki');

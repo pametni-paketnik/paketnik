@@ -7,4 +7,4 @@ const PaketnikSchema = new mongoose.Schema({
     lastnik_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Uporabnik' } // Povezava na uporabnika!
 }, { timestamps: true });
 
-module.exports = mongoose.model('Paketnik', PaketnikSchema);
+module.exports = mongoose.model('Paketnik', PaketnikSchema, 'paketniki');

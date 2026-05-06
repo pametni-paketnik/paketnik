@@ -8,4 +8,4 @@ const DnevnikOdklepovSchema = new mongoose.Schema({
 }, {
     timestamps: { createdAt: 'casovna_znacka', updatedAt: 'posodobljeno_ob' }
 });
-module.exports = mongoose.model('DnevnikOdklepov', DnevnikOdklepovSchema);
+module.exports = mongoose.model('DnevnikOdklepov', DnevnikOdklepovSchema, 'dnevnik_odklepov');
