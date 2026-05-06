@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { UserContext, UserProvider } from './userContext.js';
+import './index.css';
 import Login from './Login';
+import Logout from './Logout';
 import Profile from './Profile';
 import Register from './Register';
 import Home from './Home'; 
 
-function App() {
+function AppContent() {
+  const { user } = useContext(UserContext);
+
   return (
-    <Router>
+    <>
       <nav style={{ 
         padding: "20px 80px", 
         display: "flex", 
@@ -19,11 +24,22 @@ function App() {
             InPlant
         </div>
         <div style={{ display: "flex", gap: "20px" }}>
-            <Link to="/" className="uppercase-text" style={{ textDecoration: "none", color: "#333", fontSize: "0.8rem", fontWeight: "700" }}>Domov</Link>
-            <Link to="/login" className="uppercase-text" style={{ textDecoration: "none", color: "#333", fontSize: "0.8rem", fontWeight: "700" }}>Prijava</Link>
-            <Link to="/register" className="uppercase-text" style={{ textDecoration: "none", color: "#333", fontSize: "0.8rem", fontWeight: "700" }}>Registracija</Link>
+            <Link to="/" className="navbar-text">Domov</Link>
+            
+            {user ? (
+                <>
+                    <Link to="/profile" className="navbar-text">Profil</Link>
+                    <Link to="/logout" className="navbar-text">Odjava</Link>
+                    {/* Profilna slika */}
+                </>
+            ) : (
+                <>
+                    <Link to="/login" className="navbar-text">Prijava</Link>
+                    <Link to="/register" className="navbar-text">Registracija</Link>
+                </>
+            )}
         </div>
-    </nav>
+      </nav>
 
       <div style={{ padding: "50px" }}>
         <Routes>
@@ -32,9 +48,20 @@ function App() {
             <Route path="/register" element={<Register />} />
             
             <Route path="/profile" element={<Profile />} />
+            <Route path="/logout" element={<Logout />} />
           </Routes>
       </div>
-    </Router>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <UserProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </UserProvider>
   );
 }
 
