@@ -7,4 +7,13 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="font">#FF2D2D2D</color>
+    <color name="background">#EFE5DA</color>
+    <color name="history_card">#FFF7F4</color>
+    <color name="history_card_background">#FFF7F6F4</color>
+    <color name="history_text_primary">#2D2D2D</color>
+    <color name="history_text_secondary">#8E8E8E</color>
+    <color name="history_accent">#4A4A4A</color>
+    <color name="history_error">#C95C5C</color>
+    <color name="history_accept">#87AE73</color>
 </resources>
