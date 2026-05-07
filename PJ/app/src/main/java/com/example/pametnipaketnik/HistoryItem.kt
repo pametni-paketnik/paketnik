@@ -1,4 +1,7 @@
 package com.example.pametnipaketnik
 
-class HistoryItem {
-}
+data class HistoryItem(
+    val date: String,
+    val boxId: String,
+    val status: String
+)
