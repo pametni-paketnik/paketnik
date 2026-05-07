@@ -6,16 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context=".MainActivity2">
+    tools:context=".MainActivity">
 
     <Button
         android:id="@+id/buttonOpenBox"
         android:layout_width="wrap_content"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         android:text="@string/open_the_box"
         android:backgroundTint="@color/white"
         android:textSize="18sp"
         android:textColor="@color/font"
+        android:background="@drawable/rounded_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,11 +28,9 @@
         android:layout_height="50dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:backgroundTint="@color/white"
-        app:icon="@drawable/history"
-        app:iconSize ="30dp"
-        app:iconGravity="top"
-        app:iconTint="@color/font"
+        android:background="@drawable/rounded_button"
+        android:drawableTop="@drawable/history"
+        android:padding="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
