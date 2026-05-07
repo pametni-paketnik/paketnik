@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">PametniPaketnik</string>
+    <string name="zgodovina_paketnika">ZGODOVINA PAKETNIKA</string>
+    <string name="vse">Vse</string>
+    <string name="uspesno">Uspešno</string>
+    <string name="neuspesno">Neuspešno</string>
+    <string name="danes">Danes</string>
+    <string name="open_the_box">OPEN THE BOX</string>
+    <string name="stevilka_paketnika">Številka paketnika</string>
 </resources>

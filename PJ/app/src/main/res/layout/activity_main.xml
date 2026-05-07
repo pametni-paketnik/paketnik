@@ -12,7 +12,7 @@
         android:id="@+id/buttonOpenBox"
         android:layout_width="wrap_content"
         android:layout_height="80dp"
-        android:text="OPEN THE BOX"
+        android:text="@string/open_the_box"
         android:backgroundTint="@color/white"
         android:textSize="18sp"
         android:textColor="@color/font"
