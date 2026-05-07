@@ -9,4 +9,4 @@ const NarociloSchema = new mongoose.Schema({
     prevzeto: { type: Boolean, default: false }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Narocilo', NarociloSchema);
+module.exports = mongoose.model('Narocilo', NarociloSchema, 'narocila');
