@@ -18,7 +18,7 @@
         android:paddingTop="55dp" >
 
         <TextView
-            android:text="ZGODOVINA PAKETNIKA"
+            android:text="@string/zgodovina_paketnika"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
@@ -37,7 +37,7 @@
 
             <TextView
                 android:id="@+id/tabVse"
-                android:text="Vse"
+                android:text="@string/vse"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
 
             <TextView
                 android:id="@+id/tabUspesno"
-                android:text="Uspešno"
+                android:text="@string/uspesno"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
 
             <TextView
                 android:id="@+id/tabNeuspesno"
-                android:text="Neuspešno"
+                android:text="@string/neuspesno"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
 
             <TextView
                 android:id="@+id/tabDanes"
-                android:text="Danes"
+                android:text="@string/danes"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
