@@ -36,15 +36,13 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    buildFeatures {
-        compose = true
-    }
 
     sourceSets{
         getByName("main").java.srcDirs("build/generated/ksp/main/kotlin")
     }
 
     buildFeatures {
+        compose = true
         viewBinding = true
     }
 }
@@ -70,8 +68,6 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-    implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
     implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
 
