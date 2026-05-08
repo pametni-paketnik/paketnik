@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import ProgressBar from './ProgressBar'; 
 import './index.css'; 
 
-const PaymentForm = () => {
+const PaymentForm = ({ onNext, onBack, currentStep }) => {
+
   const [formData, setFormData] = useState({
       cardholder: 'LOREM IPSUM', 
       cardNumber: '1234 5679 9012 3456', 
@@ -37,11 +39,10 @@ const PaymentForm = () => {
     } 
   };
 
-  
   return (
     <div className="payment-container">
-      <div className="payment-card-wrapper">
-        
+      
+      <div className="payment-card-wrapper">  
         <main className="payment-content">
           {/* Vizualna kartica */}
           <div className="card-stack">
@@ -123,7 +124,7 @@ const PaymentForm = () => {
 
             <div style={{textAlign: 'right', marginTop: '20px'}}>
                <p style={{color: '#000', fontSize: '1rem', fontWeight: '800', letterSpacing: '1px', textTransform: 'uppercase'}}>Total: <span style={{color: '#6F4E37', fontWeight: '800', fontSize: '1.4rem'}}>$1234</span></p>
-               <button className="pay-button" type="button">PAY</button>
+               <button className="pay-button" type="button" onClick={onNext}>PAY</button>
             </div>
           </section>
         </main>

@@ -8,6 +8,7 @@ import Profile from './Profile';
 import Register from './Register';
 import Home from './Home'; 
 import Payment from './Payment.js'; 
+import Order from './Order.js';
 
 function AppContent() {
   const { user } = useContext(UserContext);
@@ -31,7 +32,7 @@ function AppContent() {
                 <>
                     <Link to="/profile" className="navbar-text">Profil</Link>
                     <Link to="/logout" className="navbar-text">Odjava</Link>
-                    <Link to="/payment" className="navbar-text">Placilo</Link>
+                    <Link to="/order" className="navbar-text">Naročilo</Link>
                     {/* Profilna slika */}
                 </>
             ) : (
@@ -52,7 +53,7 @@ function AppContent() {
             
             <Route path="/profile" element={<Profile />} />
             <Route path="/logout" element={<Logout />} />
-            <Route path="/payment" element={<Payment />} />
+            <Route path="/order" element={<Order />} />
           </Routes>
       </div>
     </>
