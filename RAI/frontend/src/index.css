@@ -141,12 +141,13 @@ code {
 }
 
 .heart-icon {
-    position: absolute;
-    top: 35px;
-    right: 25px;
-    z-index: 11;
-    color: #000;
-    transition: color 0.4s ease;
+  position: absolute;
+  top: 35px;
+  right: 25px;
+  z-index: 11;
+  color: #000;
+  transition: color 0.4s ease;
+  cursor: pointer;
 }
 
 .product-card:hover, .featured-card {
@@ -238,8 +239,16 @@ code {
 }
 
 .product-card:hover .add-to-cart-btn {
-  background: white;
-  color: #6F4E37;
+    background-color: white !important;
+    color: #6F4E37 !important;
+    opacity: 1 !important;
+    cursor: pointer;
+}
+
+.product-card:hover .add-to-cart-btn:disabled {
+    background-color: rgba(255, 255, 255, 0.7) !important;
+    color: #6F4E37 !important;
+    cursor: not-allowed;
 }
 
 @media (max-width: 1199px) and (min-width: 768px) {
@@ -318,6 +327,32 @@ code {
         font-size: 2.5rem;
     }
 }
+
+  /* Out of stock */
+.out-of-stock-img {
+    filter: grayscale(100%) brightness(0.7) !important;
+    opacity: 0.7;
+}
+
+.out-of-stock-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.2);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 20px;
+    font-weight: 900;
+    border-radius: 5px;
+    z-index: 20;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.btn-red {
+    background-color: #e74c3c !important;
+}
+
 
 /* Registracija */
 .uppercase-text {

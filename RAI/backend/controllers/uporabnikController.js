@@ -20,7 +20,8 @@ module.exports = {
             ime : req.body.ime,
             priimek : req.body.priimek,
             email : req.body.email, 
-            geslo: req.body.geslo
+            geslo: req.body.geslo, 
+            vloga: req.body.vloga || 'user'
         });
 
         await user.save(); 
@@ -115,7 +116,14 @@ module.exports = {
     // 7. Brisanje
     remove: async function (req, res) {
         try {
-            await Uporabnik.findByIdAndDelete(req.params.id); 
+            if(!req.session.userId) return res.status(401).json({message: "Niste prijavljeni"}); 
+
+            const currentUser = await Uporabnik.findById(req.params.id); 
+
+            if(currentUser.vloga !== 'admin'){
+                return res.status(403).json({message: "Dostop zavrnjen"}); 
+            }
+            await Uporabnik.findByIdAndDelete(req.params.id);
             return res.status(204).send(); 
         } catch (napaka) {
             return res.status(500).json({ sporocilo: "Napaka pri brisanju" }); 

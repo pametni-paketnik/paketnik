@@ -1,5 +1,6 @@
-import React, { useContext } from 'react';
-import { ArrowRight, Heart } from 'lucide-react';
+import React, { useContext, useState, useEffect } from 'react';
+import api from './api';
+import { ArrowRight, Heart, Trash} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { UserContext } from './userContext'
 import './index.css';
@@ -16,7 +17,7 @@ import plant8 from './images_no_background/roses.png';
 function Home() {
     const { user } = useContext(UserContext); 
 
-    const plants = [
+    const [plants, setPlants] = useState([
         {id: 1, name: "Bonsai Bot", img: plant1, price: "$59.99"},
         {id: 2, name: "Bonsai Bot", img: plant2, price: "$59.99"},
         {id: 3, name: "Bonsai Bot", img: plant3, price: "$59.99"},
@@ -25,8 +26,44 @@ function Home() {
         {id: 6, name: "Bonsai Bot", img: plant6, price: "$59.99"},
         {id: 7, name: "Bonsai Bot", img: plant7, price: "$59.99"},
         {id: 8, name: "Bonsai Bot", img: plant8, price: "$59.99"}
-    ];
+    ]);
 
+    useEffect(() => {
+        const fetchPlants = async () => {
+            try {
+                const res = await api.get('/plant'); 
+
+                if (res.data && res.data.length > 0) {
+                    const updatedPlants = plants.map(p => {
+                        const dbPlant = res.data.find(db => db.id === p.id);
+                        return dbPlant ? { ...p, naZalogi: dbPlant.naZalogi } : p;
+                    });
+                    setPlants(updatedPlants);
+                }
+                
+            } catch (err) {
+                console.error("Napaka pri pridobivanju rastlin", err);
+            }
+        };
+        fetchPlants();
+    }, []);
+
+    const [outOfStock, setOutOfStock] = useState([]); 
+
+    const toggleStock = async (id, currentState) => {
+        try{
+            await api.put(`/plant/${id}`, {
+                naZalogi: !currentState
+            }, { withCredentials: true }); 
+
+            window.location.reload(); 
+        }catch(err){
+            alert("Napak pri posodabljanu zaloge"); 
+        }
+    }; 
+
+    const isAdmin = user && user.vloga === 'admin'; 
+    
     return (
         <div className="home-container">
             <section 
@@ -54,27 +91,58 @@ function Home() {
             </section>
 
             <section className="product-grid">
-                {plants.map((plant) => (
-                    <div key={plant.id} className="product-card">
-                        <Heart size={24} className="heart-icon" />
-                        <img src={plant.img} alt={plant.name} />
-                        <div className="product-info">
-                            <h3>{plant.name}</h3>
-                            <p className="description">Lorem ipsum is simply dummy text.</p>
+                {plants.map((plant) => {
+                    const isOutOfStock = plant.naZalogi === false; 
+                    return (
+                        <div key={plant.id} className="product-card">
+                            {isAdmin ? (
+                                <Trash size={24} className='heart-icon' />
+                            ) : (
+                                <Heart size={24} className="heart-icon" /> 
+                            )}
+                        
+                            <img 
+                            src={plant.img} 
+                            alt={plant.name} 
+                            className={isOutOfStock ? "out-of-stock-img" : ""} />
                             
-                            <div className="price-row">
-                                <span className="price-dark">{plant.price}</span>
-                                
-                                {user && (
-                                    <button className="add-to-cart-btn">Add to Cart</button>
-                                )}
+                            {isOutOfStock && (
+                                <div className="out-of-stock-overlay">
+                                    OUT OF STOCK
+                                </div>
+                            )}
+                        
+                            <div className="product-info">
+                                <h3>{plant.name}</h3>
+                                    <p className="description">Lorem ipsum is simply dummy text.</p>                
+                                    <div className="price-row">
+                                        <span className="price-dark">{plant.price}</span>
+                                        
+                                        {user && (
+                                            isAdmin ? (
+                                                <button 
+                                                    className={`add-to-cart-btn ${isOutOfStock ? "btn-red" : ""}`}
+                                                    onClick={() => toggleStock(plant._id || plant.id, plant.naZalogi)}
+                                                    style={{ backgroundColor: isOutOfStock ? '#7f8c8d' : '#6F4E37' }}>
+                                                {isOutOfStock ? "Set In Stock" : "Out of Stock"}
+                                            </button>
+                                            ) : (
+                                                <button 
+                                                className="add-to-cart-btn" 
+                                                disabled={isOutOfStock}
+                                                style={{ opacity: isOutOfStock ? 0.5 : 1 }}>
+                                                {isOutOfStock ? "Unavailable" : "Add to Cart"}
+                                            </button>
+                                            )
+                                        )}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                ))}
-            </section>
-        </div>
-    );
+                        ); 
+                    })}
+                </section>
+            </div>
+    ); 
 }
 
 export default Home;
