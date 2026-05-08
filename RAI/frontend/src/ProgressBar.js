@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import './index.css'; 
 
 const ProgressBar = ({ currentStep, setStep }) => {
-    const steps = ["Order", "Shipping", "Payment", "Review"];
+    const steps = ["Order", "Location", "Payment", "Review"];
 
     return (
     <div className="stepper-wrapper">
