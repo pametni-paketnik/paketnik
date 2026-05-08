@@ -20,10 +20,16 @@ code {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 2px;
+
+  position: relative; 
+  padding-bottom: 5px; 
+  transition: color 0.3s ease;
 }
+
 .navbar-text:hover{
   color: #6F4E37;
 }
+
 @media (max-width: 767px) {
   nav {
     flex-direction: column;    
@@ -338,7 +344,6 @@ code {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
-/* Levi del - InPlant Zelena */
 .register-visual {
   background-color: #6F4E37;
   /*133215 ali 92B775*/
@@ -363,7 +368,6 @@ code {
   margin-bottom: 20px;
 }
 
-/* Desni del */
 .register-form-section {
   position: relative;
   padding: 60px;
@@ -399,7 +403,6 @@ code {
   margin-bottom: 30px;
 }
 
-/* Obrazec in vhodi */
 .register-form {
   display: flex;
   flex-direction: column;
@@ -548,12 +551,70 @@ code {
   font-weight: 700;
 }
 
+/* Zemljevid */
+.map-wrapper {
+  height: 700px; 
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 10px; 
+  overflow: hidden;
+}
+
+.custom-popup .leaflet-popup-content-wrapper {
+  background: #ffffff;
+  color: #000;
+  border-radius: 8px;
+  padding: 5px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.custom-popup .leaflet-popup-tip {
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.popup-content h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #000;
+}
+
+.popup-content p {
+  margin: 5px 0;
+  font-size: 13px;
+}
+
+.popup-content .details {
+  color: #000;
+  font-style: normal;
+  margin-bottom: 15px;
+}
+
+.select-button-brown {
+  background-color: #6F4E37; 
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  width: 100%;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.select-button-brown:hover {
+  background-color: #4b3525; 
+}
+
+.leaflet-container {
+  background: #f0f0f0;
+}
+
 /* Payment Method */
 .payment-card-wrapper {
   background: white;
   border-radius: 40px;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-  margin-top: 30px;
+  margin-top: 50px;
   padding: 5px;
 }
 
