@@ -26,6 +26,7 @@ var uporabnikRouter = require('./routes/uporabnikRouter');
 var paketnikRouter = require('./routes/paketnikRouter');
 var narociloRouter = require('./routes/narociloRouter');
 var dnevnikRouter = require('./routes/dnevnikRouter');
+var plantRouter = require('./routes/plantRouter');
 
 var app = express();
 
@@ -76,6 +77,7 @@ app.use('/', indexRouter);
 app.use('/narocilo', narociloRouter);
 app.use('/paketnik', paketnikRouter); 
 app.use('/dnevnik', dnevnikRouter);
+app.use('/plant', plantRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

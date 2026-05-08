@@ -7,7 +7,7 @@ const UporabnikSchema = new Schema({
     priimek: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     geslo: { type: String, required: true },
-    vloga: { type: String, default: 'lastnik' },
+    vloga: { type: String, enum: ['admin', 'user'], default: 'user'},
     slika_obraza: { type: String } 
 }, { timestamps: true });
 

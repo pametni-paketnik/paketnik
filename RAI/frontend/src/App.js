@@ -9,6 +9,7 @@ import Register from './Register';
 import Home from './Home'; 
 import Payment from './Payment.js'; 
 import Order from './Order.js';
+import AddImage from './AddImage.js'; 
 
 function AppContent() {
   const { user } = useContext(UserContext);
@@ -30,16 +31,20 @@ function AppContent() {
             
             {user ? (
                 <>
-                    <Link to="/profile" className="navbar-text">Profil</Link>
-                    <Link to="/logout" className="navbar-text">Odjava</Link>
-                    <Link to="/order" className="navbar-text">Naročilo</Link>
-                    {/* Profilna slika */}
+                {user.vloga === 'admin' && (
+                  <Link to="/addImage" className="navbar-text" style={{ color: "red", fontWeight: "bold" }}>
+                      Dodaj Sliko
+                  </Link>
+                )}
+                  <Link to="/profile" className="navbar-text">Profil</Link>
+                  <Link to="/logout" className="navbar-text">Odjava</Link>
+                  <Link to="/order" className="navbar-text">Naročilo</Link>
+                  {/* Profilna slika */}
                 </>
             ) : (
                 <>
-                    <Link to="/login" className="navbar-text">Prijava</Link>
-                    <Link to="/register" className="navbar-text">Registracija</Link>
-                    
+                <Link to="/login" className="navbar-text">Prijava</Link>
+                <Link to="/register" className="navbar-text">Registracija</Link>
                 </>
             )}
         </div>
@@ -54,6 +59,11 @@ function AppContent() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/order" element={<Order />} />
+
+            {user && user.vloga === 'admin' && (
+                <Route path="/addImage" element={<AddImage />} />
+            )}
+
           </Routes>
       </div>
     </>
