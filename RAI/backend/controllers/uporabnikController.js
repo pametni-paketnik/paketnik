@@ -34,7 +34,7 @@ module.exports = {
         if(err.name === "ValidationError"){
             return res.status(400).json({ message: "Podatki niso pravilni: " + Object.values(err.errors).map(val => val.message).json(', ')}); 
         }
-        return res.status(500).json({ message: "Prislo je do napake na strežniku", sporocilo });
+        return res.status(500).json({ message: "Prislo je do napake na strežniku" });
     }
     },
 
@@ -110,11 +110,15 @@ module.exports = {
         if (req.body.priimek) uporabnik.priimek = req.body.priimek;
         if (req.body.email) uporabnik.email = req.body.email;
         if (req.body.geslo) uporabnik.geslo = req.body.geslo; // To bo sprožilo kriptiranje!
+        if (req.file) {
+            uporabnik.profilna_slika = '/uploads/' + req.file.filename;
+
+        }
 
         await uporabnik.save(); // Uporabimo .save(), da sprožimo hook za kriptiranje
         return res.json({ message: "Podatki uspešno posodobljeni" });
     } catch (err) {
-        return res.status(500).json({ message: "Napaka pri posodabljanju" });
+        return res.status(500).json({ message: "Napaka pri posodabljanju", error: err.message});
     }
     },
 
