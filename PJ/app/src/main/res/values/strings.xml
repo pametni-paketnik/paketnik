@@ -1,6 +1,18 @@
 <resources>
     <string name="login_title">Prijava</string>
+    <string name="prijavi_se">Prijavi se</string>
+    <string name="go_to_register_text">Nimaš računa? Registriraj se tukaj</string>
+
     <string name="register_title">Registracija</string>
+    <string name="registriraj_se">Registriraj se</string>
+    <string name="go_to_login_text">Že imaš račun? Prijavi se tukaj</string>
+
+
+    <string name="emailHint">E-pošta</string>
+    <string name="passwordHint">Geslo</string>
+    <string name="nameHint">Ime</string>
+    <string name="surnameHint">Priimek</string>
+
 
 
     <string name="app_name">PametniPaketnik</string>
