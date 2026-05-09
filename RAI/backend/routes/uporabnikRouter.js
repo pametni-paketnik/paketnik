@@ -16,6 +16,22 @@ const isAdmin = async function(req, res, next) {
 }
 
 
+const multer = require('multer');
+const path = require('path');
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/uploads');
+  },
+  filename: function (req, file, cb) {
+    const uniqueName = Date.now() + path.extname(file.originalname);
+    cb(null, uniqueName);
+  }
+});
+
+const upload = multer({ storage });
+
+
 router.get('/', uporabnikController.list);
 
 router.get('/profile', uporabnikController.profile);
@@ -25,7 +41,8 @@ router.get('/:id', uporabnikController.show);
 router.post('/', uporabnikController.create);
 router.post('/login', uporabnikController.login);
 
-router.put('/:id', uporabnikController.update);
+//router.put('/:id', uporabnikController.update);
+router.put('/:id', upload.single('profilna_slika'), uporabnikController.update);
 router.delete('/:id', isAdmin, uporabnikController.remove);
 
 module.exports = router;
