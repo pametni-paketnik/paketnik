@@ -8,7 +8,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pametnipaketnik.databinding.ActivityHistoryBinding
 import org.json.JSONArray
-
+import android.graphics.Typeface
+import android.util.TypedValue
 
 class HistoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHistoryBinding
@@ -85,11 +86,19 @@ class HistoryActivity : AppCompatActivity() {
         val primary = getColor(R.color.history_text_primary)
         val secondary = getColor(R.color.history_text_secondary)
 
-        binding.tabVse.setTextColor(secondary)
-        binding.tabUspesno.setTextColor(secondary)
-        binding.tabNeuspesno.setTextColor(secondary)
-        binding.tabDanes.setTextColor(secondary)
+        val tabs = listOf(binding.tabVse, binding.tabUspesno, binding.tabNeuspesno, binding.tabDanes)
+        tabs.forEach { tab ->
+            tab.isAllCaps = true
 
-        selected.setTextColor(primary)
+            if(tab == selected){
+                tab.setTextColor(primary)
+                tab.setTypeface(null, Typeface.BOLD)
+                tab.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+            } else{
+                tab.setTextColor(secondary)
+                tab.setTypeface(null, Typeface.NORMAL)
+                tab.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+            }
+        }
     }
 }
