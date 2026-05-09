@@ -21,6 +21,11 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        binding.buttonLogin.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
         val openCameraLauncher =
             registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()) { result ->
                 if(result.resultCode == RESULT_OK) {

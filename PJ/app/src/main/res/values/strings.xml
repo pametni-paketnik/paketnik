@@ -1,4 +1,8 @@
 <resources>
+    <string name="login_title">Prijava</string>
+    <string name="register_title">Registracija</string>
+
+
     <string name="app_name">PametniPaketnik</string>
     <string name="zgodovina_paketnika">ZGODOVINA PAKETNIKA</string>
     <string name="vse">Vse</string>

@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="Theme.PametniPaketnik" parent="Theme.AppCompat.Light.NoActionBar" />
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.PametniPaketnik" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/history_text_primary</item>
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:windowLightStatusBar">true</item> </style>
+
+    <style name="Theme.PametniPaketnik" parent="Base.Theme.PametniPaketnik" />
 </resources>
