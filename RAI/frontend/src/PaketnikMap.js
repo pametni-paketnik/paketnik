@@ -4,7 +4,7 @@ import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 // instaliraj: npm install leaflet react-leaflet
 
-import paketnikClosed from './images_no_background/pametni_paketnik_closed.png'; 
+import paketnikClosed from './images/pametni_paketnik_closed.png'; 
 
 const customIcon = L.icon({
   iconUrl: paketnikClosed, 

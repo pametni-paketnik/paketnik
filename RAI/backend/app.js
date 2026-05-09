@@ -57,6 +57,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
+app.use('/images_no_background', express.static(path.join(__dirname, 'public/images_no_background')));
+
 var session = require('express-session');
 var MongoStore = require('connect-mongo');
 app.use(session({

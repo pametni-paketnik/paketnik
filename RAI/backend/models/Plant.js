@@ -1,10 +1,13 @@
-const mongoose = require('mongoose');
+var mongoose = require('mongoose');
+var Schema   = mongoose.Schema;
 
-const PlantSchema = new mongoose.Schema({
-    id: {type: Number, required: true, unique: true}, 
-    name: {type: String, required: true}, 
-    price: {type: String, required: true}, 
-    naZalogi: {type: Boolean, default: true}
+const PlantSchema = new mongoose.Schema({ 
+    'name': {type: String, required: true}, 
+    'path': {type: String}, 
+    'message': {type: String}, 
+    'price': {type: String, required: true}, 
+    'date' : {type: Date, default: Date.now},
+    'naZalogi': {type: Boolean, default: true}
 }); 
 
 module.exports = mongoose.model('Plant', PlantSchema); 

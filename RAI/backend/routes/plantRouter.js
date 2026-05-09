@@ -1,11 +1,16 @@
-const express = require('express');
-const router = express.Router();
-const plantController = require('../controllers/plantController'); 
+var express = require('express');
+var multer = require('multer');
+// install: multer
+var upload = multer({dest: 'public/images/'});
 
-router.get('/', plantController.getAllPlants);
-router.post('/', plantController.createPlant); 
+var router = express.Router();
+var plantController = require('../controllers/plantController.js');
 
-router.put('/', plantController.updatePlant);
-router.delete('/', plantController.deletePlant);
+router.get('/', plantController.list);
+router.get('/:id', plantController.show);
+router.post('/', upload.single('image'), plantController.create);
+
+router.put('/:id', plantController.update);
+router.delete('/:id', plantController.remove);
 
 module.exports = router; 

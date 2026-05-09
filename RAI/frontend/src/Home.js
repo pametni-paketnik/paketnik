@@ -4,43 +4,17 @@ import { ArrowRight, Heart, Trash} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { UserContext } from './userContext'
 import './index.css';
-import heroImg from './images/monstera.png'; 
-import plant1 from './images_no_background/coffee.png';
-import plant2 from './images_no_background/bonsai_japanese_cherry.png'; 
-import plant3 from './images_no_background/chinese_money_plant.png';   
-import plant4 from './images_no_background/peace_lily.png'; 
-import plant5 from './images_no_background/parlor_palm.png'; 
-import plant6 from './images_no_background/sunflowers.png'; 
-import plant7 from './images_no_background/peperomia.png'; 
-import plant8 from './images_no_background/roses.png'; 
+import heroImg from './images/monstera.png';
 
 function Home() {
     const { user } = useContext(UserContext); 
-
-    const [plants, setPlants] = useState([
-        {id: 1, name: "Bonsai Bot", img: plant1, price: "$59.99"},
-        {id: 2, name: "Bonsai Bot", img: plant2, price: "$59.99"},
-        {id: 3, name: "Bonsai Bot", img: plant3, price: "$59.99"},
-        {id: 4, name: "Bonsai Bot", img: plant4, price: "$59.99"}, 
-        {id: 5, name: "Bonsai Bot", img: plant5, price: "$59.99"},
-        {id: 6, name: "Bonsai Bot", img: plant6, price: "$59.99"},
-        {id: 7, name: "Bonsai Bot", img: plant7, price: "$59.99"},
-        {id: 8, name: "Bonsai Bot", img: plant8, price: "$59.99"}
-    ]);
+    const [plants, setPlants] = useState([]); 
 
     useEffect(() => {
         const fetchPlants = async () => {
             try {
                 const res = await api.get('/plant'); 
-
-                if (res.data && res.data.length > 0) {
-                    const updatedPlants = plants.map(p => {
-                        const dbPlant = res.data.find(db => db.id === p.id);
-                        return dbPlant ? { ...p, naZalogi: dbPlant.naZalogi } : p;
-                    });
-                    setPlants(updatedPlants);
-                }
-                
+                setPlants(res.data);
             } catch (err) {
                 console.error("Napaka pri pridobivanju rastlin", err);
             }
@@ -52,15 +26,26 @@ function Home() {
 
     const toggleStock = async (id, currentState) => {
         try{
-            await api.put(`/plant/${id}`, {
+            const res = await api.put(`/plant/${id}`, {
                 naZalogi: !currentState
             }, { withCredentials: true }); 
 
-            window.location.reload(); 
+            setPlants(plants.map(p => p._id === id ? res.data : p)); 
         }catch(err){
             alert("Napak pri posodabljanu zaloge"); 
         }
     }; 
+
+    const deletePlant = async (id) => {
+        if(window.confirm("Ali si prepričan da želiš izbrisati to rastlino?")) {
+            try{
+                await api.delete(`/plant/${id}`, { withCredentials: true }); 
+                setPlants(plants.filter(p => p._id !== id)); 
+            } catch(err){
+                alert("Napaka pri brisanju"); 
+            }
+        }
+    }
 
     const isAdmin = user && user.vloga === 'admin'; 
     
@@ -94,17 +79,18 @@ function Home() {
                 {plants.map((plant) => {
                     const isOutOfStock = plant.naZalogi === false; 
                     return (
-                        <div key={plant.id} className="product-card">
+                        <div key={plant._id} className="product-card">
                             {isAdmin ? (
-                                <Trash size={24} className='heart-icon' />
+                                <Trash size={24} className='heart-icon' onClick={() => deletePlant(plant._id)} />
                             ) : (
                                 <Heart size={24} className="heart-icon" /> 
                             )}
                         
                             <img 
-                            src={plant.img} 
-                            alt={plant.name} 
-                            className={isOutOfStock ? "out-of-stock-img" : ""} />
+                                src={`http://localhost:3001${plant.path}`} 
+                                alt={plant.name} 
+                                className={isOutOfStock ? "out-of-stock-img" : ""} 
+                            />
                             
                             {isOutOfStock && (
                                 <div className="out-of-stock-overlay">
@@ -122,7 +108,7 @@ function Home() {
                                             isAdmin ? (
                                                 <button 
                                                     className={`add-to-cart-btn ${isOutOfStock ? "btn-red" : ""}`}
-                                                    onClick={() => toggleStock(plant._id || plant.id, plant.naZalogi)}
+                                                    onClick={() => toggleStock(plant._id, plant.naZalogi)}
                                                     style={{ backgroundColor: isOutOfStock ? '#7f8c8d' : '#6F4E37' }}>
                                                 {isOutOfStock ? "Set In Stock" : "Out of Stock"}
                                             </button>
