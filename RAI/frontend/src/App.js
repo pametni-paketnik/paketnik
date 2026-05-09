@@ -9,7 +9,7 @@ import Register from './Register';
 import Home from './Home'; 
 import Payment from './Payment.js'; 
 import Order from './Order.js';
-import AddImage from './AddImage.js'; 
+import AddPlant from './AddPlant.js'; 
 
 function AppContent() {
   const { user } = useContext(UserContext);
@@ -61,7 +61,7 @@ function AppContent() {
             <Route path="/order" element={<Order />} />
 
             {user && user.vloga === 'admin' && (
-                <Route path="/addImage" element={<AddImage />} />
+                <Route path="/addImage" element={<AddPlant />} />
             )}
 
           </Routes>
