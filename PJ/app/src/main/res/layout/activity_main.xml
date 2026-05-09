@@ -9,32 +9,55 @@
     tools:context=".MainActivity">
 
     <Button
+        android:id="@+id/buttonLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="LOGIN"
+        android:textSize="14sp"
+        android:letterSpacing="0.1"
+        android:paddingHorizontal="20dp"
+        android:textStyle="bold"
+        android:textColor="@color/background"
+        app:backgroundTint="@color/history_text_primary"
+        app:cornerRadius="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp" />
+
+    <Button
         android:id="@+id/buttonOpenBox"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
         android:text="@string/open_the_box"
-        android:backgroundTint="@color/white"
         android:textSize="18sp"
         android:letterSpacing="0.2"
         android:paddingHorizontal="20dp"
         android:textStyle="bold"
-        android:textColor="@color/history_text_primary"
-        android:background="@drawable/rounded_button"
+        android:textColor="@color/background"
+        app:backgroundTint="@color/history_text_primary"
+        app:cornerRadius="20dp"
+
+        android:elevation="10dp"
+        android:translationZ="4dp"
+        android:stateListAnimator="@null"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/buttonHistory"
-        android:layout_width="60dp"
-        android:layout_height="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
-        android:background="@drawable/rounded_button"
-        android:drawableTop="@drawable/history"
-        android:padding="6dp"
+        android:src="@drawable/history"
+        app:tint="@color/background"
+        app:backgroundTint="@color/history_text_primary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:fabSize="normal" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
