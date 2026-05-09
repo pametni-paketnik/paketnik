@@ -49,12 +49,13 @@ module.exports = {
             }
 
             const match = await bcrypt.compare(geslo, uporabnik.geslo);
-
             if (!match) {
                 return res.status(401).json({ message: "Napačen email ali geslo." });
             }
 
             req.session.userId = uporabnik._id;
+            req.session.vloga = uporabnik.vloga; 
+
             const userResponse = uporabnik.toObject(); 
             delete userResponse.geslo; 
 
@@ -76,6 +77,7 @@ module.exports = {
             }
             var userObj = user.toObject();
             userObj.datum_registracije = moment(userObj.createdAt).format('DD.MM.YYYY HH:mm:ss');
+            
             return res.json(userObj);
         } catch (error) {
             return res.status(500).json({ message: "Napaka na strežniku." });
@@ -97,17 +99,20 @@ module.exports = {
     update: async function (req, res) {
     try {
         const id = req.params.id;
-        const uporabnik = await Uporabnik.findById(id);
+        if(req.session.userId !== id && req.session.vloga !== 'admin'){
+            return res.status(403).json({message: "Nimate dovoljenja"}); 
+        }
 
-        if (!uporabnik) return res.status(404).json({ message: "Ni najden" });
+        const uporabnik = await Uporabnik.findById(id);
+        if (!uporabnik) return res.status(404).json({ message: "Uporabnik ni najden" });
+
         if (req.body.ime) uporabnik.ime = req.body.ime;
         if (req.body.priimek) uporabnik.priimek = req.body.priimek;
         if (req.body.email) uporabnik.email = req.body.email;
         if (req.body.geslo) uporabnik.geslo = req.body.geslo; // To bo sprožilo kriptiranje!
 
         await uporabnik.save(); // Uporabimo .save(), da sprožimo hook za kriptiranje
-        
-        return res.json({ message: "Posodobljeno" });
+        return res.json({ message: "Podatki uspešno posodobljeni" });
     } catch (err) {
         return res.status(500).json({ message: "Napaka pri posodabljanju" });
     }
