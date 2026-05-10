@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from './userContext';
 import { useNavigate } from "react-router-dom";
 import ProgressBar from './ProgressBar'; 
 import PaymentForm from "./Payment";
@@ -8,11 +9,25 @@ import PaketnikMap from './PaketnikMap';
 const OrderForm = () =>{
     const [currentStep, setCurrentStep] = useState(0); 
     const [selectedLocker, setSelectedLocker] = useState(null);
+
+    const { user: contextUser } = useContext(UserContext);
+    const [user, setUser] = useState(() => {
+        if(contextUser) return contextUser; 
+        const stored = localStorage.getItem("user"); 
+        return stored ? JSON.parse(stored) : null; 
+    });
+
     const navigate = useNavigate();
 
     const nextStep = () => setCurrentStep(prev => prev + 1);
     const prevStep = () => setCurrentStep(prev => prev - 1);
     const goToStep = (step) => setCurrentStep(step); 
+
+    useEffect(() => {
+        if (contextUser) {
+            setUser(contextUser);
+        }
+    }, [contextUser]); 
 
     return (
     <div className="checkout-container">
@@ -32,8 +47,8 @@ const OrderForm = () =>{
             <div className="step-content">
                 <h1>Izberite lokacijo dostave</h1>
             
-                <div className="map-wrapper" style={{ height: '400px', marginBottom: '20px' }}>
-                    <PaketnikMap onSelect={(locker) => setSelectedLocker(locker)} />
+                <div className="map-wrapper">
+                    <PaketnikMap onSelect={(locker) => setSelectedLocker(locker)} user={user} />
                 </div>
 
             {selectedLocker && (
