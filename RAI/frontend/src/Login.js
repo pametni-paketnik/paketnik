@@ -25,7 +25,7 @@ function Login() {
 
             if (response.status === 200) {
                 console.log("Prijava uspela:", response.data);
-                //localStorage.setItem('user', JSON.stringify(response.data.user));
+                localStorage.setItem('user', JSON.stringify(response.data.user));
                 setUserContext(response.data.user || response.data);
                 navigate('/'); 
             }
