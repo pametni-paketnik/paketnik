@@ -19,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PametniPaketnik">
         <activity
+            android:name=".FaceIdActivity"
+            android:exported="false" />
+        <activity
             android:name=".RegisterActivity"
             android:exported="false" />
         <activity
