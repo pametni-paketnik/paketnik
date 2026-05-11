@@ -25,6 +25,12 @@ class RegisterActivity : AppCompatActivity() {
             performRegister()
         }
 
+        binding.btnFaceIdSetup.setOnClickListener {
+            val intent = Intent(this, FaceIdActivity::class.java)
+            intent.putExtra("MODE", "REGISTER")
+            startActivity(intent)
+        }
+
         binding.goToLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)

@@ -25,6 +25,12 @@ class LoginActivity : AppCompatActivity() {
             performLogin()
         }
 
+        binding.btnFaceIdLogin.setOnClickListener {
+            val intent = Intent(this, FaceIdActivity::class.java)
+            intent.putExtra("MODE", "LOGIN") // prijava
+            startActivity(intent)
+        }
+
         binding.goToRegister.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)

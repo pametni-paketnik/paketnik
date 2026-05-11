@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!-- To bo naredilo prosojno belo obrobo v obliki ovala -->
+    <stroke
+        android:width="4dp"
+        android:color="#80FFFFFF"
+        android:dashWidth="10dp"
+        android:dashGap="10dp" />
+    <corners android:radius="1000dp" /> <!-- To naredi ovalno obliko -->
+</shape>
