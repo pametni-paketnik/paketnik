@@ -114,6 +114,17 @@ module.exports = {
             uporabnik.profilna_slika = '/uploads/' + req.file.filename;
 
         }
+        if (req.body.stevilka_kartice !== undefined)
+            uporabnik.stevilka_kartice = req.body.stevilka_kartice;
+
+        if (req.body.ime_na_kartici !== undefined)
+            uporabnik.ime_na_kartici = req.body.ime_na_kartici;
+
+        if (req.body.datum_poteka !== undefined)
+            uporabnik.datum_poteka = req.body.datum_poteka;
+
+        if (req.body.cvv !== undefined)
+            uporabnik.cvv = req.body.cvv;
 
         await uporabnik.save(); // Uporabimo .save(), da sprožimo hook za kriptiranje
         return res.json({ message: "Podatki uspešno posodobljeni" });

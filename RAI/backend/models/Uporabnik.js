@@ -8,7 +8,11 @@ const UporabnikSchema = new Schema({
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     geslo: { type: String, required: true },
     vloga: { type: String, enum: ['admin', 'user'], default: 'user'},
-    profilna_slika: { type: String } 
+    profilna_slika: { type: String },
+    stevilka_kartice: { type: String, default: '' },
+    ime_na_kartici: { type: String, default: '' },
+    datum_poteka: { type: String, default: '' },
+    cvv: { type: String, default: '' },
 }, { timestamps: true });
 
 // 1. KRIPTIRANJE GESLA (Brez callbackov, samo async/await)
