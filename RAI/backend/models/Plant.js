@@ -10,4 +10,4 @@ const PlantSchema = new mongoose.Schema({
     'naZalogi': {type: Boolean, default: true}
 }); 
 
-module.exports = mongoose.model('Plant', PlantSchema); 
+module.exports = mongoose.model('Plant', PlantSchema, "plants"); 
