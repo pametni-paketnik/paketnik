@@ -1,16 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import ProgressBar from './ProgressBar'; 
+import { UserContext } from "./userContext";
 import './index.css'; 
 
 const PaymentForm = ({ onNext, onBack, currentStep }) => {
-
+  
+  const { user } = useContext(UserContext);
   const [formData, setFormData] = useState({
-      cardholder: 'LOREM IPSUM', 
-      cardNumber: '1234 5679 9012 3456', 
-      month: '08', 
-      year: '2030', 
-      cvv: '123'
+      cardholder: '',
+      cardNumber: '',
+      month: '',
+      year: '',
+      cvv: ''
   }); 
+
+  useEffect(() => {
+    if (user) {
+      const datumPoteka = user.datum_poteka || '';
+      const parts = datumPoteka.split('/');
+
+      const month = parts[0] || '';
+      const year = parts[1] ? `20${parts[1]}` : '';
+
+      setFormData({
+        cardholder: user.ime_na_kartici || '',
+        cardNumber: user.stevilka_kartice || '',
+        month: month,
+        year: year,
+        cvv: user.cvv || ''
+      });
+    }
+  }, [user]);
 
   const handleCardNumChange = (e) =>{
     let value = e.target.value.replace(/\D/g, ''); 
