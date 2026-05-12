@@ -16,6 +16,13 @@ function Profile() {
 
   const [sporocilo, setSporocilo] = useState('');
 
+  const [stevilkaKartice, setStevilkaKartice] = useState('');
+  const [imeNaKartici, setImeNaKartici] = useState('');
+  const [datumPoteka, setDatumPoteka] = useState('');
+  const [cvv, setCvv] = useState('');
+
+  const [sporociloKartica, setSporociloKartica] = useState("");
+
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -27,6 +34,11 @@ function Profile() {
         setIme(podatki.ime || '');
         setPriimek(podatki.priimek || '');
         setSlika(podatki.profilna_slika || '');
+
+        setStevilkaKartice(podatki.stevilka_kartice || '');
+        setImeNaKartici(podatki.ime_na_kartici || '');
+        setDatumPoteka(podatki.datum_poteka || '');
+        setCvv(podatki.cvv || '');
 
         setLoading(false);
       })
@@ -45,7 +57,6 @@ function Profile() {
     const previewUrl = URL.createObjectURL(file);
     setSlika(previewUrl);
   };
-
   const shraniProfil = async (e) => {
     e.preventDefault();
 
@@ -65,9 +76,14 @@ function Profile() {
       });
 
       const res = await api.get("/uporabnik/profile");
-      setUserContext(res.data);
+      const podatki = res.data;
 
-      setSlika(res.data.profilna_slika || "");
+      setUserContext(podatki);
+
+      setIme(podatki.ime || '');
+      setPriimek(podatki.priimek || '');
+      setSlika(podatki.profilna_slika || '');
+
       setIzbranaDatoteka(null);
 
       if (fileInputRef.current) {
@@ -75,12 +91,89 @@ function Profile() {
       }
 
       setSporocilo("Profil je bil uspešno posodobljen.");
+
       setTimeout(() => {
         setSporocilo("");
       }, 3000);
+
     } catch (err) {
       console.error(err);
       setSporocilo("Napaka pri posodabljanju profila.");
+    }
+  };
+
+  const handleStevilkaKarticeChange = (e) => {
+    let value = e.target.value.replace(/\D/g, '');
+    value = value.slice(0, 16);
+
+    value = value.replace(/(.{4})/g, '$1 ').trim();
+
+    setStevilkaKartice(value);
+  };
+
+  const handleImeNaKarticiChange = (e) => {
+    const value = e.target.value.replace(/[^A-Za-zÀ-ž\s]/g, '');
+    setImeNaKartici(value.toUpperCase());
+  };
+
+  const handleDatumPotekaChange = (e) => {
+    let value = e.target.value.replace(/\D/g, '');
+    value = value.slice(0, 4);
+
+    if (value.length >= 3) {
+      value = value.slice(0, 2) + '/' + value.slice(2);
+    }
+
+    if (value.length >= 2) {
+      const month = parseInt(value.slice(0, 2));
+      if (month < 1 || month > 12) {
+        return;
+      }
+    }
+
+    setDatumPoteka(value);
+  };
+
+  const handleCvvChange = (e) => {
+    let value = e.target.value.replace(/\D/g, '');
+    value = value.slice(0, 3);
+    setCvv(value);
+  };
+
+  const shraniKartico = async () => {
+    try {
+      const formData = new FormData();
+
+      formData.append("stevilka_kartice", stevilkaKartice);
+      formData.append("ime_na_kartici", imeNaKartici);
+      formData.append("datum_poteka", datumPoteka);
+      formData.append("cvv", cvv);
+
+      await api.put(`/uporabnik/${user._id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const res = await api.get("/uporabnik/profile");
+      const podatki = res.data;
+
+      setUserContext(podatki);
+
+      setStevilkaKartice(podatki.stevilka_kartice || "");
+      setImeNaKartici(podatki.ime_na_kartici || "");
+      setDatumPoteka(podatki.datum_poteka || "");
+      setCvv(podatki.cvv || "");
+
+      setSporociloKartica("Kartica je bila uspešno shranjena.");
+
+      setTimeout(() => {
+        setSporociloKartica("");
+      }, 3000);
+
+    } catch (err) {
+      console.error(err);
+      setSporociloKartica("Napaka pri shranjevanju kartice.");
     }
   };
 
@@ -158,6 +251,55 @@ function Profile() {
               {sporocilo}
             </div>
           )}
+
+          <h2 className="uppercase-text" style={{ marginTop: '30px', marginBottom: '15px' }}>
+            Podatki o kartici
+          </h2>
+
+          <input
+            type="text"
+            placeholder="ŠTEVILKA KARTICE"
+            className="clean-input"
+            value={stevilkaKartice}
+            onChange={handleStevilkaKarticeChange}
+            maxLength={19}
+          />
+
+          <input
+            type="text"
+            placeholder="IME IN PRIIMEK NA KARTICI"
+            className="clean-input"
+            value={imeNaKartici}
+            onChange={handleImeNaKarticiChange}
+          />
+
+          <input
+            type="text"
+            placeholder="DATUM POTEKA (MM/YY)"
+            className="clean-input"
+            value={datumPoteka}
+            onChange={handleDatumPotekaChange}
+            maxLength={5}
+          />
+
+          <input
+            type="text"
+            placeholder="CVV"
+            className="clean-input"
+            value={cvv}
+            onChange={handleCvvChange}
+            maxLength={3}
+          />
+
+          <button type="button" className="submit-btn uppercase-text" onClick={shraniKartico} style={{ marginTop: '10px', marginBottom: '10px' }}>
+            Dodaj kartico
+          </button>
+
+          {sporociloKartica && (
+            <div className="profile-message">
+              {sporociloKartica}
+            </div>
+            )}
         </div>
       </div>
     </div>
