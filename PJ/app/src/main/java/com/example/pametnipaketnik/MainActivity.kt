@@ -7,6 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.pametnipaketnik.databinding.ActivityMainBinding
+import android.Manifest
+import android.os.Build
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -20,6 +24,8 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        checkPermissions()
+
 
         binding.buttonLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
@@ -44,7 +50,32 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
+        val notifyGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions[Manifest.permission.POST_NOTIFICATIONS] ?: false
+        } else {
+            true // Na starejših verzijah je obvestilo privzeto dovoljeno
+        }
 
+        if (cameraGranted && notifyGranted) {
+            // Vse je super
+        } else {
+            Toast.makeText(this, "Aplikacija potrebuje dovoljenja za polno delovanje!", Toast.LENGTH_LONG).show()
+        }
+    }
+    private fun checkPermissions() {
+        val permissionsToRequest = mutableListOf(Manifest.permission.CAMERA)
+
+        // Obvestila zahtevajo dovoljenje samo od Androida 13 naprej
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        requestPermissionLauncher.launch(permissionsToRequest.toTypedArray())
+    }
     private fun showOpenedDialog(boxId: String) {
         androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle("Paketnik")

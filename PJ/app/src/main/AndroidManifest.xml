@@ -9,6 +9,15 @@
         android:name="android.hardware.camera"
         android:required="false" />
 
+    <!-- Dovoljenje za kamero -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Dovoljenje za obvestila -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- vibriranje ob obvestilih -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
