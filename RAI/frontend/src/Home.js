@@ -6,6 +6,7 @@ import { UserContext } from './userContext'
 import './index.css';
 import paketnikImg from './images/pametni_paketnik_open.png';
 
+// popravek slike na vrhu 
 function Home() {
     const { user } = useContext(UserContext); 
     const [plants, setPlants] = useState([]); 
