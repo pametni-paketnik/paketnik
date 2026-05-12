@@ -20,10 +20,9 @@ function AppContent() {
         padding: "20px 80px", 
         display: "flex", 
         justifyContent: "space-between", 
-        alignItems: "center",
-        backgroundColor: "white" 
+        alignItems: "center"
       }}>
-        <div className="logo uppercase-text" style={{ color: "#6F4E37", fontWeight: "900", fontSize: "1.2rem" }}>
+        <div className="logo uppercase-text" style={{ color: "#000", fontWeight: "900", fontSize: "1.2rem" }}>
             InPlant
         </div>
         <div style={{ display: "flex", gap: "20px" }}>

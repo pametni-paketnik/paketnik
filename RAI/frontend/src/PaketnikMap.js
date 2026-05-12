@@ -38,7 +38,6 @@ return (
       {/* Glavna kartica, ki razdeli vsebino na levo in desno */}
       <div className="map-card-layout">
         
-        {/* LEVA STRAN: Zemljevid */}
         <div className="map-wrapper">
           <MapContainer 
             center={centerSlovenia} 

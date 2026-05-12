@@ -1,14 +1,16 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import api from './api';
-import { ArrowRight, Heart, Trash} from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Trash, Heart, ArrowRight, Bold } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { UserContext } from './userContext'
 import './index.css';
-import heroImg from './images/monstera.png';
+import paketnikImg from './images/pametni_paketnik_open.png';
 
 function Home() {
     const { user } = useContext(UserContext); 
     const [plants, setPlants] = useState([]); 
+
+    const [selectedPlant, setSelectedPlant] = useState(null); 
 
     useEffect(() => {
         const fetchPlants = async () => {
@@ -47,88 +49,93 @@ function Home() {
         }
     }
 
+    const scrollRef = useRef(null);
+
+    const handleScroll = () => {
+        const container = scrollRef.current;
+        if (!container) return;
+
+        const currentScroll = container.scrollTop;
+        const maxScroll = container.scrollHeight / 2;
+
+        if (currentScroll >= maxScroll) {
+            container.scrollTop = currentScroll - maxScroll;
+        } 
+        else if (currentScroll <= 0) {
+            container.scrollTop = maxScroll;
+        }
+    };
+
     const isAdmin = user && user.vloga === 'admin'; 
     
     return (
-        <div className="home-container">
-            <section 
-                className="hero-section-bg" 
-                style={{ 
-                    backgroundImage: `linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.25)), url(${heroImg})` 
-                }}>
-                <div className="hero-content-centered">
-                    <h1 className="hero-title-white uppercase-text">
-                        Vaš digitalni <br /> 
-                        <span>vrt rastlin</span>
-                    </h1>
-                    <p className="hero-p-white">
-                        Preprost dostop do upravljanja vaših rastlin in pregled nad ponudbo.
-                    </p>
-
-                    {!user && (
-                        <Link to="/register">
-                            <button className="submit-btn-white uppercase-text">
-                                Ustvari račun <ArrowRight size={18} />
-                            </button>
-                        </Link>
+        <div className="split-home-container">
+            <section className="preview-side">
+                {selectedPlant && (
+                    <button className="back-button" onClick={() => setSelectedPlant(null)}> 
+                        <ArrowLeft size={24} strokeWidth={3} /> Nazaj
+                    </button>
+                )}
+                
+                <div className="paketnik-visual-container">
+                    <img src={paketnikImg} alt="Paketnik" className="paketnik-base" />
+                    {selectedPlant && (
+                        <img 
+                            key={selectedPlant._id}
+                            src={`http://localhost:3001${selectedPlant.path}`} 
+                            alt={selectedPlant.name} 
+                            className="plant-in-paketnik"
+                        />
                     )}
                 </div>
             </section>
 
-            <section className="product-grid">
-                {plants.map((plant) => {
-                    const isOutOfStock = plant.naZalogi === false; 
-                    return (
-                        <div key={plant._id} className="product-card">
-                            {isAdmin ? (
-                                <Trash size={24} className='heart-icon' onClick={() => deletePlant(plant._id)} />
-                            ) : (
-                                <Heart size={24} className="heart-icon" /> 
-                            )}
-                        
-                            <img 
-                                src={`http://localhost:3001${plant.path}`} 
-                                alt={plant.name} 
-                                className={isOutOfStock ? "out-of-stock-img" : ""} 
-                            />
-                            
-                            {isOutOfStock && (
-                                <div className="out-of-stock-overlay">
-                                    OUT OF STOCK
-                                </div>
-                            )}
-                        
-                            <div className="product-info">
-                                <h3>{plant.name}</h3>
-                                    <p className="description">Lorem ipsum is simply dummy text.</p>                
-                                    <div className="price-row">
-                                        <span className="price-dark">{plant.price}</span>
-                                        
-                                        {user && (
-                                            isAdmin ? (
-                                                <button 
-                                                    className={`add-to-cart-btn ${isOutOfStock ? "btn-red" : ""}`}
-                                                    onClick={() => toggleStock(plant._id, plant.naZalogi)}
-                                                    style={{ backgroundColor: isOutOfStock ? '#7f8c8d' : '#6F4E37' }}>
-                                                {isOutOfStock ? "Set In Stock" : "Out of Stock"}
-                                            </button>
-                                            ) : (
-                                                <button 
-                                                className="add-to-cart-btn" 
-                                                disabled={isOutOfStock}
-                                                style={{ opacity: isOutOfStock ? 0.5 : 1 }}>
-                                                {isOutOfStock ? "Unavailable" : "Add to Cart"}
-                                            </button>
-                                            )
-                                        )}
+            <section className="content-side">
+                {selectedPlant ? (
+                    <div className="plant-details-view">
+                        <div className="details-container">
+                            <h2 className="details-title">{selectedPlant.name}</h2>
+                            <p className="details-price">{selectedPlant.price}€</p>
+                            <p className="details-description">
+                                {selectedPlant.opis || "Ta čudovita rastlina bo osvežila vaš prostor in prinesla naravno energijo v vaš dom."}
+                            </p>
+                        </div>
+
+                        <div className="details-footer">
+                            <button className="main-add-btn full-width">
+                                Dodaj v košarico <ShoppingCart size={24} strokeWidth={3} />
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <div 
+                        className="infinite-scroll-viewport" 
+                        ref={scrollRef} 
+                        onScroll={handleScroll}
+                    >
+                        <div className="bubble-list">
+                            {[...plants, ...plants].map((plant, index) => (
+                                <div 
+                                    key={`${plant._id}-${index}`} 
+                                    className="bubble-card"
+                                    onClick={() => setSelectedPlant({...plant, clickId: Date.now()})}
+                                >
+                                    <img 
+                                        src={`http://localhost:3001${plant.path}`} 
+                                        alt={plant.name} 
+                                        className="card-floating-img"
+                                    />
+                                    <div className="bubble-info">
+                                        <h3>{plant.name}</h3>
                                     </div>
                                 </div>
-                            </div>
-                        ); 
-                    })}
-                </section>
-            </div>
-    ); 
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </section>
+        </div>
+    );
 }
 
 export default Home;

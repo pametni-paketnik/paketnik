@@ -2,35 +2,17 @@ const Paketnik = require('../models/Paketnik');
 const Uporabnik = require('../models/Uporabnik'); 
 
 // shranjevanje novega paketnika 
-exports.dodajPaketnik = async (req, res) => {
-    // 1. Logiraj, kaj sploh pride do sem
-    console.log("--- NOVI POSKUS DODAJANJA ---");
+exports.dodajPaketnik = async(req, res) => {
     console.log("Podatki (req.body):", req.body);
-
-    try {
+    try{
         const novPaketnik = new Paketnik(req.body); 
         const shranjen = await novPaketnik.save(); 
-        console.log("USPEH: Paketnik shranjen!");
         res.status(201).json(shranjen); 
 
-    } catch (napaka) {
-        // 2. IZPIS V TERMINAL STREŽNIKA (Poglej sem!)
-        console.log("!!! NAPAKA PRI SHRANJEVANJU !!!");
-        if (napaka.errors) {
-            Object.keys(napaka.errors).forEach(key => {
-                console.log(`Polje [${key}]: ${napaka.errors[key].message}`);
-            });
-        } else {
-            console.log("Splošna napaka:", napaka.message);
-        }
-
-        // 3. Pošlji podrobnosti nazaj v React
-        res.status(400).json({
-            sporocilo: "Napaka pri validaciji",
-            napaka: napaka.message
-        }); 
+    }catch(napaka){
+        res.status(400).json({sporocilo: "Napaka pri dodajanju paketnika", napaka}); 
     }
-};
+}; 
 
 // pridobi seznam vseh paketnikov 
 exports.pridobiVsePaketnike = async(req, res) => {
