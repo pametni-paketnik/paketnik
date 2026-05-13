@@ -30,16 +30,23 @@ function Home() {
         }; 
 
         fetchPlants();
-
         window.addEventListener('resize', handleResize); 
-
         return () => {
             window.removeEventListener('resize', handleResize); 
         };
     }, []);
 
-    const [outOfStock, setOutOfStock] = useState([]); 
+    useEffect(() => {
+        if (plants.length > 0 && scrollRef.current && !selectedPlant) {
+            const container = scrollRef.current;
+            
+            if (window.innerWidth > 768) {
+                container.scrollTop = container.scrollHeight / 4;
+            }
+        }
+    }, [plants.length, selectedPlant]);
 
+    const [outOfStock, setOutOfStock] = useState([]); 
     const toggleStock = async (id, currentState) => {
         try{
             const res = await api.put(`/plant/${id}`, {
@@ -64,26 +71,25 @@ function Home() {
     }
 
     const scrollRef = useRef(null);
-
     const handleScroll = () => {
-        if (isMobile) return; 
-
         const container = scrollRef.current;
-        if (!container) return;
+        if (!container || isMobile) return;
 
         const currentScroll = container.scrollTop;
-        const maxScroll = container.scrollHeight / 2;
+        const scrollHeight = container.scrollHeight;
+        const viewportHeight = container.clientHeight;
+        const halfHeight = scrollHeight / 2;
 
-        if (currentScroll >= maxScroll) {
-            container.scrollTop = currentScroll - maxScroll;
+        if (currentScroll + viewportHeight >= scrollHeight - 10) {
+            container.scrollTop = currentScroll - halfHeight;
         } 
-        else if (currentScroll <= 0) {
-            container.scrollTop = maxScroll;
+        else if (currentScroll <= 5) {
+            container.scrollTop = currentScroll + halfHeight;
         }
     };
     
     const isAdmin = user && user.vloga === 'admin'; 
-    const displayPlants = isMobile ? plants : [...plants, ...plants];
+    const displayPlants = window.innerWidth > 768 ? [...plants, ...plants] : plants;
     
     return (
         <div className="split-home-container">
