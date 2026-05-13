@@ -902,16 +902,43 @@ nav {
     transform: translateY(-3px);
 }
 
-.profile-card {
-  max-width: 650px;
+.profile-layout {
   width: 100%;
-  background: white;
-  border-radius: 40px;
-  overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
-.profile-form-section {
+.profile-top-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  width: 100%;
+}
+
+.profile-top-grid .profile-card {
+  width: 100%;
+  max-width: none !important;
+  min-width: 0;
+}
+.profile-top-grid .profile-card:last-child .form-header {
+  margin-top: -8px;
+}
+
+.profile-card, .payment-card-wrapper {
+  width: 100%;
+  max-width: none !important;
+  min-width: 0;
+  box-sizing: border-box;
+  background: white;
+  border-radius: 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+.profile-form-section, .payment-content {
+  width: 100%;
+  box-sizing: border-box;
   padding: 60px;
 }
 
@@ -954,6 +981,12 @@ nav {
   border: 0px;
   background: #fff;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.40);
+}
+
+.profile-form-section .submit-btn:last-child,
+.payment-content .submit-btn:last-child,
+.payment-content .pay-button:last-child {
+  margin-top: auto;
 }
 
 .file-upload-wrapper {
@@ -1005,6 +1038,26 @@ nav {
   font-size: 0.85rem;
 }
 
+.order-history-card {
+  width: 100%;
+  max-width: none !important;
+  box-sizing: border-box;
+}
+
+.order-history-list {
+  margin-top: 20px;
+}
+
+.order-history-empty {
+  padding: 40px;
+  border: 2px dashed #d6d6d6;
+  border-radius: 20px;
+  text-align: center;
+  color: #888;
+  font-weight: 600;
+  background: #fafafa;
+}
+
 @media (max-width: 768px) {
   .profile-card {
     max-width: 100%;
@@ -1028,5 +1081,23 @@ nav {
 
   .profile-message {
     font-size: 0.8rem;
+  }
+
+  .profile-top-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-layout {
+    grid-template-columns: 1fr;
+    max-width: 650px;
+  }
+
+  .order-history-card {
+    grid-column: auto;
+  }
+
+  .profile-form-section,
+  .payment-content {
+    padding: 40px 30px;
   }
 }
