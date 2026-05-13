@@ -183,22 +183,27 @@ class OpenCameraActivity : AppCompatActivity() {
             runOnUiThread {
                 val mediaPlayer = MediaPlayer()
                 mediaPlayer.setDataSource(tokenFile.absolutePath)
+                mediaPlayer.prepare()
+                mediaPlayer.start()
 
-                mediaPlayer.setOnCompletionListener {
-                    Log.d("TOKEN", "Zvok se je koncal")
-                    it.release()
+                Log.d("TOKEN", "Zvok se predvaja: ${tokenFile.absolutePath}")
+
+                android.os.Handler(mainLooper).postDelayed({
+                    try {
+                        if (mediaPlayer.isPlaying) {
+                            mediaPlayer.stop()
+                        }
+                    } catch (_: Exception) {
+                    }
+
+                    mediaPlayer.release()
 
                     val resultIntent = Intent()
                     resultIntent.putExtra("boxId", lastBoxId)
 
                     setResult(RESULT_OK, resultIntent)
                     finish()
-                }
-
-                mediaPlayer.prepare()
-                mediaPlayer.start()
-
-                Log.d("TOKEN", "Zvok se predvaja: ${tokenFile.absolutePath}")
+                }, 4000)
             }
 
         } catch (e: Exception) {
