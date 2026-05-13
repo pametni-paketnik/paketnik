@@ -189,118 +189,154 @@ function Profile() {
 
   return (
     <div className="register-container">
-      <div className="profile-card">
-        <div className="register-form-section profile-form-section">
-          <div className="form-header profile-header-row">
-            <div className="profile-header-text">
-              <h1 className="uppercase-text">Profil</h1>
-              <p>Spremenite ime, priimek in profilno sliko.</p>
-            </div>
+      <div className="profile-layout">
 
-            <div className="profile-header-image-wrapper">
-              <img
-                src={profilnaSlika || defaultImage}
-                alt="Profilna slika"
-                className="profile-header-image"
-              />
+        {/* Zgornji dve kartici */}
+        <div className="profile-top-grid">
+
+          {/* LEVO: Uporabniški račun */}
+          <div className="profile-card">
+            <div className="register-form-section profile-form-section">
+              <div className="form-header profile-header-row">
+                <div className="profile-header-text">
+                  <h1 className="uppercase-text">Profil</h1>
+                  <p>Spremenite ime, priimek in profilno sliko.</p>
+                </div>
+
+                <div className="profile-header-image-wrapper">
+                  <img
+                    src={profilnaSlika || defaultImage}
+                    alt="Profilna slika"
+                    className="profile-header-image"
+                  />
+                </div>
+              </div>
+
+              <form onSubmit={shraniProfil} className="register-form">
+                <div className="input-group-row">
+                  <input
+                    type="text"
+                    placeholder="IME"
+                    required
+                    className="clean-input"
+                    value={ime}
+                    onChange={(e) => setIme(e.target.value)}
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="PRIIMEK"
+                    required
+                    className="clean-input"
+                    value={priimek}
+                    onChange={(e) => setPriimek(e.target.value)}
+                  />
+
+                  <div className="file-upload-wrapper">
+                    <label className="file-upload-label uppercase-text">
+                      Izberi profilno sliko
+                    </label>
+
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="file-upload-input"
+                      ref={fileInputRef}
+                    />
+                  </div>
+                </div>
+
+                <button type="submit" className="submit-btn uppercase-text">
+                  Shrani spremembe
+                </button>
+              </form>
+
+              {sporocilo && (
+                <div className="profile-message">
+                  {sporocilo}
+                </div>
+              )}
             </div>
           </div>
 
-          <form onSubmit={shraniProfil} className="register-form">
-            <div className="input-group-row">
+          {/* DESNO: Kartica */}
+          <div className="profile-card">
+            <div className="register-form-section profile-form-section">
+              <div className="form-header">
+                <h1 className="uppercase-text">Kartica</h1>
+                <p>Dodajte podatke za plačilo.</p>
+              </div>
+
               <input
                 type="text"
-                placeholder="IME"
-                required
+                placeholder="ŠTEVILKA KARTICE"
                 className="clean-input"
-                value={ime}
-                onChange={(e) => setIme(e.target.value)}
+                value={stevilkaKartice}
+                onChange={handleStevilkaKarticeChange}
+                maxLength={19}
               />
 
               <input
                 type="text"
-                placeholder="PRIIMEK"
-                required
+                placeholder="IME IN PRIIMEK NA KARTICI"
                 className="clean-input"
-                value={priimek}
-                onChange={(e) => setPriimek(e.target.value)}
+                value={imeNaKartici}
+                onChange={handleImeNaKarticiChange}
               />
 
-              <div className="file-upload-wrapper">
-                <label className="file-upload-label uppercase-text">
-                  Izberi profilno sliko
-                </label>
+              <input
+                type="text"
+                placeholder="DATUM POTEKA (MM/YY)"
+                className="clean-input"
+                value={datumPoteka}
+                onChange={handleDatumPotekaChange}
+                maxLength={5}
+              />
 
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="file-upload-input"
-                  ref={fileInputRef}
-                />
+              <input
+                type="text"
+                placeholder="CVV"
+                className="clean-input"
+                value={cvv}
+                onChange={handleCvvChange}
+                maxLength={3}
+              />
+
+              <button
+                type="button"
+                className="submit-btn uppercase-text"
+                onClick={shraniKartico}
+              >
+                Dodaj kartico
+              </button>
+
+              {sporociloKartica && (
+                <div className="profile-message">
+                  {sporociloKartica}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* SPODAJ: Zgodovina naročil */}
+        <div className="profile-card order-history-card">
+          <div className="register-form-section profile-form-section">
+            <div className="form-header">
+              <h1 className="uppercase-text">Zgodovina naročil</h1>
+              <p>Pregled vseh vaših preteklih naročil.</p>
+            </div>
+
+            <div className="order-history-list">
+              {/* Tukaj boš kasneje prikazala naročila iz baze */}
+              <div className="order-history-empty">
+                Trenutno še nimate nobenega naročila.
               </div>
             </div>
-
-            <button type="submit" className="submit-btn uppercase-text">
-              Shrani spremembe
-            </button>
-          </form>
-
-          {sporocilo && (
-            <div className="profile-message">
-              {sporocilo}
-            </div>
-          )}
-
-          <h2 className="uppercase-text" style={{ marginTop: '30px', marginBottom: '15px' }}>
-            Podatki o kartici
-          </h2>
-
-          <input
-            type="text"
-            placeholder="ŠTEVILKA KARTICE"
-            className="clean-input"
-            value={stevilkaKartice}
-            onChange={handleStevilkaKarticeChange}
-            maxLength={19}
-          />
-
-          <input
-            type="text"
-            placeholder="IME IN PRIIMEK NA KARTICI"
-            className="clean-input"
-            value={imeNaKartici}
-            onChange={handleImeNaKarticiChange}
-          />
-
-          <input
-            type="text"
-            placeholder="DATUM POTEKA (MM/YY)"
-            className="clean-input"
-            value={datumPoteka}
-            onChange={handleDatumPotekaChange}
-            maxLength={5}
-          />
-
-          <input
-            type="text"
-            placeholder="CVV"
-            className="clean-input"
-            value={cvv}
-            onChange={handleCvvChange}
-            maxLength={3}
-          />
-
-          <button type="button" className="submit-btn uppercase-text" onClick={shraniKartico} style={{ marginTop: '10px', marginBottom: '10px' }}>
-            Dodaj kartico
-          </button>
-
-          {sporociloKartica && (
-            <div className="profile-message">
-              {sporociloKartica}
-            </div>
-            )}
+          </div>
         </div>
+
       </div>
     </div>
   );
