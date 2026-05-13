@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         val openCameraLauncher =
             registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()) { result ->
                 if(result.resultCode == RESULT_OK) {
-                    val boxId = result.data?.getStringExtra("boxId") ?: "352"
+                    val boxId = result.data?.getStringExtra("boxId") ?: " "
                     showOpenedDialog(boxId)
                 }
             }
@@ -57,11 +57,10 @@ class MainActivity : AppCompatActivity() {
         val notifyGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissions[Manifest.permission.POST_NOTIFICATIONS] ?: false
         } else {
-            true // Na starejših verzijah je obvestilo privzeto dovoljeno
+            true
         }
 
         if (cameraGranted && notifyGranted) {
-            // Vse je super
         } else {
             Toast.makeText(this, "Aplikacija potrebuje dovoljenja za polno delovanje!", Toast.LENGTH_LONG).show()
         }
@@ -69,7 +68,6 @@ class MainActivity : AppCompatActivity() {
     private fun checkPermissions() {
         val permissionsToRequest = mutableListOf(Manifest.permission.CAMERA)
 
-        // Obvestila zahtevajo dovoljenje samo od Androida 13 naprej
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
         }

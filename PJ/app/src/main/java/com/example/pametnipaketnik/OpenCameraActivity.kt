@@ -88,7 +88,15 @@ class OpenCameraActivity : AppCompatActivity() {
                                 barcode.rawValue?.let { value ->
                                     isScanned = true
                                     Log.d("QR", "QR CODE: $value")
-                                    openBox(this, value)
+                                    val boxId = extractBoxId(value)
+
+                                    if (boxId != null) {
+                                        Log.d("QR", "BOX ID: $boxId")
+                                        openBox(this, boxId)
+                                    } else {
+                                        Log.e("QR", "Ne morem prebrati ID paketnika iz QR kode: $value")
+                                        isScanned = false
+                                    }
                                 }
                             }
                         }
@@ -107,6 +115,16 @@ class OpenCameraActivity : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
+    private fun extractBoxId(qrValue: String): String? {
+        val value = qrValue.trim()
+
+        if (value.contains("b.direct4.me", ignoreCase = true)) {
+            val parts = value.split("/")
+            return parts.getOrNull(4)?.toIntOrNull()?.toString()
+        }
+
+        return value.toIntOrNull()?.toString()
+    }
     private fun openBox(context: Context, boxId: String) {
         lastBoxId = boxId
         val client = OkHttpClient()
@@ -153,27 +171,34 @@ class OpenCameraActivity : AppCompatActivity() {
         try {
             val decodedBytes = Base64.decode(base64Data, Base64.DEFAULT)
 
-            val file = File(context.cacheDir, "token.wav")
-            FileOutputStream(file).use { fos ->
+            val header = decodedBytes.take(10).joinToString(" ") { "%02X".format(it) }
+            Log.d("TOKEN_HEADER", header)
+
+            val tokenFile = File(context.cacheDir, "token.wav")
+
+            FileOutputStream(tokenFile).use { fos ->
                 fos.write(decodedBytes)
             }
 
-            val mediaPlayer = MediaPlayer()
-            mediaPlayer.setDataSource(file.absolutePath)
-            mediaPlayer.prepare()
-            mediaPlayer.start()
+            runOnUiThread {
+                val mediaPlayer = MediaPlayer()
+                mediaPlayer.setDataSource(tokenFile.absolutePath)
 
-            Log.d("TOKEN", "Zvok se predvaja: ${file.absolutePath}")
+                mediaPlayer.setOnCompletionListener {
+                    Log.d("TOKEN", "Zvok se je koncal")
+                    it.release()
 
-            mediaPlayer.setOnCompletionListener {
-                Log.d("TOKEN", "Zvok se je koncal")
-                it.release()
+                    val resultIntent = Intent()
+                    resultIntent.putExtra("boxId", lastBoxId)
 
-                val resultIntent = Intent()
-                resultIntent.putExtra("boxId", lastBoxId)
+                    setResult(RESULT_OK, resultIntent)
+                    finish()
+                }
 
-                setResult(RESULT_OK, resultIntent)
-                finish()
+                mediaPlayer.prepare()
+                mediaPlayer.start()
+
+                Log.d("TOKEN", "Zvok se predvaja: ${tokenFile.absolutePath}")
             }
 
         } catch (e: Exception) {
