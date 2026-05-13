@@ -1,93 +1,115 @@
 import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from './userContext';
 import { useNavigate } from "react-router-dom";
-import ProgressBar from './ProgressBar'; 
+import { ArrowRight, ShoppingCart } from 'lucide-react';
 import PaymentForm from "./Payment";
-import './index.css'; 
 import PaketnikMap from './PaketnikMap'; 
+import DodajPaketnik from './DodajPaketnik';
+import paketnikImg from './images/pametni_paketnik_open.png';
+import './index.css';
 
 const OrderForm = () =>{
-    const [currentStep, setCurrentStep] = useState(0); 
+    const { user } = useContext(UserContext); 
+    const navigate = useNavigate(); 
+
+    const [cart, setCart] = useState([]); 
+    const [currentIndex, setCurrentIndex] = useState(0); 
+    const [processedOrders, setProcessedOrders] = useState([]);
     const [selectedLocker, setSelectedLocker] = useState(null);
 
-    const { user: contextUser } = useContext(UserContext);
-    const [user, setUser] = useState(() => {
-        if(contextUser) return contextUser; 
-        const stored = localStorage.getItem("user"); 
-        return stored ? JSON.parse(stored) : null; 
-    });
-
-    const navigate = useNavigate();
-
-    const nextStep = () => setCurrentStep(prev => prev + 1);
-    const prevStep = () => setCurrentStep(prev => prev - 1);
-    const goToStep = (step) => setCurrentStep(step); 
-
     useEffect(() => {
-        if (contextUser) {
-            setUser(contextUser);
+        const storedCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
+        setCart(storedCart); 
+    }, []); 
+
+    const currentProduct = cart[currentIndex]; 
+
+    const handleNextProduct = () => {
+        const newOrderEntry = {
+            ...currentProduct, 
+            locker: selectedLocker
+        }; 
+
+        const updatedProcessed = [...processedOrders, newOrderEntry];
+        setProcessedOrders(updatedProcessed);
+
+        if (currentIndex < cart.length -1) {
+            setCurrentIndex(prev => prev + 1); 
+            setSelectedLocker(null); 
+        } else { 
+            localStorage.setItem('final_orders', JSON.stringify(updatedProcessed)); 
+            navigate('/review'); 
         }
-    }, [contextUser]); 
+    }; 
 
-    return (
-    <div className="checkout-container">
-        <ProgressBar currentStep={currentStep} setStep={goToStep} />
+    if (cart.length === 0) return <div>Vaša košarica je prazna</div>; 
+    if (!currentProduct) return <div>Nalagam...</div>; 
 
-        <div className="form-content-wrapper" style={{ marginTop: '40px' }}>
-        
-        {currentStep === 0 && (
-          <div className="step-content">
-            <h1>Order Summary</h1>
-            <p>Tukaj so vaši izdelki...</p>
-            <button onClick={nextStep} className="pay-button">Dostava</button>
-          </div>
-        )}
+// ... (vsi tvoji importi ostanejo isti)
 
-        {currentStep === 1 && (
-            <div className="step-content">
-                <h1>Izberite lokacijo dostave</h1>
-            
-                <div className="map-wrapper">
-                    <PaketnikMap onSelect={(locker) => setSelectedLocker(locker)} user={user} />
+return (
+    <div className="checkout-page-custom">
+        <div className="checkout-main-wrapper">
+            <div className="checkout-preview-area">
+                <div className="checkout-visual-box">
+                    <img src={paketnikImg} alt="Paketnik" className="checkout-paketnik-img" />
+                    <img 
+                        key={currentProduct._id} 
+                        src={`http://localhost:3001${currentProduct.path}`} 
+                        alt={currentProduct.name} 
+                        className="checkout-plant-overlay"
+                    />
                 </div>
-
-            {selectedLocker && (
-                <div className="selected-info">
-                    <p>Izbran paketnik: <strong>{selectedLocker.name}</strong></p>
-                </div>
-            )}
-
-            <div className="button-group" style={{ display: 'flex', gap: '10px' }}>
-                <button onClick={prevStep} className="pay-button secondary">Nazaj</button>
-                <button 
-                    onClick={nextStep} 
-                    className="pay-button" 
-                    disabled={!selectedLocker}>
-                    Nadaljuj na plačilo
-                </button>
             </div>
-          </div>
-        )}
 
-        {currentStep === 2 && (
-            <PaymentForm 
-                currentStep={currentStep}
-                onNext={nextStep}
-                onBack={prevStep} 
-            />
-        )}
+            <div className="checkout-details-area">
+                <div className="checkout-content-scrollable">
+                    <div className="checkout-header-info">
+                        <span className="checkout-step-label">IZDELEK {currentIndex + 1} OD {cart.length}</span>
+                        <h1 className="checkout-product-name">{currentProduct.name.toUpperCase()}</h1>
+                        <p className="checkout-product-price">{currentProduct.price}€</p>
+                    </div>
 
-        {currentStep === 3 && (
-          <div className="step-content">
-            <h1>Review your order</h1>
-            <p>Preverite podatke pred koncem...</p>
-            <button onClick={prevStep} className="pay-button">Nazaj</button>
-            <button onClick={() => alert("Naročilo oddano!")} className="pay-button">FINISH</button>
-          </div>
-        )}
+                    <p className="checkout-description-text">
+                        Ta čudovita rastlina bo osvežila vaš prostor in prinesla naravno energijo v vaš dom.
+                    </p>
+
+                    <section className="checkout-form-section">
+                        <h3 className="checkout-section-title">1. LOKACIJA ZA TO RASTLINO</h3>
+                        <div className="checkout-map-container">
+                            <PaketnikMap onSelect={setSelectedLocker} user={user} />
+                        </div>
+                    </section>
+
+                    <section className="checkout-form-section">
+                        <h3 className="checkout-section-title">2. NAČIN PLAČILA</h3>
+                        <PaymentForm hideButtons={true} />
+                    </section>
+
+                    <div className="checkout-footer-action">
+                        <button 
+                            className="checkout-submit-btn" 
+                            disabled={!selectedLocker}
+                            onClick={handleNextProduct}
+                        >
+                            <span>
+                                {currentIndex < cart.length - 1 ? "NASLEDNJA RASTLINA" : "PREGLEJ NAROČILO"}
+                            </span>
+                            <ShoppingCart size={24} />
+                        </button>
+                    </div>
+
+                    {/* --- ADMIN DEL: TUKAJ DODAJ OBRAZEC --- */}
+                    {user && user.username === "admin" && (
+                        <div className="admin-special-section" style={{ marginTop: '50px', paddingTop: '30px', borderTop: '2px dashed #ccc' }}>
+                            <DodajPaketnik onSuccess={() => window.location.reload()} />
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     </div>
-  );
+    );
 };
 
 export default OrderForm;
