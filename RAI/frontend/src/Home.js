@@ -13,6 +13,8 @@ function Home() {
 
     const [selectedPlant, setSelectedPlant] = useState(null); 
 
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
     useEffect(() => {
         const fetchPlants = async () => {
             try {
@@ -22,7 +24,18 @@ function Home() {
                 console.error("Napaka pri pridobivanju rastlin", err);
             }
         };
+
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 768); 
+        }; 
+
         fetchPlants();
+
+        window.addEventListener('resize', handleResize); 
+
+        return () => {
+            window.removeEventListener('resize', handleResize); 
+        };
     }, []);
 
     const [outOfStock, setOutOfStock] = useState([]); 
@@ -53,6 +66,8 @@ function Home() {
     const scrollRef = useRef(null);
 
     const handleScroll = () => {
+        if (isMobile) return; 
+
         const container = scrollRef.current;
         if (!container) return;
 
@@ -66,8 +81,9 @@ function Home() {
             container.scrollTop = maxScroll;
         }
     };
-
+    
     const isAdmin = user && user.vloga === 'admin'; 
+    const displayPlants = isMobile ? plants : [...plants, ...plants];
     
     return (
         <div className="split-home-container">
@@ -115,12 +131,11 @@ function Home() {
                         onScroll={handleScroll}
                     >
                         <div className="bubble-list">
-                            {[...plants, ...plants].map((plant, index) => (
+                            {displayPlants.map((plant, index) => (
                                 <div 
                                     key={`${plant._id}-${index}`} 
                                     className="bubble-card"
-                                    onClick={() => setSelectedPlant({...plant, clickId: Date.now()})}
-                                >
+                                    onClick={() => setSelectedPlant({...plant, clickId: Date.now()})}>
                                     <img 
                                         src={`http://localhost:3001${plant.path}`} 
                                         alt={plant.name} 
