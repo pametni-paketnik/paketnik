@@ -526,6 +526,35 @@ nav {
   gap: 12px;
 }
 
+.input-group {
+  text-align: center;
+  margin: 25px 30px;
+  border-bottom: 1px solid #000;
+}
+
+.input-group label {
+
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #6F4E37;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    text-align: center;
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 11px 0;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #000;
+    background: transparent;
+}
+
 .input-group-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -556,6 +585,7 @@ nav {
   flex-direction: column;
   gap: 0; 
 }
+
 
 /* BUTTON */
 .submit-btn {
