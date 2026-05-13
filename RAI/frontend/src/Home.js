@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import api from './api';
 import { ArrowLeft, ShoppingCart, Trash, Heart, ArrowRight, Bold } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { UserContext } from './userContext'
 import './index.css';
 import paketnikImg from './images/pametni_paketnik_open.png';
@@ -45,6 +45,15 @@ function Home() {
             }
         }
     }, [plants.length, selectedPlant]);
+
+    const navigate = useNavigate(); 
+    const handleAddToCart = () => {
+        const currentCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
+        localStorage.setItem('cart', JSON.stringify([...currentCart, selectedPlant])); 
+        alert(`${selectedPlant.name} dodana v košarico!`);
+
+        navigate('/'); 
+    }
 
     const [outOfStock, setOutOfStock] = useState([]); 
     const toggleStock = async (id, currentState) => {
@@ -125,7 +134,7 @@ function Home() {
                         </div>
 
                         <div className="details-footer">
-                            <button className="main-add-btn full-width">
+                            <button className="main-add-btn full-width" onClick={handleAddToCart}>
                                 Dodaj v košarico <ShoppingCart size={24} strokeWidth={3} />
                             </button>
                         </div>
