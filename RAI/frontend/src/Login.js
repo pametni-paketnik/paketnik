@@ -38,10 +38,9 @@ function Login() {
     };
 
     return (
-        <div className="register-container"> {/* Uporabljamo enake kontejneje kot pri registraciji */}
+        <div className="register-container">
             <div className="register-card">
                 
-                {/* Levi vizualni del - Rjava barva #6F4E37 */}
                 <div className="register-visual">
                     <div className="visual-content">
                         <h2 className="visual-title uppercase-text">Dobrodošli nazaj</h2>
@@ -52,7 +51,6 @@ function Login() {
                     </div>
                 </div>
 
-                {/* Desni del z obrazcem */}
                 <div className="register-form-section">
                     <div className="form-header">
                         <div className="icon-box">
@@ -62,7 +60,6 @@ function Login() {
                         <p>Vnesite svoje podatke za dostop do profila.</p>
                     </div>
 
-                    {/* Izpis napake */}
                     {error && (
                         <div className="error-message" style={{ color: 'red', marginBottom: '15px', fontWeight: 'bold', textAlign: 'center', fontSize: '0.8rem' }}>
                             {error}
@@ -70,20 +67,25 @@ function Login() {
                     )}
 
                     <form onSubmit={handleSubmit} className="register-form">
-                        <div className="input-group-row">
-                            <input 
-                                type="email" 
-                                placeholder="E-POŠTA" 
-                                required
-                                className="clean-input" 
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
+                        <div className="row-modern">
+                            <div className="input-group-modern">
+                                <label>E-pošta</label>
+                                <input 
+                                    type="email" 
+                                    placeholder="ime@primer.si" 
+                                    required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="input-group-modern">
+                            <label>Geslo</label>
                             <input 
                                 type="password" 
-                                placeholder="GESLO" 
+                                placeholder="••••••••" 
                                 required
-                                className="clean-input" 
                                 value={geslo}
                                 onChange={(e) => setGeslo(e.target.value)}
                             />
@@ -94,7 +96,7 @@ function Login() {
                             className="submit-btn uppercase-text"
                             disabled={loading}
                         >
-                            {loading ? 'Prijavljanje...' : 'Prijava'} <ArrowRight size={18} />
+                            {loading ? 'Prijavljanje...' : 'Prijava'} <ArrowRight size={18} style={{ marginLeft: '10px' }} />
                         </button>
                     </form>
 

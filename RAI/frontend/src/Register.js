@@ -47,7 +47,6 @@ function Register() {
         <div className="register-container">
             <div className="register-card">
                 
-                {/* Levi vizualni del */}
                 <div className="register-visual">
                     <div className="visual-content">
                         <h2 className="visual-title uppercase-text">Registracija</h2>
@@ -58,7 +57,6 @@ function Register() {
                     </div>
                 </div>
 
-                {/* Desni del z obrazcem */}
                 <div className="register-form-section">
                     <div className="form-header">
                         <div className="icon-box">
@@ -68,7 +66,6 @@ function Register() {
                         <p>Vnesite svoje podatke za dostop.</p>
                     </div>
 
-                    {/* Izpis napake, če obstaja */}
                     {error && (
                         <div className="error-message" style={{ color: 'red', marginBottom: '15px', fontWeight: 'bold', textAlign: 'center' }}>
                             {error}
@@ -76,38 +73,48 @@ function Register() {
                     )}
 
                     <form onSubmit={handleRegister} className="register-form">
-                        <div className="input-group-row">
-                            <input 
-                                type="text" 
-                                placeholder="IME" 
-                                required
-                                value={ime}
-                                className="clean-input" 
-                                onChange={(e) => setIme(e.target.value)}
-                            />
-                            <input 
-                                type="text" 
-                                placeholder="PRIIMEK" 
-                                required
-                                value={priimek}
-                                className="clean-input" 
-                                onChange={(e) => setPriimek(e.target.value)}
-                            />
-                            <input 
-                                type="email" 
-                                placeholder="E-POŠTA" 
-                                required
-                                className="clean-input" 
-                                onChange={(e) => setEmail(e.target.value)}
-                                value={email}
-                            />
+                        
+                        <div className="row-modern">
+                            <div className="input-group-modern">
+                                <label>Ime</label>
+                                <input 
+                                    type="text" 
+                                    placeholder="Joe" 
+                                    required
+                                    value={ime}
+                                    onChange={(e) => setIme(e.target.value)}
+                                />
+                            </div>
+                            <div className="input-group-modern">
+                                <label>Priimek</label>
+                                <input 
+                                    type="text" 
+                                    placeholder="Doe" 
+                                    required
+                                    value={priimek}
+                                    onChange={(e) => setPriimek(e.target.value)}
+                                />
+                            </div>
+                            <div className="input-group-modern">
+                                <label>E-pošta</label>
+                                <input 
+                                    type="email" 
+                                    placeholder="ime@primer.si" 
+                                    required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="input-group-modern">
+                            <label>Geslo</label>
                             <input 
                                 type="password" 
-                                placeholder="GESLO" 
+                                placeholder="••••••••" 
                                 required
-                                className="clean-input" 
-                                onChange={(e) => setGeslo(e.target.value)}
                                 value={geslo}
+                                onChange={(e) => setGeslo(e.target.value)}
                             />
                         </div>
 
@@ -116,7 +123,7 @@ function Register() {
                             className="submit-btn uppercase-text"
                             disabled={loading}
                         >
-                            {loading ? 'Pošiljanje...' : 'Registracija'} <ArrowRight size={18} />
+                            {loading ? 'Pošiljanje...' : 'Registracija'} <ArrowRight size={18} style={{ marginLeft: '10px' }} />
                         </button>
                     </form>
 

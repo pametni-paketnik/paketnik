@@ -439,192 +439,223 @@ nav {
 /* REGISTER */
 .uppercase-text {
   text-transform: uppercase;
-  letter-spacing: 2px;
 }
-
 .register-container {
-  min-height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  min-height: 70vh;
+  padding: 40px 20px;
 }
 
 .register-card {
-  max-width: 850px; 
+  position: relative;
   width: 100%;
-  background: white;
-  border-radius: 40px; 
+  max-width: 1300px;
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  grid-template-columns: 1.2fr 1.3fr; 
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 30px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden; 
 }
 
 .register-visual {
-  background-color: #6F4E37;
-  /*133215 ali 92B775*/
-  padding: 50px;
-  color: white;
+  padding: 20px 40px;
+  color: rgb(54, 80, 22);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  position: relative;
+  background: rgba(54, 80, 22, 0.15);
 }
 
 .visual-title {
-  font-size: 1.8rem;
+  font-size: 2.8rem; 
   font-weight: 900;
   margin-bottom: 20px;
-}
-
-.visual-divider {
-  width: 40px;
-  height: 3px;
-  background: white;
-  margin-bottom: 20px;
+  line-height: 1.1;
+  letter-spacing: 2px;
 }
 
 .register-form-section {
-  position: relative;
-  padding: 60px;
+  padding: 80px;
+  background: rgba(255, 255, 255, 0.4);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-}
-
-.icon-box {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  background: transparent;
-  color: #6F4E37;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
   justify-content: center;
 }
 
 .form-header h1 {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: 800;
-  color: #000;
-  margin-bottom: 5px;
-  padding-top: 30px;
-}
-
-.form-header p {
-  font-size: 0.85rem;
-  color: #000;
-  margin-bottom: 30px;
+  color: #1a1a1a;
+  margin-bottom: 10px;
+  letter-spacing: 2px;
 }
 
 .register-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
-.input-group {
-  text-align: center;
-  margin: 25px 30px;
-  border-bottom: 1px solid #000;
-}
-
-.input-group label {
-
-    display: block;
-    font-size: 0.7rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: #6F4E37;
-    font-weight: 800;
-    margin-bottom: 5px;
-}
-
-.input-group input {
-    text-align: center;
-    width: 100%;
-    border: none;
-    outline: none;
-    padding: 11px 0;
-    font-size: 1rem;
-    font-weight: bold;
-    color: #000;
-    background: transparent;
-}
-
-.input-group-row {
+.row-modern {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: 1fr 1fr; 
+  gap: 20px;
 }
 
-.clean-input {
-  width: 100%;
-  padding: 15px 20px;
-  border: 1.7px solid rgb(54,80,22);;
-  border-radius: 16px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
-  margin-bottom: 15px;
-}
-
-.clean-input:focus {
-  outline: none;
-  border-color: #6F4E37;
-  background: white;
-  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
-}
-
-.input-group-row {
+.input-group-modern {
   display: flex;
   flex-direction: column;
-  gap: 0; 
+  margin-bottom: 10px;
 }
 
+.input-group-modern label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  margin-bottom: 5px;
+  color: rgb(54, 80, 22);
+  letter-spacing: 1px;
+}
 
-/* BUTTON */
+.input-group-modern input {
+  padding: 10px 10px;
+  border: none;
+  border-bottom: 2px solid rgba(54, 80, 22, 0.08);
+  background: transparent;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.input-group-modern input:focus {
+  outline: none;
+  border-bottom-color: rgb(54, 80, 22);
+}
+
 .submit-btn {
-  margin-top: 15px;
-  background: rgb(54,80,22);
+  display: block;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 70%;
+  background: rgb(54, 80, 22);
   color: white;
   padding: 16px;
   border: none;
-  border-radius: 16px;
-  font-size: 0.85rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
   font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: transform 0.2s, background 0.3s;
+  transition: all 0.3s ease;
 }
 
 .submit-btn:hover {
-  background: rgb(54,80,22);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(54, 80, 22, 0.2);
+  filter: brightness(1.1);
 }
 
 .login-link {
   text-align: center;
-  margin-top: 30px;
-  font-size: 0.8rem;
-  color: #000;
+  margin-top: 25px;
+  font-size: 0.85rem;
+  color: #444;
 }
 
 .login-link a {
-  color: #6F4E37;
+  color: rgb(54, 80, 22);
   text-decoration: none;
   font-weight: 800;
-  font-size: 12px;
-  letter-spacing: 0.5px;
   margin-left: 5px;
 }
+
+@media (max-width: 992px) {
+  .register-card {
+    grid-template-columns: 1fr; 
+    width: 95%;
+  }
+
+  .register-visual {
+    padding: 60px 30px;
+    text-align: center;
+    align-items: center;
+  }
+
+  .visual-title {
+    font-size: 2.8rem;
+    padding: 10px;
+  }
+
+  .register-form-section {
+    padding: 60px 40px;
+  }
+}
+
+@media (max-width: 900px) {
+  .register-card {
+    grid-template-columns: 1fr; 
+    border-radius: 20px; 
+  }
+
+  .register-visual {
+    padding: 30px 20px;
+    text-align: center;
+    align-items: center;
+  }
+
+  .visual-title {
+    font-size: 1.5rem; 
+    margin-bottom: 0;
+  }
+
+  .register-form-section {
+    padding: 50px; 
+  }
+
+  .icon-box {
+    top: 20px;
+    left: 20px;
+    font-size: 1.3rem;
+  }
+
+  .form-header h1 {
+    font-size: 1.6rem;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+
+  .row-modern {
+    grid-template-columns: 1fr; 
+    gap: 15px; 
+  }
+
+  .input-group-modern {
+    margin-bottom: 5px;
+  }
+
+  .input-group-modern input {
+    font-size: 16px; /* Prepreči avtomatsko povečavo (zoom) na iPhone-u */
+    padding: 8px 0;
+  }
+
+  /* Gumb naj bo na mobilnih raje čez celo širino za lažji klik */
+  .submit-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 14px;
+  }
+
+  .login-link {
+    margin-top: 20px;
+    font-size: 0.85rem;
+  }
+}
+
 
 /* LOGIN */
 .input-group-row {
