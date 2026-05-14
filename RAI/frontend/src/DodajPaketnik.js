@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import api from './api'; 
-import './index.css'; 
 
 function DodajPaketnik({onSuccess}){
     const [formData, setFormData] = useState({
@@ -32,31 +31,15 @@ function DodajPaketnik({onSuccess}){
     return (
         <form onSubmit={handleSubmit} className="checkout-admin-form">
             <h3 className="checkout-section-title">Admin: Nov paketnik</h3>
-            <div className="checkout-input-group">
-                <label>Ime</label>
-                <input name="ime" value={formData.ime} onChange={handleChange} className="checkout-styled-input" required />
-            </div>
-            <div className="checkout-input-group">
-                <label>Lokacija</label>
-                <input name="lokacija" value={formData.lokacija} onChange={handleChange} className="checkout-styled-input" required />
-            </div>
+            <input name="ime" placeholder="Ime paketnika" value={formData.ime} onChange={handleChange} className="checkout-styled-input" required />
+            <input name="lokacija" placeholder="Naslov (Ulica 12, Kraj)" value={formData.lokacija} onChange={handleChange} className="checkout-styled-input" required />
             <div style={{display:'flex', gap:'10px'}}>
-                <div className="checkout-input-group" style={{flex:1}}>
-                    <label>Lat</label>
-                    <input name="lat" value={formData.lat} onChange={handleChange} className="checkout-styled-input" required />
-                </div>
-                <div className="checkout-input-group" style={{flex:1}}>
-                    <label>Lng</label>
-                    <input name="lng" value={formData.lng} onChange={handleChange} className="checkout-styled-input" required />
-                </div>
+                <input name="lat" placeholder="Latitude (npr. 46.05)" value={formData.lat} onChange={handleChange} className="checkout-styled-input" required />
+                <input name="lng" placeholder="Longitude (npr. 14.50)" value={formData.lng} onChange={handleChange} className="checkout-styled-input" required />
             </div>
-            <div className="checkout-input-group">
-                <label>Opis / Details</label>
-                <textarea name="details" value={formData.details} onChange={handleChange} className="checkout-styled-input" style={{minHeight:'80px'}} />
-            </div>
-            <button type="submit" className="checkout-submit-btn"><span>SHRANI PAKETNIK</span></button>
+            <textarea name="details" placeholder="Dodatne informacije..." value={formData.details} onChange={handleChange} className="checkout-styled-input" />
+            <button type="submit" className="checkout-submit-btn">SHRANI PAKETNIK</button>
         </form>
     );
 }
-
 export default DodajPaketnik;

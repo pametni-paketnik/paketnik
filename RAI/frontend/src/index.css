@@ -633,44 +633,10 @@ nav {
   gap: 0; 
 }
 
-/* MAP */
-.checkout-map-display {
-    height: 300px;
-    width: 100%;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid #ddd;
-    margin-bottom: 20px;
-    z-index: 1; 
-}
-
-.checkout-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 5px;
-    display: block;
-}
-
-.checkout-styled-input {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    font-size: 15px;
-    color: #333;
-    outline: none;
-    box-sizing: border-box;
-}
-
 /* ORDER */
 .checkout-page-custom {
     height: 80vh;
     width: 100%;
-    overflow: hidden;
 }
 
 .checkout-main-wrapper {
@@ -918,6 +884,96 @@ nav {
   grid-template-columns: 1fr 1fr 1fr;
   gap: 15px;
 }
+
+/* MAP */
+.map-and-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.map-frame {
+    width: 100%;
+    height: 400px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.content-box-modern {
+    display: flex;
+    flex-direction: row; 
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.location-list-container {
+    flex: 1; 
+    min-width: 300px;
+}
+
+.form-container-modern {
+    flex: 1;
+    padding: 20px;
+}
+
+.location-list {
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+.location-list::-webkit-scrollbar {
+    width: 6px; 
+}
+
+.location-list::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+
+.location-list::-webkit-scrollbar-thumb {
+    background: #000;
+    border-radius: 10px;
+}
+
+.location-list::-webkit-scrollbar-thumb:hover {
+    background: #333;
+}
+
+.location-item {
+    transition: all 0.2s ease;
+}
+
+.location-item:hover {
+    background-color: #f5f5f5 !important;
+}
+
+.row-modern {
+    display: grid;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.input-group-modern {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.input-group-modern input {
+    padding: 10px;
+}
+
+@media (max-width: 768px) {
+    .content-box-modern {
+        flex-direction: column; 
+    }
+    
+    .location-list-container, .form-container-modern {
+        width: 100%;
+    }
+}
+
 
 /* Profile */
 .profile-layout {
