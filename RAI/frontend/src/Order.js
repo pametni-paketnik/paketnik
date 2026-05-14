@@ -45,8 +45,6 @@ const OrderForm = () =>{
     if (cart.length === 0) return <div>Vaša košarica je prazna</div>; 
     if (!currentProduct) return <div>Nalagam...</div>; 
 
-// ... (vsi tvoji importi ostanejo isti)
-
 return (
     <div className="checkout-page-custom">
         <div className="checkout-main-wrapper">
@@ -75,9 +73,9 @@ return (
                     </p>
 
                     <section className="checkout-form-section">
-                        <h3 className="checkout-section-title">1. LOKACIJA ZA TO RASTLINO</h3>
-                        <div className="checkout-map-container">
-                            <PaketnikMap onSelect={setSelectedLocker} user={user} />
+                        <h3 className="checkout-section-title">1. LOKACIJE NAŠIH PAKETIKOV</h3>
+                        <div className="checkout-map-outer-wrapper">
+                            <PaketnikMap onSelect={setSelectedLocker} user={user} selectedLocker={selectedLocker} />
                         </div>
                     </section>
 
@@ -98,13 +96,6 @@ return (
                             <ShoppingCart size={24} />
                         </button>
                     </div>
-
-                    {/* --- ADMIN DEL: TUKAJ DODAJ OBRAZEC --- */}
-                    {user && user.username === "admin" && (
-                        <div className="admin-special-section" style={{ marginTop: '50px', paddingTop: '30px', borderTop: '2px dashed #ccc' }}>
-                            <DodajPaketnik onSuccess={() => window.location.reload()} />
-                        </div>
-                    )}
                 </div>
             </div>
         </div>
