@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { Trash2 } from "lucide-react";
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 // instaliraj: npm install leaflet react-leaflet
@@ -74,6 +75,20 @@ function PaketnikMap({ onSelect, user, selectedLocker }) {
             alert("Napaka pri komunikaciji z bazo.");
         }
     };
+    
+    const handleDelete = async(e, id) => {
+        e.stopPropagation();
+        if(window.confirm("Ali ste prepričani da želite izbrisati ta paketnik?")) {
+            try {
+                await api.delete(`/paketnik/${id}`); 
+                alert("Uspesno izbrisano"); 
+                fetchPaketniki(); 
+            } catch (err) {
+                console.error("Napaka: ", err); 
+                alert("Napak pri brisanju"); 
+            }
+        }
+    }; 
 
   return (
         <div className="map-and-content-wrapper"> 
@@ -138,9 +153,11 @@ function PaketnikMap({ onSelect, user, selectedLocker }) {
                 <div className="location-list" style={{ maxHeight: isAdmin ? '200px' : '400px', overflowY: 'auto' }}>
                     {paketniki.map((p) => {
                         const isSelected = selectedLocker?._id === p._id || selectedLocker?.id === p.id;
+                        const pId = p._id || p.id;
+
                         return (
                             <div 
-                                key={p._id || p.id} 
+                                key={pId} 
                                 className={`location-item ${isSelected ? 'active' : ''}`}
                                 onClick={() => onSelect && onSelect(p)}
                                 style={{ 
@@ -148,18 +165,40 @@ function PaketnikMap({ onSelect, user, selectedLocker }) {
                                     borderBottom: '1px solid #eee', 
                                     cursor: 'pointer',
                                     background: isSelected ? '#e6e6e6' : 'transparent',
-                                    borderLeft: isSelected ? '4px solid #000' : '4px solid transparent'
+                                    borderLeft: isSelected ? '4px solid #000' : '4px solid transparent',
+                                    display: 'flex',            
+                                    justifyContent: 'space-between', // POPRAVEK: camelCase
+                                    alignItems: 'center'
                                 }}
                             >
-                                <strong>{p.ime}</strong> - {p.lokacija}
+                                <div>
+                                    <strong>{p.ime}</strong> - {p.lokacija}
+                                </div>
+
+                                {isAdmin && (
+                                    <button 
+                                        onClick={(e) => handleDelete(e, pId)}
+                                        style={{
+                                            background: 'transparent',
+                                            border: 'none',
+                                            color: '#ff4d4d',
+                                            cursor: 'pointer',
+                                            padding: '5px',
+                                            display: 'flex',
+                                            alignItems: 'center'
+                                        }}
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
+                                )}
                             </div>
                         );
-                      })}
-                    </div>
+                    })}
                 </div>
             </div>
+          </div>
         </div>
-    );
+  );
 }
 
 export default PaketnikMap;
