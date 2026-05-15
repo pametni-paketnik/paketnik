@@ -7,7 +7,8 @@ function AddPlant() {
     const userContext = useContext(UserContext); 
     const [name, setName] = useState('');
     const [price, setPrice] = useState(''); 
-    const [message, setMessage] = useState(''); 
+    const [description, setDescription] = useState(''); 
+    const [care, setCare] = useState(''); 
     const [file, setFile] = useState(null);
     const [uploaded, setUploaded] = useState(false);
 
@@ -22,7 +23,8 @@ function AddPlant() {
         const formData = new FormData();
         formData.append('name', name);
         formData.append('price', price); 
-        formData.append('message', message); 
+        formData.append('description', description); 
+        formData.append('care', care); 
         formData.append('image', file);
         formData.append('naZalogi', 'false');
 
@@ -57,7 +59,7 @@ function AddPlant() {
 
                 <form className="publish-form" onSubmit={onSubmit}>
                     {/* IME RASTLINE */}
-                    <div className="input-group">
+                    <div className="input-group-modern">
                         <label><FaFileSignature className="meta-icon" /> Ime rastline</label>
                         <input 
                             type="text" 
@@ -70,7 +72,7 @@ function AddPlant() {
                     </div>
 
                     {/* CENA */}
-                    <div className="input-group">
+                    <div className="input-group-modern">
                         <label><FaEuroSign className="meta-icon" /> Cena</label>
                         <input 
                             type="text" 
@@ -81,33 +83,43 @@ function AddPlant() {
                         />
                     </div>
 
-                    {/* OPIS (Message v modelu) */}
-                    <div className="input-group">
+                    {/* OPIS (Description v modelu) */}
+                    <div className="input-group-modern">
                         <label><FaCommentAlt className="meta-icon" /> Opis</label>
-                        <textarea 
+                        <input 
+                            type="text" 
                             placeholder="Povej kaj o tej rastlini..." 
-                            value={message} 
-                            onChange={(e) => setMessage(e.target.value)}
-                        ></textarea>
+                            value={description} 
+                            onChange={(e) => setDescription(e.target.value)}
+                            required 
+                        />
+                    </div>
+
+                    {/* VZDRZEVANJE */}
+                    <div className="input-group-modern">
+                        <label><FaCommentAlt className="meta-icon" /> Vzdrzevanje</label>
+                        <input 
+                            type="text" 
+                            placeholder="Povej kako se vzdrzuje to raztlino..." 
+                            value={care} 
+                            onChange={(e) => setCare(e.target.value)}
+                            required 
+                        />
                     </div>
 
                     {/* SLIKA */}
-                    <div className="input-group">
-                        <div className="file-input-wrapper">
-                            <input 
-                                type="file" 
-                                id="file-upload"
-                                accept="image/*"
-                                onChange={(e) => setFile(e.target.files[0])} 
-                            />
-                            <label htmlFor="file-upload" className="custom-file-upload">
-                                {file ? file.name : "Izberi fotografijo rastline"}
-                            </label>
-                        </div>
+                    <div className="input-group-modern">
+                        <label><FaCommentAlt className="meta-icon" /> IZBERI FOTOGRAFIJO:</label>
+                        <input 
+                            type="file" 
+                            id="file-upload"
+                            accept="image/*"
+                            onChange={(e) => setFile(e.target.files[0])} 
+                        />
                     </div>
 
                     <div className="profile-footer">
-                        <button className="nav-btn" type="submit">
+                        <button className="submit-btn uppercase-text" type="submit">
                             DODAJ NA SEZNAM
                         </button>
                     </div>
