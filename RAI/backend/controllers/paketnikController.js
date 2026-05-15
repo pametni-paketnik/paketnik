@@ -17,14 +17,40 @@ exports.dodajPaketnik = async(req, res) => {
 // pridobi seznam vseh paketnikov 
 exports.pridobiVsePaketnike = async(req, res) => {
     try{
-        const paketniki = await Paketnik.find().populate('lastnik_id', 'ime priimek email'); 
+        const paketniki = await Paketnik.find()
+        .populate('lastnik_id', 'ime priimek email')
+        .sort({ createdAt: -1 }); 
         res.status(200).json(paketniki); 
     }catch(napaka){
         res.status(500).json({sporocilo: "Napaka pri branju paketnikov", napaka}); 
     }
 }; 
 
-// psoodobi 
+//prodobi paketnik po id
+exports.pridobiPaketnikPoId = async(req, res) => {
+    try {
+        const paketnik = await Paketnik.findById(req.params.id);
+
+        if(!paketnik) return res.status(404).json({ sporocilo: 'Paketnik ni bil najden' });
+        
+        res.status(200).json(paketnik); 
+    } catch (napaka) {
+        res.status(500).json({sporocilo: "Napaka pri pridobivanju paketnika", napaka}); 
+    }
+}; 
+
+//prodobi proste paketnike
+exports.pridobiProstePaketnike = async(req, res) => {
+    try {
+        const paketniki = await Paketnik.find({ status: 'prosto' });
+
+        res.status(200).json(paketniki); 
+    } catch (napaka) {
+        res.status(500).json({sporocilo: "Napaka pri pridobivanju prostih paketnikov", napaka}); 
+    }
+}; 
+
+// posoodobi 
 exports.posodobiPaketnik = async(req, res) => {
     try{
         const posodobljen = await Paketnik.findByIdAndUpdate(
