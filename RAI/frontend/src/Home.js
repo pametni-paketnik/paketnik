@@ -125,6 +125,29 @@ function Home() {
             <section className="content-side">
                 {selectedPlant ? (
                     <div className="plant-details-view">
+                        {isAdmin && (
+                            <button 
+                                className="admin-delete-top-btn" 
+                                onClick={() => deletePlant(selectedPlant._id)}
+                                style={{
+                                    position: 'absolute',
+                                    top: '5px',
+                                    right: '10px',
+                                    border: 'none',
+                                    background: 'transparent',
+                                    color: '#ff4d4d',
+                                    padding: '10px',
+                                    width: '90px',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    fontWeight: 'bold',
+                                    transition: '0.3s'
+                                }}
+                            > <Trash size={20} />
+                            </button>
+                        )}
                         <div className="details-container">
                             <h2 className="details-title">{selectedPlant.name}</h2>
                             <p className="details-price">{selectedPlant.price}€</p>
