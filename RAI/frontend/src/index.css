@@ -897,6 +897,13 @@ nav {
   letter-spacing: 1px;
 }
 
+.card-input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+}
+
 .input-group-modern {
   display: flex;
   flex-direction: column;
@@ -1176,13 +1183,12 @@ nav {
 }
 
 .profile-card, .payment-card-wrapper {
-  width: 100%;
-  max-width: none !important;
-  min-width: 0;
-  box-sizing: border-box;
-  background: white;
+  background: #ffffff;
+  border: none !important;
+  outline: none !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   border-radius: 40px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
 }
 .profile-form-section, .payment-content {
   width: 100%;

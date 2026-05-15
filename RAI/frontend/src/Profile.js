@@ -214,23 +214,28 @@ function Profile() {
 
               <form onSubmit={shraniProfil} className="register-form">
                 <div className="input-group-row">
-                  <input
-                    type="text"
-                    placeholder="IME"
-                    required
-                    className="clean-input"
-                    value={ime}
-                    onChange={(e) => setIme(e.target.value)}
-                  />
-
-                  <input
-                    type="text"
-                    placeholder="PRIIMEK"
-                    required
-                    className="clean-input"
-                    value={priimek}
-                    onChange={(e) => setPriimek(e.target.value)}
-                  />
+                  <div className="input-group-modern">
+                      <label>IME: </label>
+                      <input
+                        type="text"
+                        placeholder="IME"
+                        required
+                        className="input-group-modern"
+                        value={ime}
+                        onChange={(e) => setIme(e.target.value)}
+                      />
+                  </div>
+                  <div className="input-group-modern">
+                      <label>IME: </label>
+                      <input
+                        type="text"
+                        placeholder="PRIIMEK"
+                        required
+                        className="input-group-modern"
+                        value={priimek}
+                        onChange={(e) => setPriimek(e.target.value)}
+                      />
+                  </div>
 
                   <div className="file-upload-wrapper">
                     <label className="file-upload-label uppercase-text">
@@ -241,7 +246,7 @@ function Profile() {
                       type="file"
                       accept="image/*"
                       onChange={handleImageChange}
-                      className="file-upload-input"
+                      className="input-group-modern"
                       ref={fileInputRef}
                     />
                   </div>
@@ -268,40 +273,58 @@ function Profile() {
                 <p>Dodajte podatke za plačilo.</p>
               </div>
 
-              <input
-                type="text"
-                placeholder="ŠTEVILKA KARTICE"
-                className="clean-input"
-                value={stevilkaKartice}
-                onChange={handleStevilkaKarticeChange}
-                maxLength={19}
-              />
+              <div className="input-group-modern">
+                  <label>ŠTEVILKA KARTICE: </label>
+                  <input
+                    type="text"
+                    placeholder="ŠTEVILKA KARTICE"
+                    required
+                    className="input-group-modern"
+                    value={stevilkaKartice}
+                    onChange={handleStevilkaKarticeChange}
+                    maxLength={19}
+                  />
+              </div>
 
-              <input
-                type="text"
-                placeholder="IME IN PRIIMEK NA KARTICI"
-                className="clean-input"
-                value={imeNaKartici}
-                onChange={handleImeNaKarticiChange}
-              />
+              <div className="input-group-modern">
+                  <label>IME IN PRIIMEK NA KARTICI: </label>
+                  <input
+                    type="text"
+                    placeholder="IME IN PRIIMEK NA KARTICI"
+                    required
+                    className="input-group-modern"
+                    value={imeNaKartici}
+                    onChange={handleImeNaKarticiChange}
+                  />
+              </div>
+              <div className="card-input-row">
+                <div className="input-group-modern">
+                  <label>DATUM POTEKA (MM/YY): </label>
+                  <input
+                    type="text"
+                    placeholder="DATUM POTEKA (MM/YY)"
+                    required
+                    className="input-group-modern"
+                    value={datumPoteka}
+                    onChange={handleDatumPotekaChange}
+                    maxLength={5}
+                  />
+                </div>
 
-              <input
-                type="text"
-                placeholder="DATUM POTEKA (MM/YY)"
-                className="clean-input"
-                value={datumPoteka}
-                onChange={handleDatumPotekaChange}
-                maxLength={5}
-              />
+                <div className="input-group-modern">
+                    <label>CVV: </label>
+                    <input
+                      type="text"
+                      placeholder="CVV"
+                      required
+                      className="input-group-modern"
+                      value={cvv}
+                      onChange={handleCvvChange}
+                      maxLength={3}
+                    />
+                </div>
+              </div>
 
-              <input
-                type="text"
-                placeholder="CVV"
-                className="clean-input"
-                value={cvv}
-                onChange={handleCvvChange}
-                maxLength={3}
-              />
 
               <button
                 type="button"
