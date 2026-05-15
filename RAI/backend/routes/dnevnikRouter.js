@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const dnevnikController = require('../controllers/dnevnikController.js');
 
-router.post('/', dnevnikController.ustvariZapis);
-router.get('/', dnevnikController.list);
-router.get('/uporabnik/:uporabnikId', dnevnikController.listZaUporabnika);
-router.get('/paketnik/:paketnikId', dnevnikController.listZaPaketnik);
+router.post('/', dnevnikController.dodajZapis);
+router.get('/', dnevnikController.pridobiVseZapise);
+router.get('/uporabnik/:uporabnikId', dnevnikController.pridobiZapiseZaPaketnik);
+router.get('/paketnik/:paketnikId', dnevnikController.pridobiZapiseZaUporabnika);
 
 module.exports = router;
