@@ -38,11 +38,20 @@ def zajemi_obraz():
         faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
         for (x, y, w, h) in faces:
+            # Doda 20% zamika (padding)
+            offset_w = int(w * 0.2)
+            offset_h = int(h * 0.2)
+            # Izračuna nove koordinate
+            y1 = max(0, y - offset_h)
+            y2 = min(frame.shape[0], y + h + offset_h)
+            x1 = max(0, x - offset_w)
+            x2 = min(frame.shape[1], x + w + offset_w)
+
             # Narise moder kvadrat okoli obraza (guideline)
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
+            cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), 2)
             
             # Napis za uporabnika
-            cv2.putText(frame, "Zaznan obraz", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+            cv2.putText(frame, "Zaznan obraz", (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
         # Prikaz okna
         cv2.imshow('Zajem podatkov za Smart Flower Locker', frame)
@@ -53,34 +62,18 @@ def zajemi_obraz():
             # Če je zaznan vsaj en obraz shrani izrezek
             if len(faces) > 0:
                 for (x, y, w, h) in faces:
-                    # Izreže samo obraz + 20% padding
-                    offset_w = int(w * 0.2)
-                    offset_h = int(h * 0.2)
-                    
-                    # Izračuna nove koordinate
-                    y1 = max(0, y - offset_h)
-                    y2 = min(frame.shape[0], y + h + offset_h)
-                    x1 = max(0, x - offset_w)
-                    x2 = min(frame.shape[1], x + w + offset_w)
+                    # Izreže samo obraz
+                    # širši izrezek (x1, y1, x2, y2 izračunan zgoraj)
+                    face_roi = frame[y1:y2, x1:x2]
+                    img_name = f"{ime_osebe}_{st_slik}.jpg"
+                    cv2.imwrite(os.path.join(path, img_name), face_roi)
+                    print(f"Shranjena slika {st_slik}: {img_name}")
+                    st_slik += 1
+            else:
+                print("Napaka: Obraz ni zaznan, slika ni shranjena!")
 
-                    # Nariše kvadrat na zaslonu (za vizualno kontrolo)
-                    cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), 2)
-                    cv2.putText(frame, "Zaznan obraz", (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
-
-                # ... spodi v kodi pr tipki 's' spremeni še shranjevanje ...
-                if tipka == ord('s'):
-                    if len(faces) > 0:
-                        # Shrani ta širši izrezek (x1, y1, x2, y2 je izračunan zgoraj)
-                        face_roi = frame[y1:y2, x1:x2]
-                        img_name = f"{ime_osebe}_{st_slik}.jpg"
-                        cv2.imwrite(os.path.join(path, img_name), face_roi)
-                        print(f"Shranjena slika {st_slik}: {img_name}")
-                        st_slik += 1
-                    else:
-                        print("Napaka: Obraz ni zaznan, slika ni shranjena!")
-
-                elif tipka == ord('q'):
-                    break
+        elif tipka == ord('q'):
+            break
 
     # Čiščenje
     cap.release()
