@@ -167,10 +167,26 @@ nav {
 .plant-details-view {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  height: 100%;
+  justify-content: flex-start;
   padding: 0 60px;
   animation: detailsSlideIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #000000 transparent;
+}
+
+.plant-details-view::-webkit-scrollbar {
+  width: 6px; 
+}
+
+.plant-details-view::-webkit-scrollbar-track {
+  background: transparent; 
+}
+
+.plant-details-view::-webkit-scrollbar-thumb {
+  background-color: #000000; 
+  border-radius: 10px; 
+  transition: background-color 0.2s ease;
 }
 
 .details-title {
@@ -227,6 +243,7 @@ nav {
 }
 
 .main-add-btn {
+  width: 100%;
   background: #000;
   color: #fff;
   border: none;
@@ -241,6 +258,7 @@ nav {
   letter-spacing: 2px;
   cursor: pointer;
   transition: all 0.3s ease;
+  margin-top: 50px;
 }
 
 .main-add-btn:hover {
@@ -256,6 +274,120 @@ nav {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.plant-features-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 30px 0;
+  width: 100%;
+}
+
+.feature-item.clickable {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px; 
+  flex: 1;   
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.feature-item.clickable span {
+  font-size: 14px;
+  color: #666;
+  font-weight: 400;
+  transition: font-weight 0.3s ease, color 0.3s ease;
+}
+
+.feature-item .feature-icon-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid rgba(54, 80, 22, 0.2); 
+  color: rgba(54, 80, 22, 0.7);
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease;
+}
+
+.feature-item.highlight .feature-icon-circle {
+  border: 2px solid rgb(54, 80, 22); 
+  color: rgb(54, 80, 22);
+  background-color: rgba(54, 80, 22, 0.05); 
+}
+
+.feature-item.highlight span {
+  color: #000;
+  font-weight: 700; 
+}
+
+.searches-section {
+  margin-top: 35px;
+  width: 100%;
+}
+
+.graph-container {
+  position: relative;
+  border-radius: 20px;
+  padding: 25px 15px 15px 15px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.graph-svg {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 300 / 80; 
+  display: block;
+}
+
+.graph-path {
+  stroke: rgb(54, 80, 22);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  transition: d 0.5s ease-in-out;
+}
+
+.graph-badge {
+  position: absolute;
+  top: 10px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  color: #000;
+  transform: translateX(-50%);
+  transition: left 0.5s ease-in-out;
+}
+
+.graph-days {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 5px 0 5px;
+  border-top: 1px solid #eee;
+  margin-top: 10px;
+}
+
+.graph-days span {
+  font-size: 12px;
+  color: #999;
+  font-weight: 600;
+  width: 24px;
+  text-align: center;
+}
+
+.graph-days span.active-day {
+  color: rgb(54, 80, 22);
+  font-weight: 800;
+  transition: color 0.3s ease;
+}
+
 
 @media (max-width: 900px) {
   .split-home-container {
@@ -897,13 +1029,6 @@ nav {
   letter-spacing: 1px;
 }
 
-.card-input-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  width: 100%;
-}
-
 .input-group-modern {
   display: flex;
   flex-direction: column;
@@ -1159,7 +1284,6 @@ nav {
 /* Profile */
 .profile-layout {
   width: 100%;
-  max-width: 1200px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -1168,8 +1292,8 @@ nav {
 
 .profile-top-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 0px 15px;
   width: 100%;
 }
 
@@ -1178,22 +1302,29 @@ nav {
   max-width: none !important;
   min-width: 0;
 }
-.profile-top-grid .profile-card:last-child .form-header {
+
+.profile-top-grid .profile-card :last-child .form-header {
   margin-top: -8px;
 }
 
 .profile-card, .payment-card-wrapper {
-  background: #ffffff;
   border: none !important;
   outline: none !important;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  border-radius: 40px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 30px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); 
   overflow: hidden;
 }
+
 .profile-form-section, .payment-content {
   width: 100%;
   box-sizing: border-box;
-  padding: 60px;
+  padding: 60px; 
+  background: rgba(255, 255, 255, 0.4); 
+  display: flex;
+  flex-direction: column;
 }
 
 .profile-header-row {
@@ -1209,16 +1340,17 @@ nav {
 }
 
 .profile-header-text h1 {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: 800;
-  color: #000;
-  margin-bottom: 5px;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
   padding-top: 0;
 }
 
 .profile-header-text p {
   font-size: 0.85rem;
-  color: #000;
+  color: #444;
   margin: 0;
   line-height: 1.6;
 }
@@ -1232,9 +1364,9 @@ nav {
   height: 110px;
   border-radius: 50%;
   object-fit: cover;
-  border: 0px;
+  border: none;
   background: #fff;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.40);
+  box-shadow: 0 10px 20px rgba(54, 80, 22, 0.15); 
 }
 
 .profile-form-section .submit-btn:last-child,
@@ -1244,44 +1376,55 @@ nav {
 }
 
 .file-upload-wrapper {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .file-upload-label {
   display: block;
-  margin-bottom: 10px;
-  font-size: 0.75rem;
+  margin-bottom: 8px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
   font-weight: 800;
-  color: rgb(54,80,22);
+  color: rgb(54, 80, 22);
   letter-spacing: 1px;
 }
 
 .file-upload-input {
   width: 100%;
-  padding: 14px 18px;
-  border: 1.7px solid rgb(54,80,22);
-  border-radius: 16px;
-  font-size: 0.8rem;
+  padding: 12px 0;
+  border: none;
+  border-bottom: 2px solid rgba(54, 80, 22, 0.08);
+  background: transparent;
+  font-size: 0.9rem;
   font-weight: 600;
   box-sizing: border-box;
-  background: white;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.file-upload-input:focus {
+  outline: none;
+  border-bottom-color: rgb(54, 80, 22);
 }
 
 .file-upload-input::file-selector-button {
-  background: rgb(54,80,22);
+  background: rgb(54, 80, 22);
   color: white;
   border: none;
-  padding: 10px 16px;
-  border-radius: 10px;
+  padding: 8px 16px;
+  border-radius: 8px;
   margin-right: 15px;
   font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .file-upload-input::file-selector-button:hover {
-  background: rgb(54,80,22);
-  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  background: rgb(54, 80, 22);
+  box-shadow: 0 5px 15px rgba(54, 80, 22, 0.3);
+  filter: brightness(1.1);
 }
 
 .profile-message {
@@ -1304,22 +1447,33 @@ nav {
 
 .order-history-empty {
   padding: 40px;
-  border: 2px dashed #d6d6d6;
+  border: 2px dashed rgba(54, 80, 22, 0.2); /* Prilagojena barva črtic */
   border-radius: 20px;
   text-align: center;
-  color: #888;
+  color: #666;
   font-weight: 600;
-  background: #fafafa;
+  background: rgba(255, 255, 255, 0.3);
 }
 
-@media (max-width: 768px) {
-  .profile-card {
-    max-width: 100%;
-    border-radius: 30px;
+@media (max-width: 900px) {
+  .profile-top-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 
-  .profile-form-section {
-    padding: 35px 25px;
+  .profile-layout {
+    max-width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .profile-card, .payment-card-wrapper {
+    border-radius: 20px; /* Uskajeno z .register-card na mobilnikih */
+  }
+
+  .profile-form-section, .payment-content {
+    padding: 30px 20px !important; /* Popolnoma enako kot register-form-section */
+    background: rgba(255, 255, 255, 0.7);
   }
 
   .profile-header-row {
@@ -1328,30 +1482,16 @@ nav {
     gap: 20px;
   }
 
+  .profile-header-text h1 {
+    font-size: 1.5rem;
+  }
+
   .profile-header-image {
     width: 90px;
     height: 90px;
   }
 
-  .profile-message {
-    font-size: 0.8rem;
-  }
-
-  .profile-top-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .profile-layout {
-    grid-template-columns: 1fr;
-    max-width: 650px;
-  }
-
   .order-history-card {
     grid-column: auto;
-  }
-
-  .profile-form-section,
-  .payment-content {
-    padding: 40px 30px;
   }
 }

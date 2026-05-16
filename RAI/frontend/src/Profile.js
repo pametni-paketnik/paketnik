@@ -190,11 +190,7 @@ function Profile() {
   return (
     <div className="register-container">
       <div className="profile-layout">
-
-        {/* Zgornji dve kartici */}
         <div className="profile-top-grid">
-
-          {/* LEVO: Uporabniški račun */}
           <div className="profile-card">
             <div className="register-form-section profile-form-section">
               <div className="form-header profile-header-row">
@@ -265,7 +261,6 @@ function Profile() {
             </div>
           </div>
 
-          {/* DESNO: Kartica */}
           <div className="profile-card">
             <div className="register-form-section profile-form-section">
               <div className="form-header">
@@ -287,10 +282,10 @@ function Profile() {
               </div>
 
               <div className="input-group-modern">
-                  <label>IME IN PRIIMEK NA KARTICI: </label>
+                  <label>IME NA KARTICI: </label>
                   <input
                     type="text"
-                    placeholder="IME IN PRIIMEK NA KARTICI"
+                    placeholder="IME NA KARTICI"
                     required
                     className="input-group-modern"
                     value={imeNaKartici}
@@ -299,10 +294,10 @@ function Profile() {
               </div>
               <div className="card-input-row">
                 <div className="input-group-modern">
-                  <label>DATUM POTEKA (MM/YY): </label>
+                  <label>DATUM POTEKA: </label>
                   <input
                     type="text"
-                    placeholder="DATUM POTEKA (MM/YY)"
+                    placeholder="DATUM POTEKA"
                     required
                     className="input-group-modern"
                     value={datumPoteka}
