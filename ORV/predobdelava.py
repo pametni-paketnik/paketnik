@@ -65,6 +65,10 @@ def zajemi_obraz():
         elif tipka == ord('q'):
             break
 
+    # Čiščenje
+    cap.release()
+    cv2.destroyAllWindows()
+    print(f"\nZajem končan. Skupaj zajetih slik za {ime_osebe}: {st_slik}")
 
 if __name__ == "__main__":
     zajemi_obraz()
