@@ -25,7 +25,46 @@ def zajemi_obraz():
     print("Pritisnite 'q' za izhod.")
     print("----------------\n")
 
-    
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        # Zrcaljenje slike (za lažje pozicioniranje)
+        frame = cv2.flip(frame, 1)
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # Iskanje obrazov
+        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+
+        for (x, y, w, h) in faces:
+            # Narise moder kvadrat okoli obraza (guideline)
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
+            
+            # Napis za uporabnika
+            cv2.putText(frame, "Zaznan obraz", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+
+        # Prikaz okna
+        cv2.imshow('Zajem podatkov za Smart Flower Locker', frame)
+
+        tipka = cv2.waitKey(1) & 0xFF
+
+        if tipka == ord('s'):
+            # Če je zaznan vsaj en obraz shrani izrezek
+            if len(faces) > 0:
+                for (x, y, w, h) in faces:
+                    # Izreže samo obraz
+                    face_roi = frame[y:y+h, x:x+w]
+                    img_name = f"{ime_osebe}_{st_slik}.jpg"
+                    cv2.imwrite(os.path.join(path, img_name), face_roi)
+                    print(f"Shranjena slika {st_slik}: {img_name}")
+                    st_slik += 1
+            else:
+                print("Napaka: Obraz ni zaznan, slika ni shranjena!")
+
+        elif tipka == ord('q'):
+            break
+
 
 if __name__ == "__main__":
     zajemi_obraz()
