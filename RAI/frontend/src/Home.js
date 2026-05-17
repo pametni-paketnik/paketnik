@@ -183,9 +183,8 @@ function Home() {
                         <div className="details-container">
                             <h2 className="details-title">{selectedPlant.name}</h2>
                             <p className="details-price">{selectedPlant.price}€</p>
-                            <p className="details-description">
-                                {selectedPlant.opis || "Ta čudovita rastlina bo osvežila vaš prostor in prinesla naravno energijo v vaš dom."}
-                            </p>
+                            <p className="details-description"><b>Description: </b>{selectedPlant.description}</p>
+                            <p className="details-care"><b>Care: </b>{selectedPlant.care}</p>
 
                             <div className="plant-features-row">
                                 <div 
