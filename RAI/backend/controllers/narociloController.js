@@ -21,11 +21,39 @@ exports.dodajNarocilo = async (req, res) => {
     const koda = Math.floor(100000 + Math.random() * 900000).toString();
 
     const novoNarocilo = new Narocilo({
-      uporabnik_id,
-      paketnik_id,
-      izdelki,
-      datum_dostave,
-      koda_za_odpiranje: koda
+      uporabnik_id: finalOrder.uporabnik_id || null, // Če je uporabnik prijavljen, sicer null
+      
+      stranka: {
+        ime: finalOrder.customer?.firstName,
+        priimek: finalOrder.customer?.lastName,
+        email: finalOrder.customer?.email,
+        telefon: finalOrder.customer?.phone
+      },
+      
+      izdelki: finalOrder.items.map(item => ({
+        izdelek_id: item._id, 
+        ime_izdelka: item.name,
+        cena: Number(item.price) || 0,
+        kolicina: 1, 
+        paketnik: {
+          paketnik_id: item.selectedLocker?._id || null,
+          ime: item.selectedLocker?.name || "Glavni Paketnik",
+          naslov: item.selectedLocker?.address || "Naslov paketnika ni izbran"
+        }
+      })),
+      
+      placilo: {
+        imetnik: finalOrder.payment?.cardholder || "Ni podatka",
+        kartica_maskirana: finalOrder.payment?.cardNumber 
+          ? `•••• •••• •••• ${finalOrder.payment.cardNumber.slice(-4)}` 
+          : "Ni podatka",
+        potek: `${String(finalOrder.payment?.month).padStart(2, '0')}/${String(finalOrder.payment?.year).slice(-2)}`
+      },
+      
+      skupna_cena: Number(finalOrder.totalPrice) || 0,
+      koda_za_odpiranje: koda,
+      datum_dostave: new Date(), // Ker na frontend-u nimaš datuma, nastavimo trenutni čas dostave/oddaje
+      status: 'oddano'
     });
 
     const shranjeno = await novoNarocilo.save();

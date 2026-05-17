@@ -28,9 +28,15 @@ const OrderForm = () =>{
     const currentProduct = cart[currentIndex]; 
 
     const handleNextProduct = () => {
+        const lockerPayload = {
+            _id: selectedLocker?._id || selectedLocker?.id, 
+            name: selectedLocker?.ime || selectedLocker?.name || null, 
+            address: selectedLocker?.lokacija || selectedLocker?.naslov || selectedLocker?.address || "Naslov ni na voljo"
+        }; 
+
         const newOrderEntry = {
             ...currentProduct, 
-            selectedLocker: selectedLocker
+            selectedLocker: lockerPayload
         }; 
 
         const updatedProcessed = [...processedOrders, newOrderEntry];
@@ -45,7 +51,7 @@ const OrderForm = () =>{
             const finalOrderPayload = {
                 customer: {
                     firstName: user?.name || "Unknown", 
-                    lastName: user?.priimerk || "Unknown", 
+                    lastName: user?.priimek || "Unknown", 
                     email: user?.email || "", 
                     phone: "/"
                 }, 
@@ -55,7 +61,7 @@ const OrderForm = () =>{
                 totalPrice: total
             }; 
 
-            localStorage.setItem('final_orders', JSON.stringify(updatedProcessed)); 
+            localStorage.setItem('final_orders', JSON.stringify(finalOrderPayload)); 
             navigate('/review'); 
         }
     }; 

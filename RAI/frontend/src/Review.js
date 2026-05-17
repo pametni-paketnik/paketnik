@@ -9,6 +9,7 @@ const ReviewForm = () => {
 
     useEffect (() => {
         const storedOrder = JSON.parse(localStorage.getItem('final_orders')); 
+        console.log("Podatki iz localStorage:", storedOrder);
         if(storedOrder) {
             setFinalOrder(storedOrder); 
         }
@@ -16,10 +17,30 @@ const ReviewForm = () => {
 
     const handleConfirmOrder = async () => {
         try{
-            alert("Naročilo uspešno oddano"); 
-            localStorage.removeItem('cart'); 
-            localStorage.removeItem('final_orders'); 
-            navigate('/success'); 
+            const trenutniUporabnikId = localStorage.getItem('user_id') || null;
+
+            const podatkiZaBackend = {
+                ...finalOrder,
+                uporabnik_id: trenutniUporabnikId
+            };
+
+            const response = await fetch('http://localhost:3001/api/orders', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}, 
+            body: JSON.stringify(finalOrder)
+        }); 
+
+        if(!response.ok){
+            throw new Error("Nekaj je šlo narobe pri shranjevanju naročil v bazo"); 
+        }
+        const data = await response.json(); 
+        console.log("Narocilo uspesno shranjeno"); 
+
+        alert("Naročilo uspešno oddano"); 
+        navigate('/success', { state: { order: finalOrder } });
+
+        localStorage.removeItem('cart'); 
+        localStorage.removeItem('final_orders'); 
         } catch(error) {
             console.error("Napaka: ", error); 
         }
@@ -31,6 +52,9 @@ const ReviewForm = () => {
     const maskedCardNumber = payment?.cardNumber 
         ? `•••• •••• •••• ${payment.cardNumber.slice(-4)}` 
         : "Ni podatka o kartici";
+
+    const displayMonth = payment?.month ? String(payment.month).padStart(2, '0') : "MM"; 
+    const displayYear = payment?.year ? payment.year.toString().slice(-2) : "YY";
 
     return (
         <div className="checkout-container">
@@ -68,7 +92,7 @@ const ReviewForm = () => {
                                 <p style={{ margin: 0 }}><strong>Imetnik:</strong> {payment?.cardholder || "Ni podatka"}</p>
                                 <p style={{ margin: '4px 0 0 0', color: '#555' }}><strong>Številka:</strong> {maskedCardNumber}</p>
                                 <p style={{ margin: '4px 0 0 0', fontSize: '0.9rem', color: '#777' }}>
-                                    <strong>Potek:</strong> {payment?.month || "MM"}/{payment?.year?.toString().slice(-2) || "YY"}
+                                    <strong>Potek:</strong> {displayMonth}/{displayYear}
                                 </p>
                             </div>
                         </div>
@@ -88,15 +112,14 @@ const ReviewForm = () => {
                 <h2 className="summary-title">Izbrane rože ({items?.length || 0})</h2>
                 
                 <div className="cart-items-list">
-                    {items && items.slice(0, 2).map((item, index) => (
+                    {items && items.map((item, index) => (
                         <div key={item._id || index} className="cart-item-row">
                             <div className="item-img-container">
                                 <img src={`http://localhost:3001${item.path}`} alt={item.name} />
                             </div>
                             <div className="item-details">
                                 <div className="item-header">
-                                    <h3>{item.name.toUpperCase()}</h3>
-                                    {/* DODANO: Pretvorba v Number zaradi preprečevanja napak */}
+                                    <h3>{item.name ? item.name.toUpperCase() : "ROŽA"}</h3>
                                     <span className="item-price">{(Number(item.price) || 0).toFixed(2)} €</span>
                                 </div>
                                 <p className="item-meta">Količina: 1</p>
