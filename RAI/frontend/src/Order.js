@@ -17,6 +17,9 @@ const OrderForm = () =>{
     const [processedOrders, setProcessedOrders] = useState([]);
     const [selectedLocker, setSelectedLocker] = useState(null);
 
+    const [orderItems, setOrderItems] = useState([]);
+    const [paymentData, setPaymentData] = useState(null);
+
     useEffect(() => {
         const storedCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
         setCart(storedCart.slice(0, 2)); 
@@ -27,7 +30,7 @@ const OrderForm = () =>{
     const handleNextProduct = () => {
         const newOrderEntry = {
             ...currentProduct, 
-            locker: selectedLocker
+            selectedLocker: selectedLocker
         }; 
 
         const updatedProcessed = [...processedOrders, newOrderEntry];
@@ -37,6 +40,21 @@ const OrderForm = () =>{
             setCurrentIndex(prev => prev + 1); 
             setSelectedLocker(null); 
         } else { 
+            const total = updatedProcessed.reduce((sum, item) => sum + (Number(item.price) || 0), 0); 
+
+            const finalOrderPayload = {
+                customer: {
+                    firstName: user?.name || "Unknown", 
+                    lastName: user?.priimerk || "Unknown", 
+                    email: user?.email || "", 
+                    phone: "/"
+                }, 
+                items: updatedProcessed, 
+                locker: updatedProcessed[0]?.selectedLocker, 
+                payment: paymentData, 
+                totalPrice: total
+            }; 
+
             localStorage.setItem('final_orders', JSON.stringify(updatedProcessed)); 
             navigate('/review'); 
         }

@@ -2,8 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from "./userContext";
 import './index.css'; 
 
-const PaymentForm = ({ onNext, onBack, currentStep }) => {
-  
+const PaymentForm = ({ onCardDataChange }) => {
   const { user } = useContext(UserContext);
   const [formData, setFormData] = useState({
       cardholder: '',
@@ -20,23 +19,32 @@ const PaymentForm = ({ onNext, onBack, currentStep }) => {
       const month = parts[0] || '';
       const year = parts[1] ? `20${parts[1]}` : '';
 
-      setFormData({
+      const initialData = {
         cardholder: user.ime_na_kartici || '',
         cardNumber: user.stevilka_kartice || '',
         month: month,
         year: year,
         cvv: user.cvv || ''
-      });
+      };
+      setFormData(initialData); 
+
+      if(onCardDataChange) onCardDataChange(initialData); 
     }
   }, [user]);
+
+  const updateFormData = (newData) => {
+    setFormData(newData);
+    if (onCardDataChange) {
+      onCardDataChange(newData);
+    }
+  };
 
   const handleCardNumChange = (e) =>{
     let value = e.target.value.replace(/\D/g, ''); 
     value = value.substring(0, 16); 
-
     const formattedValue = value.match(/.{1,4}/g)?.join(' ') || '';
 
-    setFormData({
+    updateFormData({
       ...formData, 
       cardNumber: formattedValue
     }); 
@@ -44,7 +52,7 @@ const PaymentForm = ({ onNext, onBack, currentStep }) => {
 
   const handleNumberInput = (name, value, maxLength) =>{
     const cleaned = value.replace(/\D/g, '').substring(0, maxLength); 
-    setFormData({
+    updateFormData({
       ...formData, 
       [name]: cleaned
     });
@@ -53,7 +61,7 @@ const PaymentForm = ({ onNext, onBack, currentStep }) => {
   const handleNameChange = (e) => {
     let value = e.target.value.replace(/[^a-zA-Z\s]/g, ''); 
     if(value.length <= 20){
-      setFormData({...formData, cardholder: value.toUpperCase()}); 
+      updateFormData({...formData, cardholder: value.toUpperCase()}); 
     } 
   };
 
