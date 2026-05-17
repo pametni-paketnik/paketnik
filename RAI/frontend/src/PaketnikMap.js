@@ -166,84 +166,85 @@ function PaketnikMap({ onSelect, user, selectedLocker }) {
             </div>
 
             <div className="content-box-modern">
-            {isAdmin && (
-                <div className="form-container-modern">
-                    <div className="input-group-modern">
-                        <label>Ime paketnika</label>
-                        <input type="text" name="ime" value={formData.ime} onChange={handleInputChange} placeholder="052" />
-                    </div>
-                    <div className="row-modern" style={{ gridTemplateColumns: '1fr 1fr' }}>
+                {isAdmin && (
+                    <div className="form-container-modern">
                         <div className="input-group-modern">
-                            <label>Latitude</label>
-                            <input type="number" step="any" name="lat" value={formData.lat} onChange={handleInputChange} placeholder="46.0567"/>
+                            <label>Ime paketnika</label>
+                            <input type="text" name="ime" value={formData.ime} onChange={handleInputChange} placeholder="052" />
                         </div>
-                        <div className="input-group-modern">
-                            <label>Longitude</label>
-                            <input type="number" step="any" name="lng" value={formData.lng} onChange={handleInputChange} placeholder="45.0556"/>
-                        </div>
-                    </div>
-                    <div className="input-group-modern">
-                        <label>Naslov</label>
-                        <input type="text" name="lokacija" value={formData.lokacija} onChange={handleInputChange} placeholder="Petrol, Celovška cesta" />
-                    </div>
-                    <button onClick={handleSubmit} className="checkout-submit-btn" style={{ padding: '10px 5px', fontSize: '12px'}}>
-                        <span>SHRANI NOV PAKETNIK</span>
-                    </button>
-                </div>
-            )}
-
-            <div className="location-list-container">
-                <h4>{isAdmin ? "Pregled vseh paketnikov:" : "Izberi lokacijo prevzema:"}</h4>
-                <div className="location-list" style={{ maxHeight: isAdmin ? '200px' : '400px', overflowY: 'auto' }}>
-                    {paketniki.map((p) => {
-                        const pId = p._id || p.id;
-                        const isSelected = selectedLocker?._id === pId;
-                        const isFocused = activePopupId === pId;
-
-                        return (
-                            <div 
-                                key={pId} 
-                                className={`location-item ${isSelected ? 'confirmed' : ''} ${isFocused ? 'active' : ''}`}
-                                onClick={() => handleFocusLocker(p)}
-                                style={{ 
-                                    padding: '12px 10px', 
-                                    borderBottom: '1px solid #eee', 
-                                    cursor: 'pointer',
-                                    background: isSelected ? '#d4edda' : isFocused ? '#e6e6e6' : 'transparent',
-                                    borderLeft: isSelected ? '4px solid #28a745' : isFocused ? '4px solid #000' : '4px solid transparent',
-                                    display: 'flex',            
-                                    justifyContent: 'space-between', 
-                                    alignItems: 'center',
-                                    transition: 'background 0.2s ease'
-                                }}
-                            >
-                                <div>
-                                    <strong>{p.ime}</strong> - {p.lokacija}
-                                    {isSelected && <span style={{ color: '#28a745', marginLeft: '10px', fontSize: '12px' }}>✓ Izbrano</span>}
-                                </div>
-
-                                {isAdmin && (
-                                    <button 
-                                        onClick={(e) => handleDelete(e, pId)}
-                                        style={{
-                                            background: 'transparent',
-                                            border: 'none',
-                                            color: '#ff4d4d',
-                                            cursor: 'pointer',
-                                            padding: '5px',
-                                            display: 'flex',
-                                            alignItems: 'center'
-                                        }}
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-                                )}
+                        <div className="row-modern" style={{ gridTemplateColumns: '1fr 1fr' }}>
+                            <div className="input-group-modern">
+                                <label>Latitude</label>
+                                <input type="number" step="any" name="lat" value={formData.lat} onChange={handleInputChange} placeholder="46.0567"/>
                             </div>
-                        );
-                    })}
+                            <div className="input-group-modern">
+                                <label>Longitude</label>
+                                <input type="number" step="any" name="lng" value={formData.lng} onChange={handleInputChange} placeholder="45.0556"/>
+                            </div>
+                        </div>
+                        <div className="input-group-modern">
+                            <label>Naslov</label>
+                            <input type="text" name="lokacija" value={formData.lokacija} onChange={handleInputChange} placeholder="Petrol, Celovška cesta" />
+                        </div>
+                        <button onClick={handleSubmit} className="checkout-submit-btn" style={{ padding: '10px 5px', fontSize: '12px'}}>
+                            <span>SHRANI NOV PAKETNIK</span>
+                        </button>
+                    </div>
+                )}
+            </div>
+            <div className="content-box-modern">
+                <div className="location-list-container">
+                    <h4>{isAdmin ? "Pregled vseh paketnikov:" : "Izberi lokacijo prevzema:"}</h4>
+                    <div className="location-list" style={{ maxHeight: isAdmin ? '200px' : '400px', overflowY: 'auto' }}>
+                        {paketniki.map((p) => {
+                            const pId = p._id || p.id;
+                            const isSelected = selectedLocker?._id === pId;
+                            const isFocused = activePopupId === pId;
+
+                            return (
+                                <div 
+                                    key={pId} 
+                                    className={`location-item ${isSelected ? 'confirmed' : ''} ${isFocused ? 'active' : ''}`}
+                                    onClick={() => handleFocusLocker(p)}
+                                    style={{ 
+                                        padding: '12px 10px', 
+                                        borderBottom: '1px solid #eee', 
+                                        cursor: 'pointer',
+                                        background: isSelected ? '#d4edda' : isFocused ? '#e6e6e6' : 'transparent',
+                                        borderLeft: isSelected ? '4px solid #28a745' : isFocused ? '4px solid #000' : '4px solid transparent',
+                                        display: 'flex',            
+                                        justifyContent: 'space-between', 
+                                        alignItems: 'center',
+                                        transition: 'background 0.2s ease'
+                                    }}
+                                >
+                                    <div>
+                                        <strong>{p.ime}</strong> - {p.lokacija}
+                                        {isSelected && <span style={{ color: '#28a745', marginLeft: '10px', fontSize: '12px' }}>✓ Izbrano</span>}
+                                    </div>
+
+                                    {isAdmin && (
+                                        <button 
+                                            onClick={(e) => handleDelete(e, pId)}
+                                            style={{
+                                                background: 'transparent',
+                                                border: 'none',
+                                                color: '#ff4d4d',
+                                                cursor: 'pointer',
+                                                padding: '5px',
+                                                display: 'flex',
+                                                alignItems: 'center'
+                                            }}
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
-          </div>
         </div>
   );
 }
