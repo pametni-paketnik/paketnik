@@ -32,5 +32,23 @@ def predobdelaj_podatke():
             if img is None:
                 continue
 
+             # 1. SPREMEMBA VELIKOSTI (Resizing)
+            img_resized = cv2.resize(img, target_size)
+
+            # 2. PRETVORBA V SIVINE (če rabi Člana 2)
+            img_gray = cv2.cvtColor(img_resized, cv2.COLOR_BGR2GRAY)
+            
+            # SHRANJEVANJE ORIGINALNE (pomanjšane) SLIKE
+            cv2.imwrite(os.path.join(oseba_proc_dir, f"proc_{img_name}"), img_resized)
+
+            # 3. AUGMENTACIJA (Horizontalni flip - zrcaljenje)
+            # Za podvojeno št slik brez dodatnega slikanja
+            img_flip = cv2.flip(img_resized, 1)
+            cv2.imwrite(os.path.join(oseba_proc_dir, f"aug_flip_{img_name}"), img_flip)
+
+            print(f"  - Obdelana slika: {img_name} (+ augmentacija)")
+
+    print("\nPredobdelava končana! Slike so v mapi 'dataset/obdelani_podatki'.")
+
 if __name__ == "__main__":
     predobdelaj_podatke()
