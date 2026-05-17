@@ -13,7 +13,7 @@ function Home() {
     const [selectedPlant, setSelectedPlant] = useState(null); 
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const [activeFeature, setActiveFeature] = useState('water'); 
-
+    const [cartCount, setCartCount] = useState(0); 
 
     useEffect(() => {
         const fetchPlants = async () => {
@@ -46,16 +46,23 @@ function Home() {
         }
         if(selectedPlant){
             setActiveFeature('water'); 
+
+            const currentCart = JSON.parse(localStorage.getItem('cart') || []); 
+            setCartCount(currentCart.length); 
         }
     }, [plants.length, selectedPlant]);
-
     const navigate = useNavigate(); 
+
     const handleAddToCart = () => {
         const currentCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
+        
+        if(currentCart.length >= 2){
+            alert("Naročilo je omejeno na največ 2 roži naenkrat. Prosim dokončajte svoje naročilo"); 
+            return; 
+        }
         localStorage.setItem('cart', JSON.stringify([...currentCart, selectedPlant])); 
         alert(`${selectedPlant.name} dodana v košarico!`);
-
-        navigate('/'); 
+        navigate('/home'); 
     }
 
     const [outOfStock, setOutOfStock] = useState([]); 
@@ -246,8 +253,22 @@ function Home() {
                         </div>
 
                         <div className="details-footer">
-                            <button className="main-add-btn full-width" onClick={handleAddToCart}>
-                                Dodaj v košarico <ShoppingCart size={24} strokeWidth={3} />
+                            <button 
+                                className="main-add-btn full-width" 
+                                onClick={handleAddToCart}
+                                disabled={cartCount >= 2}
+                                style={cartCount >= 2 ? { 
+                                    backgroundColor: '#b3b3b3', 
+                                    cursor: 'not-allowed', 
+                                    color: '#ffffff',
+                                    opacity: 0.8
+                                } : {}}
+                            >
+                                {cartCount >= 2 ? (
+                                    <>Košarica je polna <ShoppingCart size={24} /></>
+                                ) : (
+                                    <>Dodaj v košarico <ShoppingCart size={24} strokeWidth={3} /></>
+                                )}
                             </button>
                         </div>
                     </div>

@@ -10,6 +10,7 @@ import Home from './Home';
 import Payment from './Payment.js'; 
 import Order from './Order.js';
 import AddPlant from './AddPlant.js'; 
+import ReviewForm from './Review.js';
 
 function AppContent() {
   const { user } = useContext(UserContext);
@@ -38,7 +39,6 @@ function AppContent() {
                   <Link to="/profile" className="navbar-text">Profil</Link>
                   <Link to="/logout" className="navbar-text">Odjava</Link>
                   <Link to="/order" className="navbar-text">Naročilo</Link>
-                  {/* Profilna slika */}
                 </>
             ) : (
                 <>
@@ -58,6 +58,8 @@ function AppContent() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/order" element={<Order />} />
+
+            <Route path="/review" element={<ReviewForm/>}/>
 
             {user && user.vloga === 'admin' && (
                 <Route path="/addImage" element={<AddPlant />} />

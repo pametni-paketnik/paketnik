@@ -19,7 +19,7 @@ const OrderForm = () =>{
 
     useEffect(() => {
         const storedCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
-        setCart(storedCart); 
+        setCart(storedCart.slice(0, 2)); 
     }, []); 
 
     const currentProduct = cart[currentIndex]; 
