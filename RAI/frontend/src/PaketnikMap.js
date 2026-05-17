@@ -1,21 +1,26 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Trash2 } from "lucide-react";
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-// instaliraj: npm install leaflet react-leaflet
 import api from "./api";
 import DodajPaketnik from './DodajPaketnik';
 import paketnikClosed from './images/pametni_paketnik_closed.png'; 
 import { TextAlignCenter } from "lucide-react";
 
-function ChangeView({center}) {
+function ChangeView({center, targetMarkerRef}) {
   const map = useMap(); 
   useEffect(() => {
     if(center){
-      map.flyTo(center, 12); 
+      map.flyTo(center, 14);
+      
+      if(targetMarkerRef && targetMarkerRef.current){
+        setTimeout(() => {
+            targetMarkerRef.current.openPopup(); 
+        }, 300); 
+      }
     }
-  }, [center, map]); 
+  }, [center, map, targetMarkerRef]); 
   return null; 
 }
 
@@ -38,6 +43,11 @@ function PaketnikMap({ onSelect, user, selectedLocker }) {
   const [paketniki, setPaketniki] = useState([]); 
   const [loading, setLoading] = useState(true);
 
+  const [focusedCenter, setFocusedCenter] = useState(null);
+  const [activePopupId, setActivePopupId] = useState(null);
+
+  const markerRefs = useRef({}); 
+
   const [formData, setFormData] = useState({
         ime: "",
         lokacija: "",
@@ -56,7 +66,7 @@ function PaketnikMap({ onSelect, user, selectedLocker }) {
 
     useEffect (() =>{
       fetchPaketniki(); 
-    }, []); 
+    }, [fetchPaketniki]); 
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -90,6 +100,12 @@ function PaketnikMap({ onSelect, user, selectedLocker }) {
         }
     }; 
 
+    const handleFocusLocker = (p) => {
+        const pId = p._id || p.id; 
+        setActivePopupId(pId); 
+        setFocusedCenter([parseFloat(p.lat), parseFloat(p.lng)]); 
+    }; 
+
   return (
         <div className="map-and-content-wrapper"> 
             <div className="map-frame">
@@ -98,25 +114,53 @@ function PaketnikMap({ onSelect, user, selectedLocker }) {
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         attribution='&copy; OpenStreetMap contributors'
                     />
-                    {selectedLocker && <ChangeView center={[parseFloat(selectedLocker.lat), parseFloat(selectedLocker.lng)]}/>}
+                    {focusedCenter && (
+                      <ChangeView 
+                        center={focusedCenter} 
+                        targetMarkerRef={{ current: markerRefs.current[activePopupId] }} 
+                      />
+                    )}
 
                     {paketniki
                         .filter(p => p.lat && p.lng && !isNaN(parseFloat(p.lat)) && !isNaN(parseFloat(p.lng)))
-                        .map((p) => (
-                            <Marker 
-                                key={p._id || p.id} 
-                                position={[parseFloat(p.lat), parseFloat(p.lng)]} 
-                                icon={customIcon}
-                                eventHandlers={{
-                                    click: () => onSelect && onSelect(p),
-                                }}
-                            >
-                                <Popup>
-                                    <strong>{p.ime}</strong> <br />
-                                    {p.lokacija}
-                                </Popup>
-                            </Marker>
-                        ))}
+                        .map((p) => {
+                            const pId = p._id || p.id;
+                            return (
+                                <Marker 
+                                    key={pId} 
+                                    ref={(el) => { if (el) markerRefs.current[pId] = el; }}
+                                    position={[parseFloat(p.lat), parseFloat(p.lng)]} 
+                                    icon={customIcon}
+                                    eventHandlers={{
+                                        click: () => handleFocusLocker(p),
+                                    }}
+                                >
+                                    <Popup>
+                                        <div className="map-popup-custom" style={{ padding: '5px', textAlign: 'center' }}>
+                                            <h3 style={{ margin: '0 0 5px 0', fontSize: '14px' }}>{p.ime}</h3>
+                                            <p style={{ margin: '0 0 10px 0', fontSize: '12px', color: '#666' }}>{p.lokacija}</p>
+                                            
+                                            <button 
+                                                onClick={() => onSelect && onSelect(p)}
+                                                style={{
+                                                    background: selectedLocker?._id === pId ? '#4BB543' : '#000',
+                                                    color: '#fff',
+                                                    border: 'none',
+                                                    padding: '6px 12px',
+                                                    borderRadius: '4px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '11px',
+                                                    fontWeight: 'bold',
+                                                    width: '100%'
+                                                }}
+                                            >
+                                                {selectedLocker?._id === pId ? "✓ IZBRANO" : "IZBERI TO LOKACIJO"}
+                                            </button>
+                                        </div>
+                                    </Popup>
+                                </Marker>
+                            );
+                        })}
                     <ResizeMap />
                 </MapContainer>
             </div>
@@ -152,27 +196,30 @@ function PaketnikMap({ onSelect, user, selectedLocker }) {
                 <h4>{isAdmin ? "Pregled vseh paketnikov:" : "Izberi lokacijo prevzema:"}</h4>
                 <div className="location-list" style={{ maxHeight: isAdmin ? '200px' : '400px', overflowY: 'auto' }}>
                     {paketniki.map((p) => {
-                        const isSelected = selectedLocker?._id === p._id || selectedLocker?.id === p.id;
                         const pId = p._id || p.id;
+                        const isSelected = selectedLocker?._id === pId;
+                        const isFocused = activePopupId === pId;
 
                         return (
                             <div 
                                 key={pId} 
-                                className={`location-item ${isSelected ? 'active' : ''}`}
-                                onClick={() => onSelect && onSelect(p)}
+                                className={`location-item ${isSelected ? 'confirmed' : ''} ${isFocused ? 'active' : ''}`}
+                                onClick={() => handleFocusLocker(p)}
                                 style={{ 
-                                    padding: '10px', 
+                                    padding: '12px 10px', 
                                     borderBottom: '1px solid #eee', 
                                     cursor: 'pointer',
-                                    background: isSelected ? '#e6e6e6' : 'transparent',
-                                    borderLeft: isSelected ? '4px solid #000' : '4px solid transparent',
+                                    background: isSelected ? '#d4edda' : isFocused ? '#e6e6e6' : 'transparent',
+                                    borderLeft: isSelected ? '4px solid #28a745' : isFocused ? '4px solid #000' : '4px solid transparent',
                                     display: 'flex',            
-                                    justifyContent: 'space-between', // POPRAVEK: camelCase
-                                    alignItems: 'center'
+                                    justifyContent: 'space-between', 
+                                    alignItems: 'center',
+                                    transition: 'background 0.2s ease'
                                 }}
                             >
                                 <div>
                                     <strong>{p.ime}</strong> - {p.lokacija}
+                                    {isSelected && <span style={{ color: '#28a745', marginLeft: '10px', fontSize: '12px' }}>✓ Izbrano</span>}
                                 </div>
 
                                 {isAdmin && (
