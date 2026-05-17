@@ -410,7 +410,7 @@ nav {
 
   .paketnik-base {
     transform: scale(1); 
-    max-width: 90% !important;
+    max-width: 80% !important;
     margin: 0 auto;
   }
 
@@ -498,7 +498,7 @@ nav {
 @media (min-width: 1200px) {
   .paketnik-base {
     width: 100%;
-    height: 100%;
+    height:100%;
     max-width: 600px; 
     max-height: 72vh; 
     margin-left: 100px;
