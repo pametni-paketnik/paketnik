@@ -210,6 +210,12 @@ nav {
   line-height: 1.6;
   color: #000;
   max-width: 400px;
+}
+.details-care {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #000;
+  max-width: 400px;
   margin-bottom: 80px;
 }
 
