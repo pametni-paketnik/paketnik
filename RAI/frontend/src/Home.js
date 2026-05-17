@@ -15,6 +15,8 @@ function Home() {
     const [activeFeature, setActiveFeature] = useState('water'); 
     const [cartCount, setCartCount] = useState(0); 
 
+    const detailsRef = useRef(null);
+
     useEffect(() => {
         const fetchPlants = async () => {
             try {
@@ -49,21 +51,43 @@ function Home() {
 
             const currentCart = JSON.parse(localStorage.getItem('cart') || []); 
             setCartCount(currentCart.length); 
+
+            requestAnimationFrame(() => {
+                if (detailsRef.current) {
+                    detailsRef.current.scrollTop = 0;
+                }
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
         }
     }, [plants.length, selectedPlant]);
     const navigate = useNavigate(); 
 
     const handleAddToCart = () => {
-        const currentCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
-        
-        if(currentCart.length >= 2){
-            alert("Naročilo je omejeno na največ 2 roži naenkrat. Prosim dokončajte svoje naročilo"); 
-            return; 
-        }
-        localStorage.setItem('cart', JSON.stringify([...currentCart, selectedPlant])); 
-        alert(`${selectedPlant.name} dodana v košarico!`);
-        navigate('/home'); 
+    const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+    if (currentCart.length >= 2) {
+        alert("Naročilo je omejeno na največ 2 roži naenkrat. Prosim dokončajte svoje naročilo");
+        return;
     }
+
+    const updatedCart = [...currentCart, selectedPlant];
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
+
+        setCartCount(updatedCart.length);
+
+        alert(`${selectedPlant.name} dodana v košarico!`);
+
+        setSelectedPlant(null);
+
+        requestAnimationFrame(() => {
+            if (scrollRef.current) {
+                scrollRef.current.scrollTop = 0;
+            }
+        });
+    };
 
     const [outOfStock, setOutOfStock] = useState([]); 
     const toggleStock = async (id, currentState) => {
@@ -164,7 +188,7 @@ function Home() {
 
             <section className="content-side">
                 {selectedPlant ? (
-                    <div className="plant-details-view">
+                    <div className="plant-details-view" ref={detailsRef}>
                         {isAdmin && (
                             <button 
                                 className="admin-delete-top-btn" 
@@ -183,8 +207,10 @@ function Home() {
                         <div className="details-container">
                             <h2 className="details-title">{selectedPlant.name}</h2>
                             <p className="details-price">{selectedPlant.price}€</p>
-                            <p className="details-description"><b>Description: </b>{selectedPlant.description}</p>
-                            <p className="details-care"><b>Care: </b>{selectedPlant.care}</p>
+                            <p><b>DESCRIPTION: </b></p>
+                            <p className="details-description">{selectedPlant.description}</p>
+                            <p><b>CARE: </b></p>
+                            <p className="details-care">{selectedPlant.care}</p>
 
                             <div className="plant-features-row">
                                 <div 

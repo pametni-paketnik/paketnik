@@ -66,6 +66,28 @@ const OrderForm = () =>{
         }
     }; 
 
+    const handleRemoveFromCart = () => {
+        const updatedCart = cart.filter((_, index) => index !== currentIndex);
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
+
+        setCart(updatedCart);
+
+        if (updatedCart.length === 0) {
+            navigate('/home');
+            return;
+        }
+
+        if (currentIndex >= updatedCart.length) {
+            setCurrentIndex(updatedCart.length - 1);
+        }
+
+        setSelectedLocker(null);
+
+        setProcessedOrders(prev =>
+            prev.filter((_, index) => index !== currentIndex)
+        );
+    };
+
     if (cart.length === 0) return <div>Vaša košarica je prazna</div>; 
     if (!currentProduct) return <div>Nalagam...</div>; 
 
@@ -86,15 +108,14 @@ return (
 
             <div className="checkout-details-area">
                 <div className="checkout-content-scrollable">
-                    <div className="checkout-header-info">
+                    <div className="checkout-header-info" style={{ position: 'relative' }}>
+                        <button onClick={handleRemoveFromCart} className="btn-delete-item">ODSTRANI</button>
                         <span className="checkout-step-label">IZDELEK {currentIndex + 1} OD {cart.length}</span>
                         <h1 className="checkout-product-name">{currentProduct.name.toUpperCase()}</h1>
                         <p className="checkout-product-price">{currentProduct.price}€</p>
                     </div>
 
-                    <p className="checkout-description-text">
-                        Ta čudovita rastlina bo osvežila vaš prostor in prinesla naravno energijo v vaš dom.
-                    </p>
+                    <p className="checkout-description-text">{currentProduct.description}</p>
 
                     <section className="checkout-form-section">
                         <h3 className="checkout-section-title">1. LOKACIJE NAŠIH PAKETIKOV</h3>
