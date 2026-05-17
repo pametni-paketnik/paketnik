@@ -116,6 +116,7 @@ nav {
 
 .card-floating-img {
   position: absolute;
+  top: -150px;
   left: 5%;
   width: 275px;
   height: auto;
@@ -943,6 +944,28 @@ nav {
 .checkout-submit-btn:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+}
+
+.btn-delete-item {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: transparent;
+  border: none;
+  color: #ff4d4d;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: capitalize;
+  font-weight: 800;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.btn-delete-item:hover {
+  color: #d63031;
+  transform: scale(1.05);
 }
 
 /* PAYMENT METHOD */
