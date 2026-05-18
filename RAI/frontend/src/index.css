@@ -116,8 +116,8 @@ nav {
 
 .card-floating-img {
   position: absolute;
-  top: -150px;
-  left: 5%;
+  bottom: 4%;
+  left: 6%;
   width: 275px;
   height: auto;
   pointer-events: none;
@@ -131,7 +131,7 @@ nav {
 
 .plant-in-paketnik {
   position: absolute;
-  width: 650px;      
+  width: 670px;      
   height: auto;
   left: 28%;
   top: 60%;
@@ -149,7 +149,7 @@ nav {
         opacity: 0;
     }
     to {
-        left: 28%;   
+        left: 26%;   
         top: 60%;   
         transform: translate(-45%, -50%) scale(0.7); 
         opacity: 1;
@@ -541,8 +541,8 @@ nav {
         opacity: 0;
     }
     to {
-        left: 28%;   
-        top: 60%;   
+        left: 27.5%;   
+        top: 59.8%;   
         transform: translate(-65%, -55%) scale(0.7); 
         opacity: 1;
     }
@@ -1203,7 +1203,6 @@ nav {
 
     .checkout-product-name {
         font-size: 28px; 
-
     }
 
     .checkout-product-price {
@@ -1310,6 +1309,7 @@ nav {
   }
 }
 
+/* PROFILE */
 /* Profile */
 .profile-layout {
   width: 100%;
@@ -1321,22 +1321,19 @@ nav {
 
 .profile-top-grid {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 0px 15px;
+  grid-template-columns: repeat(3, minmax(0, 1fr)); /* Čisto in varno definira 3 enake stolpce */
+  gap: 20px;
   width: 100%;
+  align-items: stretch; /* Poskrbi, da so vse kartice v vrsti enako visoke */
 }
 
-.profile-top-grid .profile-card {
+/* Uporabimo skupne lastnosti za vse tri kartice, da bodo vizualno usklajene */
+.profile-card, 
+.payment-card-wrapper, 
+.order-history-card {
   width: 100%;
   max-width: none !important;
   min-width: 0;
-}
-
-.profile-top-grid .profile-card :last-child .form-header {
-  margin-top: -8px;
-}
-
-.profile-card, .payment-card-wrapper {
   border: none !important;
   outline: none !important;
   background: rgba(255, 255, 255, 0.6);
@@ -1345,23 +1342,28 @@ nav {
   border-radius: 30px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); 
   overflow: hidden;
+  display: flex; /* Omogoči, da se notranji elementi raztegnejo do dna */
 }
 
-.profile-form-section, .payment-content {
+/* Popravljen selektor za formo znotraj zgodovine naročil, če uporablja isti razred */
+.profile-form-section, 
+.payment-content {
   width: 100%;
   box-sizing: border-box;
-  padding: 60px; 
+  padding: 40px 30px; /* Zmanjšan padding iz 60px, da imajo elementi v ožjih stolpcih dovolj prostora */
   background: rgba(255, 255, 255, 0.4); 
   display: flex;
   flex-direction: column;
+  flex: 1; /* Raztegne vsebino čez celotno višino kartice */
 }
 
 .profile-header-row {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column-reverse; /* Zaradi ožjih stolpcev je bolje, da je slika nad besedilom */
   align-items: center;
-  gap: 25px;
-  margin-bottom: 35px;
+  text-align: center;
+  gap: 15px;
+  margin-bottom: 25px;
 }
 
 .profile-header-text {
@@ -1369,11 +1371,11 @@ nav {
 }
 
 .profile-header-text h1 {
-  font-size: 1.8rem;
+  font-size: 1.5rem; /* Malenkost zmanjšano, da se besedilo ne lomi grdo */
   font-weight: 800;
   color: #1a1a1a;
   margin-bottom: 8px;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   padding-top: 0;
 }
 
@@ -1389,19 +1391,18 @@ nav {
 }
 
 .profile-header-image {
-  width: 110px;
-  height: 110px;
+  width: 90px;  /* Prilagojena velikost za tri-stolpčno postavitev */
+  height: 90px;
   border-radius: 50%;
   object-fit: cover;
   border: none;
-  background: #fff;
   box-shadow: 0 10px 20px rgba(54, 80, 22, 0.15); 
 }
 
 .profile-form-section .submit-btn:last-child,
 .payment-content .submit-btn:last-child,
 .payment-content .pay-button:last-child {
-  margin-top: auto;
+  margin-top: auto; /* Potisne gumbe na dno kartice, da so lepo poravnani */
 }
 
 .file-upload-wrapper {
@@ -1457,17 +1458,10 @@ nav {
 }
 
 .profile-message {
-  color: #6F4E37;
   margin-top: 20px;
   font-weight: bold;
   text-align: center;
   font-size: 0.85rem;
-}
-
-.order-history-card {
-  width: 100%;
-  max-width: none !important;
-  box-sizing: border-box;
 }
 
 .order-history-list {
@@ -1475,8 +1469,8 @@ nav {
 }
 
 .order-history-empty {
-  padding: 40px;
-  border: 2px dashed rgba(54, 80, 22, 0.2); /* Prilagojena barva črtic */
+  padding: 30px 20px;
+  border: 2px dashed rgba(54, 80, 22, 0.2); 
   border-radius: 20px;
   text-align: center;
   color: #666;
@@ -1484,24 +1478,32 @@ nav {
   background: rgba(255, 255, 255, 0.3);
 }
 
-@media (max-width: 900px) {
+/* ODZIVNOST (Media Queries) */
+@media (max-width: 1100px) {
+  /* Na manjših prenosnikih in tablicah zložimo kartice eno pod drugo */
   .profile-top-grid {
     grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .profile-layout {
-    max-width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-  }
-
-  .profile-card, .payment-card-wrapper {
-    border-radius: 20px; /* Uskajeno z .register-card na mobilnikih */
+    gap: 25px;
   }
 
   .profile-form-section, .payment-content {
-    padding: 30px 20px !important; /* Popolnoma enako kot register-form-section */
+    padding: 40px; 
+  }
+
+  .profile-header-row {
+    flex-direction: row-reverse; /* Na širšem zaslonu vrnemo sliko na desno stran */
+    text-align: left;
+    align-items: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-layout {
+    padding: 10px;
+  }
+
+  .profile-form-section, .payment-content {
+    padding: 30px 20px !important; 
     background: rgba(255, 255, 255, 0.7);
   }
 
@@ -1512,243 +1514,424 @@ nav {
   }
 
   .profile-header-text h1 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 
   .profile-header-image {
     width: 90px;
     height: 90px;
   }
-
-  .order-history-card {
-    grid-column: auto;
-  }
 }
 
 /* REVIEW */
-.review-data-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-    padding: 20px;
-    border-radius: 4px;
-    margin-top: 15px;
-}
-
-.review-data-grid p {
-    margin: 0;
-    font-size: 1rem;
-    color: #333;
-}
-
-.selected-locker-display {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 4px;
-    border: 1px solid #e0e0e0;
-    margin-top: 15px;
-}
-
-.locker-info-icon {
-    font-size: 1.8rem;
-}
-
-.selected-locker-display h3 {
-    margin: 0 0 5px 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-}
-
-.selected-locker-display p {
-    margin: 0;
-    font-size: 0.9rem;
-    color: #666;
-}
-
-.payment-review-method {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background: #ffffff;
-    padding: 15px 20px;
-    border-radius: 4px;
-    border: 1px solid #e0e0e0;
-    margin-top: 15px;
-}
-
-.back-edit-btn {
-    display: block;
+.checkout-page-review {
+    height: 80vh;
     width: 100%;
-    background: transparent;
-    border: none;
-    color: #666;
-    text-align: center;
-    margin-top: 15px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    text-decoration: underline;
+    overflow: hidden;
 }
 
-.back-edit-btn:hover {
+.checkout-main-wrapper-review {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.checkout-preview-review {
+    flex: 1;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+}
+
+.checkout-details-review {
+    flex: 1;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;   
+    padding: 60px 50px 60px 70px; 
+    box-sizing: border-box;
+    overflow-y: auto; 
+    overflow-x: hidden;
+    background: rgba(255, 255, 255, 0.65); 
+    backdrop-filter: blur(20px);          
+    -webkit-backdrop-filter: blur(20px); 
+    border-radius: 20px;                  
+    border: 1px solid rgba(255, 255, 255, 0.4); 
+    scrollbar-width: thin;
+    scrollbar-color: #000000 transparent;
+}
+
+.checkout-details-review::-webkit-scrollbar {
+    width: 6px; 
+}
+
+.checkout-details-review::-webkit-scrollbar-button,
+.checkout-details-review::-webkit-scrollbar-button:start:decrement,
+.checkout-details-review::-webkit-scrollbar-button:end:increment {
+    display: none !important;
+    height: 0px !important;
+    width: 0px !important;
+}
+
+.checkout-details-review::-webkit-scrollbar-track {
+    background: transparent; 
+    margin-top: 20px;    
+    margin-bottom: 20px; 
+}
+
+.checkout-details-review::-webkit-scrollbar-thumb {
+    background-color: #000000;
+    border-radius: 10px;
+}
+
+.checkout-step-label-review {
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    color: #888;
+}
+
+.checkout-product-name-review {
+    font-size: 3rem;
+    font-weight: 900;
+    margin: 10px 0;
+    color: #000;
+    line-height: 1.1;
+    letter-spacing: 2px;
+}
+
+.checkout-description-review {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.checkout-section-title-review {
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    text-align: left;
+    border-bottom: 1px solid #000;
+    padding-bottom: 8px;
+    margin-bottom: 25px;
+    margin-top: 40px;
+    font-weight: 800;
     color: #000;
 }
 
-/* Seznam narocil za cvetlicarne */
-.flower-order-card {
-  border: none !important;
-  outline: none !important;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 30px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-
-  width: 100%;
-  box-sizing: border-box;
-  padding: 60px;
-  display: flex;
-  flex-direction: column;
-  transition: all 0.3s ease;
-}
-
-
-.flower-orders-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-  gap: 25px;
-  width: 100%;
-}
-
-.flower-order-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 25px;
-}
-
-.flower-order-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 16px;
-  border-radius: 999px;
-  background: rgba(111, 78, 55, 0.08);
-  color: #6F4E37;
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.flower-order-status {
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 16px;
-  border-radius: 999px;
-  background: rgba(54, 80, 22, 0.12);
-  color: rgb(54, 80, 22);
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.flower-order-customer {
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: #1a1a1a;
-  margin: 0 0 8px 0;
-  letter-spacing: 1px;
-}
-
-.flower-order-email {
-  font-size: 0.9rem;
-  color: #444;
-  margin: 0 0 30px 0;
-  line-height: 1.6;
-}
-
-.flower-order-info {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin-bottom: 35px;
-}
-
-.flower-order-info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(54, 80, 22, 0.08);
-}
-
-.flower-order-label {
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: rgb(54, 80, 22);
-}
-
-.flower-order-value {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #1a1a1a;
-}
-
-.flower-order-price {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: #6F4E37;
-}
-
-.flower-order-accept-btn {
-  margin-top: auto;
-  width: 100%;
-  border: none;
-  border-radius: 14px;
-  padding: 15px 20px;
-  background: rgb(54, 80, 22);
-  color: #ffffff;
-  font-size: 0.85rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.flower-order-accept-btn:hover {
-  background: rgb(54, 80, 22);
-  filter: brightness(1.1);
-  box-shadow: 0 10px 20px rgba(54, 80, 22, 0.25);
-  transform: translateY(-2px);
-}
-
-@media (max-width: 900px) {
-  .flower-orders-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .flower-order-card {
-    padding: 30px 20px;
+.checkout-submit-btn-review {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 18px 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    width: 100%;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 30px;
     border-radius: 20px;
-  }
+}
 
-  .flower-order-customer {
-    font-size: 1.4rem;
-  }
+.checkout-submit-btn-review span {
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
 
-  .flower-order-card-header {
+.checkout-submit-btn-review:hover {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+}
+
+.card-visual-modern {
+    width: 100%;
+    max-width: 360px;
+    height: 200px;
+    background: linear-gradient(135deg, #111 0%, #333 100%);
+    border-radius: 20px;
+    padding: 25px;
+    color: white;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+    margin: 10px 0 30px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-inner {
+    display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.card-chip {
+    width: 40px;
+    height: 30px;
+    background: linear-gradient(135deg, #f0d57d 0%, #977a28 100%);
+    border-radius: 4px;
+}
+
+.card-type {
+    font-weight: 900;
+    font-style: italic;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+}
+
+.card-number-display {
+    font-size: 1.3rem;
+    letter-spacing: 3px;
+    font-family: 'Courier New', Courier, monospace;
+    margin: 20px 0;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.card-bottom {
+    display: flex;
+    justify-content: space-between;
+}
+
+.card-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-info .label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    opacity: 0.6;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+.card-info .value {
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
+.review-data-box {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.input-group-static {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 8px;
+}
+
+.input-group-static label {
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #999;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.input-group-static p {
+    margin: 0;
+    font-size: 15px;
+    color: #111;
+    font-weight: 500;
+}
+
+.locker-review-item {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    padding: 10px 0;
+}
+.locker-review-item:not(:last-child) {
+    border-bottom: 1px solid #f0f0f0;
+}
+.locker-icon-min {
+    font-size: 1.5rem;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.locker-item-title {
+    margin: 0;
+    font-size: 14px;
+    color: #000;
+}
+.locker-item-address {
+    margin: 3px 0 0 0;
+    font-size: 13px;
+    color: #666;
+}
+
+.checkout-back-btn {
+    background: transparent;
+    border: none;
+    color: #666;
+    padding: 15px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: underline;
+    transition: color 0.2s;
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+}
+.checkout-back-btn:hover {
+    color: #000;
+}
+
+.checkout-summary-sticky {
+    width: 100%;
+    max-width: 450px;
+}
+
+.summary-title {
+    font-size: 1.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 800;
+    margin-bottom: 25px;
+}
+
+.cart-items-list {
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.cart-item-row-custom {
+  display: flex;
+  gap: 15px;
+  padding: 15px 0;
+  align-items: center; 
+  justify-content: flex-start; 
+  border-bottom: 1.5px solid #ddd;
+}
+
+.item-img-container-custom {
+  width: 100px;
+  height: auto;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.item-img-container-custom img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.item-details-custom {
+    flex: 1;
+}
+
+.item-header-custom {
+    display: flex;
+    justify-content: space-between;
     align-items: flex-start;
-    gap: 12px;
-  }
+}
+
+.item-header-custom h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.item-price-custom {
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.item-meta-custom {
+    margin: 4px 0 0 0;
+    font-size: 12px;
+    color: #888;
+}
+
+.item-subtext-custom {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.price-breakdown-custom {
+    margin-top: 30px;
+}
+
+.breakdown-row-custom {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.free-text-custom {
+    color: #000;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.divider-custom {
+    border: none;
+    border-top: 1.5px solid #ddd;
+    margin: 15px 0;
+}
+
+.total-row-custom {
+    color: #000;
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 900;
+}
+
+.empty-cart {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+@media (max-width: 992px) {
+    .checkout-main-wrapper-review {
+        flex-direction: column-reverse; 
+        height: auto;
+    }
+
+    .checkout-page-review {
+        height: auto;
+        overflow: auto;
+    }
+
+    .checkout-preview-review {
+        width: 100%;
+        padding: 40px 20px;
+    }
+
+    .checkout-details-review {
+        width: 100%;
+        padding: 40px 20px;
+        border-radius: 0px; 
+    }
+
+    .checkout-product-name-review {
+        font-size: 32px;
+    }
 }

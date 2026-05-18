@@ -57,89 +57,122 @@ const ReviewForm = () => {
     const displayYear = payment?.year ? payment.year.toString().slice(-2) : "YY";
 
     return (
-        <div className="checkout-container">
-            <div className="checkout-left">
-                <h1 className="checkout-main-title">PREGLED NAROČILA</h1>
-
-                <div className="review-sections-wrapper">
-                    <section className="form-section review-box">
-                        <h2>1. Vaši podatki</h2>
-                        <div className="review-data-grid">
-                            <p><strong>Ime in priimek:</strong> {customer?.firstName} {customer?.lastName}</p>
-                            <p><strong>E-pošta:</strong> {customer?.email}</p>
-                            <p><strong>Telefon:</strong> {customer?.phone}</p>
-                        </div>
-                    </section>
-
-                    <section className="form-section review-box">
-                        <h2>2. Prevzemna mesta rož</h2>
-                        {items && items.map((item, idx) => (
-                            <div key={idx} className="selected-locker-display" style={{ marginBottom: '10px' }}>
-                                <div className="locker-info-icon">📍</div>
-                                <div>
-                                    <h3>{item.name} → {item.selectedLocker?.name || "Glavni Paketnik"}</h3>
-                                    <p>{item.selectedLocker?.address || "Naslov paketnika ni izbran"}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </section>
-
-                    <section className="form-section review-box">
-                        <h2>3. Plačilo</h2>
-                        <div className="payment-review-method" style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                            <span className="credit-card-icon" style={{ fontSize: '2rem' }}>💳</span>
-                            <div>
-                                <p style={{ margin: 0 }}><strong>Imetnik:</strong> {payment?.cardholder || "Ni podatka"}</p>
-                                <p style={{ margin: '4px 0 0 0', color: '#555' }}><strong>Številka:</strong> {maskedCardNumber}</p>
-                                <p style={{ margin: '4px 0 0 0', fontSize: '0.9rem', color: '#777' }}>
-                                    <strong>Potek:</strong> {displayMonth}/{displayYear}
-                                </p>
-                            </div>
-                        </div>
-                    </section>
-
-                    <button onClick={handleConfirmOrder} className="pay-btn">
-                        POTRDI IN ODDAJ NAROČILO
-                    </button>
-                    
-                    <button onClick={() => navigate(-1)} className="back-edit-btn">
-                        ← Popravi podatke
-                    </button>
-                </div>
-            </div>
-
-            <div className="checkout-right-summary">
-                <h2 className="summary-title">Izbrane rože ({items?.length || 0})</h2>
+        /* POPRAVLJENO: Razredi se sedaj 100% ujemajo z vašim CSS-om za sivo-belo postavitev */
+        <div className="checkout-page-review">
+            <div className="checkout-main-wrapper-review">
                 
-                <div className="cart-items-list">
-                    {items && items.map((item, index) => (
-                        <div key={item._id || index} className="cart-item-row">
-                            <div className="item-img-container">
-                                <img src={`http://localhost:3001${item.path}`} alt={item.name} />
-                            </div>
-                            <div className="item-details">
-                                <div className="item-header">
-                                    <h3>{item.name ? item.name.toUpperCase() : "ROŽA"}</h3>
-                                    <span className="item-price">{(Number(item.price) || 0).toFixed(2)} €</span>
+                {/* Levi del - siva podlaga */}
+                <div className="checkout-preview-review">
+                    <div className="checkout-summary-sticky">
+                        <h2 className="summary-title">Izbrane rože ({items?.length || 0})</h2>
+                        
+                        <div className="cart-items-list">
+                            {items && items.map((item, index) => (
+                                <div key={item._id || index} className="cart-item-row-custom">
+                                    <div className="item-img-container-custom">
+                                        <img src={`http://localhost:3001${item.path}`} alt={item.name} />
+                                    </div>
+                                    <div className="item-details-custom">
+                                        <div className="item-header-custom">
+                                            <h3>{item.name ? item.name.toUpperCase() : "ROŽA"}</h3>
+                                            <span className="item-price-custom">{(Number(item.price) || 0).toFixed(2)} €</span>
+                                        </div>
+                                        <p className="item-meta-custom">Količina: 1</p>
+                                        <p className="item-subtext-custom">📍 {item.selectedLocker?.name || "Prevzemno mesto"}</p>
+                                    </div>
                                 </div>
-                                <p className="item-meta">Količina: 1</p>
-                                <p className="item-subtext">Paketnik: {item.selectedLocker?.name || "Prevzemno mesto"}</p>
+                            ))}
+                        </div>
+
+                        <div className="price-breakdown-custom">
+                            <div className="breakdown-row-custom">
+                                <span>Dostava v paketnik</span>
+                                <span className="free-text-custom">Brezplačno</span>
+                            </div>
+                            <hr className="divider-custom" />
+                            <div className="breakdown-row-custom total-row-custom">
+                                <span>Skupaj za plačilo:</span>
+                                <span>{(Number(totalPrice) || 0).toFixed(2)} €</span>
                             </div>
                         </div>
-                    ))}
+                    </div>
                 </div>
 
-                <div className="price-breakdown">
-                    <div className="breakdown-row">
-                        <span>Dostava v paketnik</span>
-                        <span className="free-text">Brezplačno</span>
-                    </div>
-                    <hr className="divider" />
-                    <div className="breakdown-row total-row">
-                        <span>Skupaj za plačilo:</span>
-                        <span>{(Number(totalPrice) || 0).toFixed(2)} €</span>
+                {/* Desni del - ČISTO BELO OZADJE + DRSNIK */}
+                <div className="checkout-details-review">
+                    <span className="checkout-step-label-review">KORAK 3 OD 3</span>
+                    <h1 className="checkout-product-name-review">PREGLED NAROČILA</h1>
+                    <p className="checkout-description-review">Prosimo, preverite pravilnost vaših podatkov pred potrditvijo naročila.</p>
+
+                    <div className="review-sections-wrapper">
+                        
+                        <h3 className="checkout-section-title-review">1. VAŠI PODATKI</h3>
+                        <div className="review-data-box">
+                            <div className="input-group-static">
+                                <label>Ime in priimek</label>
+                                <p>{customer?.firstName} {customer?.lastName}</p>
+                            </div>
+                            <div className="input-group-static">
+                                <label>E-pošta</label>
+                                <p>{customer?.email}</p>
+                            </div>
+                            <div className="input-group-static">
+                                <label>Telefon</label>
+                                <p>{customer?.phone}</p>
+                            </div>
+                        </div>
+
+                        <h3 className="checkout-section-title-review">2. PREVZEMNA MESTA ROŽ</h3>
+                        <div className="review-data-box">
+                            {items && items.map((item, idx) => (
+                                <div key={idx} className="locker-review-item">
+                                    <div className="locker-icon-min">📍</div>
+                                    <div>
+                                        <p className="locker-item-title"><strong>{item.name}</strong> → {item.selectedLocker?.name || "Glavni Paketnik"}</p>
+                                        <p className="locker-item-address">{item.selectedLocker?.address || "Naslov paketnika ni izbran"}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <h3 className="checkout-section-title-review">3. PLAČILO</h3>
+                        <div className="payment-container-minimal">
+                            <div className="card-visual-modern">
+                                <div className="card-inner">
+                                    <div className="card-top">
+                                        <div className="card-chip"></div>
+                                        <div className="card-type">VISA</div>
+                                    </div>
+                                    <div className="card-number-display">
+                                        {maskedCardNumber}
+                                    </div>
+                                    <div className="card-bottom">
+                                        <div className="card-info">
+                                            <span className="label">Imetnik kartice</span>
+                                            <span className="value">{payment?.cardholder || "Ni podatka"}</span>
+                                        </div>
+                                        <div className="card-info">
+                                            <span className="label">Potek</span>
+                                            <span className="value">{displayMonth}/{displayYear}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="action-buttons-wrapper">
+                            <button onClick={handleConfirmOrder} className="checkout-submit-btn-review">
+                                <span>POTRDI IN ODDAJ NAROČILO</span>
+                            </button>
+                            
+                            <button onClick={() => navigate(-1)} className="checkout-back-btn">
+                                ← Popravi podatke naročila
+                            </button>
+                        </div>
+
                     </div>
                 </div>
+
             </div>
         </div>
     );
