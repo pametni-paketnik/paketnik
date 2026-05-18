@@ -91,10 +91,24 @@ def predobdelaj_podatke():
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             cv2.imwrite(os.path.join(oseba_proc_dir, f"{ime_osnova}_gray.jpg"), gray)
 
-             # 3. Zrcaljenje (Flip)
+            # 3. Zrcaljenje (Flip)
             flipped = cv2.flip(img, 1)
             cv2.imwrite(os.path.join(oseba_proc_dir, f"{ime_osnova}_flip.jpg"), flipped)
 
+            # 3. Rotacije (Malo levo, malo desno)
+            for kot in [-15, -8, 8, 15]:
+                rot = rotiraj_sliko(img, kot)
+                cv2.imwrite(os.path.join(oseba_proc_dir, f"{ime_osnova}_rot{kot}.jpg"), rot)
+
+            # 4. Svetlost (Exposure up/down)
+            cv2.imwrite(os.path.join(oseba_proc_dir, f"{ime_osnova}_bright.jpg"), spremeni_svetlost(img, 1.4))
+            cv2.imwrite(os.path.join(oseba_proc_dir, f"{ime_osnova}_dark.jpg"), spremeni_svetlost(img, 0.6))
+
+            # 5. Blur (Zameglitev) in Grainy (Šum)
+            blur = cv2.GaussianBlur(img, (7, 7), 0)
+            cv2.imwrite(os.path.join(oseba_proc_dir, f"{ime_osnova}_blur.jpg"), blur)
+            grainy = dodaj_sum(img)
+            cv2.imwrite(os.path.join(oseba_proc_dir, f"{ime_osnova}_grainy.jpg"), grainy)
 
     print("\nPredobdelava končana! Slike so v mapi 'dataset/obdelani_podatki'.")
 
