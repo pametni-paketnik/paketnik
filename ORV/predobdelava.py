@@ -86,18 +86,15 @@ def predobdelaj_podatke():
 
             # --- GENERIRANJE VARIACIJ (Augmentacija) --------------------------------------------------------
 
-            # 2. PRETVORBA V SIVINE (če rabi Člana 2)
-            img_gray = cv2.cvtColor(img_resized, cv2.COLOR_BGR2GRAY)
-            
-            # SHRANJEVANJE ORIGINALNE (pomanjšane) SLIKE
-            cv2.imwrite(os.path.join(oseba_proc_dir, f"proc_{img_name}"), img_resized)
+            # 2.  Original in Grayscale (Sivinska) (če rabi Član 2)
+            cv2.imwrite(os.path.join(oseba_proc_dir, f"{ime_osnova}_orig.jpg"), img)
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            cv2.imwrite(os.path.join(oseba_proc_dir, f"{ime_osnova}_gray.jpg"), gray)
 
-            # 3. AUGMENTACIJA (Horizontalni flip - zrcaljenje)
-            # Za podvojeno št slik brez dodatnega slikanja
-            img_flip = cv2.flip(img_resized, 1)
-            cv2.imwrite(os.path.join(oseba_proc_dir, f"aug_flip_{img_name}"), img_flip)
+             # 3. Zrcaljenje (Flip)
+            flipped = cv2.flip(img, 1)
+            cv2.imwrite(os.path.join(oseba_proc_dir, f"{ime_osnova}_flip.jpg"), flipped)
 
-            print(f"  - Obdelana slika: {img_name} (+ augmentacija)")
 
     print("\nPredobdelava končana! Slike so v mapi 'dataset/obdelani_podatki'.")
 
