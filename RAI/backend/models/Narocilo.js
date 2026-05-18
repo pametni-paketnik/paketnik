@@ -12,7 +12,7 @@ const NarociloSchema = new mongoose.Schema({
         type: [
             {
                 izdelek_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Izdelek', required: true },
-                ime_izdelka: { type: mongoose.Schema.Types.ObjectId, required: true },
+                ime_izdelka: { type: String, required: true },
                 kolicina: { type: Number, required: true, min: 1, default: 1 }, 
                 paketnik: {
                     paketnik_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Paketnik', required: false },
@@ -38,7 +38,7 @@ const NarociloSchema = new mongoose.Schema({
     skupna_cena: { type: Number, required: true },
     koda_za_odpiranje: { type: String, required: true },
     datum_dostave: { type: Date, required: true },
-    status: { type: String, enum: ['oddano', 'v_dostavi', 'prevzeto', 'preklicano'], default: 'oddano' },
+    status: { type: String, enum: ['oddano', 'v_dostavi', 'dostavljeno', 'prevzeto', 'preklicano'], default: 'oddano' },
     prevzeto: { type: Boolean, default: false },
     datum_prevzema: { type: Date, default: null }
 }, { timestamps: true });
