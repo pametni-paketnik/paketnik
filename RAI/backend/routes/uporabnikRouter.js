@@ -10,9 +10,23 @@ const isAdmin = async function(req, res, next) {
     const user = await Uporabnik.findById(req.session.userId); 
     if(user && user.vloga === 'admin'){
         next(); 
-    } else{
+    } else {
         res.status(403).json({message: "Nimate admin dovoljneja"}); 
     }
+}
+
+const isFlowerShop = async function(req, res, next) {
+  if(!req.session.userId) {
+    return res.status(401).json( { message: "Prijavi se" } );
+
+    const user = await Uporabnik.findById(req.session.userId);
+
+    if (user && user.vloga == 'cvetlicarna') {
+      next();
+    } else {
+      res.status(403).json( { message: "Nmate cvetlicarna doviljenja" } );
+    }
+  }
 }
 
 

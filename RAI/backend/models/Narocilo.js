@@ -12,12 +12,13 @@ const NarociloSchema = new mongoose.Schema({
         type: [
             {
                 izdelek_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Izdelek', required: true },
+                ime_izdelka: { type: mongoose.Schema.Types.ObjectId, required: true },
                 kolicina: { type: Number, required: true, min: 1, default: 1 }, 
 
                 paketnik: {
-                paketnik_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Paketnik', required: false },
-                ime: { type: String, default: "Glavni Paketnik" },
-                naslov: { type: String, default: "Naslov paketnika ni izbran" }
+                    paketnik_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Paketnik', required: false },
+                    ime: { type: String, default: "Glavni Paketnik" },
+                    naslov: { type: String, default: "Naslov paketnika ni izbran" }
                 }
             }
         ], 

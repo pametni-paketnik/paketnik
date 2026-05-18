@@ -5,16 +5,19 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { UserContext } from './userContext'
 import './index.css';
 import paketnikImg from './images/pametni_paketnik_open.png';
+import axios from 'axios';
 
 function Home() {
     const { user } = useContext(UserContext); 
     const [plants, setPlants] = useState([]); 
     const [selectedPlant, setSelectedPlant] = useState(null); 
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-    
     const [activeFeature, setActiveFeature] = useState('water'); 
     const [cartCount, setCartCount] = useState(0); 
     const detailsRef = useRef(null);
+    const [orders, setOrders] = useState([]);
+    const isFlowerShop = user && user.vloga === 'cvetlicarna';
+
 
     useEffect(() => {
         const fetchPlants = async () => {
@@ -26,16 +29,39 @@ function Home() {
             }
         };
 
+        const fetchOrders = async () => {
+            try {
+                const res = await api.get(
+                    'http://localhost:3001/narocilo',
+                    { withCredentials: true }
+                );
+                const avalableOrders = res.data.filter(
+                    (order) => order.status === 'oddano'
+                );
+
+                console.log('Odprta naročila:', avalableOrders);
+                setOrders(avalableOrders);
+            } catch (err) {
+                console.error("Napaka pri pridobivanju narocil", err);
+            }
+        }
+
         const handleResize = () => {
             setIsMobile(window.innerWidth <= 768); 
         }; 
 
-        fetchPlants();
+        if (isFlowerShop) {
+            fetchOrders();
+        } else {
+            fetchPlants();
+        }
+
         window.addEventListener('resize', handleResize); 
+
         return () => {
             window.removeEventListener('resize', handleResize); 
         };
-    }, []);
+    }, [isFlowerShop]);
 
     useEffect(() => {
         const currentCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
@@ -204,6 +230,77 @@ function Home() {
     const graph = getGraphData(); 
     const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S']; 
 
+    if (isFlowerShop) {
+        return (
+            <div className="flower-orders-page">
+                <div className="flower-orders-wrapper">
+                    <div className="flower-orders-header">
+                        <h1 className="flower-orders-title">Vsa naročila</h1>
+                        <p className="flower-orders-subtitle">
+                            Tukaj so prikazana vsa odprta naročila, ki jih lahko sprejmete v obdelavo.
+                        </p>
+                    </div>
+
+                    {orders.length === 0 ? (
+                        <div className="flower-orders-empty">
+                            Trenutno ni odprtih naročil.
+                        </div>
+                    ) : (
+                        <div className="flower-orders-grid">
+                            {orders.map((order) => (
+                                <div
+                                    key={order._id}
+                                    className="flower-order-card"
+                                >
+                                    <div className="flower-order-card-header">
+                                        <span className="flower-order-badge">
+                                            #{order._id.slice(-6)}
+                                        </span>
+                                        <span className="flower-order-status">
+                                            {order.status}
+                                        </span>
+                                    </div>
+
+                                    <h3 className="flower-order-customer">
+                                        {order.stranka?.ime} {order.stranka?.priimek}
+                                    </h3>
+
+                                    <p className="flower-order-email">
+                                        {order.stranka?.email}
+                                    </p>
+
+                                    <div className="flower-order-info">
+                                        <div className="flower-order-info-row">
+                                            <span className="flower-order-label">Ime izdelka</span>
+                                            <span className="flower-order-price">{order.izdelki?.[0]?.ime_izdelka || "ni podatka"}</span>
+                                        </div>
+
+                                        <div className="flower-order-info-row">
+                                            <span className="flower-order-label">Število izdelkov</span>
+                                            <span className="flower-order-value">{order.izdelki?.length || 0}</span>
+                                        </div>
+
+                                        <div className="flower-order-info-row">
+                                            <span className="flower-order-label">Skupna cena</span>
+                                            <span className="flower-order-price">{order.skupna_cena} €</span>
+                                        </div>
+                                    </div>
+
+                                    <button className="flower-order-accept-btn"
+                                        onClick={() =>
+                                            alert(
+                                                `Naročilo ${order._id.slice(-6)} sprejeto.`
+                                            )
+                                        }
+                                    >Sprejmi naročilo</button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    }
     return (
         <div className="split-home-container">
             <section className="preview-side">

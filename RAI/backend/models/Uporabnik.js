@@ -7,7 +7,7 @@ const UporabnikSchema = new Schema({
     priimek: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     geslo: { type: String, required: true },
-    vloga: { type: String, enum: ['admin', 'user'], default: 'user'},
+    vloga: { type: String, enum: ['admin', 'user', 'cvetlicarna'], default: 'user'},
     profilna_slika: { type: String },
     stevilka_kartice: { type: String, default: '' },
     ime_na_kartici: { type: String, default: '' },
