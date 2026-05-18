@@ -20,6 +20,13 @@ def spremeni_svetlost(img, faktor):
     hsv = np.array(hsv, dtype=np.uint8)
     return cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
 
+def rotiraj_sliko(img, kot):
+    """Rotira sliko za določen kot brez rezanja robov."""
+    (h, w) = img.shape[:2]
+    center = (w // 2, h // 2)
+    M = cv2.getRotationMatrix2D(center, kot, 1.0)
+    return cv2.warpAffine(img, M, (w, h))
+
 def predobdelaj_podatke():
     raw_path = "dataset/surovi_podatki"
     proc_path = "dataset/obdelani_podatki"
