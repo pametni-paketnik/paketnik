@@ -11,6 +11,14 @@ def dodaj_sum(img):
     noisy = img + gauss
     return np.clip(noisy, 0, 255).astype(np.uint8)
 
+def spremeni_svetlost(img, faktor):
+    """Simulira exposure up/down preko HSV barvnega prostora."""
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    hsv = np.array(hsv, dtype=np.float64)
+    hsv[:, :, 2] = hsv[:, :, 2] * faktor
+    hsv[:, :, 2][hsv[:, :, 2] > 255] = 255
+    hsv = np.array(hsv, dtype=np.uint8)
+    return cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
 
 def predobdelaj_podatke():
     raw_path = "dataset/surovi_podatki"
