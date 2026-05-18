@@ -126,7 +126,7 @@ return (
 
                     <section className="checkout-form-section">
                         <h3 className="checkout-section-title">2. NAČIN PLAČILA</h3>
-                        <PaymentForm hideButtons={true} />
+                        <PaymentForm onCardDataChange={setPaymentData} />
                     </section>
 
                     <div className="checkout-footer-action">

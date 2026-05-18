@@ -14,7 +14,6 @@ const NarociloSchema = new mongoose.Schema({
                 izdelek_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Izdelek', required: true },
                 ime_izdelka: { type: mongoose.Schema.Types.ObjectId, required: true },
                 kolicina: { type: Number, required: true, min: 1, default: 1 }, 
-
                 paketnik: {
                     paketnik_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Paketnik', required: false },
                     ime: { type: String, default: "Glavni Paketnik" },
@@ -29,15 +28,14 @@ const NarociloSchema = new mongoose.Schema({
                 },
                 message: 'Na eno naročilo lahko najmanj 1 in največ 2 izdelka.'
             }
-        ], 
-        placilo: {
+        ]
+    }, 
+    placilo: {
         imetnik: { type: String, required: true },
         kartica_maskirana: { type: String, required: true },
         potek: { type: String, required: true } // npr. "05/28"
-        },
-
-    skupna_cena: { type: Number, required: true },
     },
+    skupna_cena: { type: Number, required: true },
     koda_za_odpiranje: { type: String, required: true },
     datum_dostave: { type: Date, required: true },
     status: { type: String, enum: ['oddano', 'v_dostavi', 'prevzeto', 'preklicano'], default: 'oddano' },

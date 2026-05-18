@@ -190,7 +190,10 @@ function Profile() {
   return (
     <div className="register-container">
       <div className="profile-layout">
+        {/* ZAČETEK GRID-A KI DRŽI VSE 3 KARTICE V ENI VRSTI */}
         <div className="profile-top-grid">
+          
+          {/* 1. KARTICA: PROFIL */}
           <div className="profile-card">
             <div className="register-form-section profile-form-section">
               <div className="form-header profile-header-row">
@@ -198,7 +201,6 @@ function Profile() {
                   <h1 className="uppercase-text">Profil</h1>
                   <p>Spremenite ime, priimek in profilno sliko.</p>
                 </div>
-
                 <div className="profile-header-image-wrapper">
                   <img
                     src={profilnaSlika || defaultImage}
@@ -211,33 +213,32 @@ function Profile() {
               <form onSubmit={shraniProfil} className="register-form">
                 <div className="input-group-row">
                   <div className="input-group-modern">
-                      <label>IME: </label>
-                      <input
-                        type="text"
-                        placeholder="IME"
-                        required
-                        className="input-group-modern"
-                        value={ime}
-                        onChange={(e) => setIme(e.target.value)}
-                      />
+                    <label>IME: </label>
+                    <input
+                      type="text"
+                      placeholder="IME"
+                      required
+                      className="input-group-modern"
+                      value={ime}
+                      onChange={(e) => setIme(e.target.value)}
+                    />
                   </div>
                   <div className="input-group-modern">
-                      <label>IME: </label>
-                      <input
-                        type="text"
-                        placeholder="PRIIMEK"
-                        required
-                        className="input-group-modern"
-                        value={priimek}
-                        onChange={(e) => setPriimek(e.target.value)}
-                      />
+                    <label>PRIIMEK: </label>
+                    <input
+                      type="text"
+                      placeholder="PRIIMEK"
+                      required
+                      className="input-group-modern"
+                      value={priimek}
+                      onChange={(e) => setPriimek(e.target.value)}
+                    />
                   </div>
 
                   <div className="file-upload-wrapper">
                     <label className="file-upload-label uppercase-text">
                       Izberi profilno sliko
                     </label>
-
                     <input
                       type="file"
                       accept="image/*"
@@ -253,14 +254,11 @@ function Profile() {
                 </button>
               </form>
 
-              {sporocilo && (
-                <div className="profile-message">
-                  {sporocilo}
-                </div>
-              )}
+              {sporocilo && <div className="profile-message">{sporocilo}</div>}
             </div>
           </div>
 
+          {/* 2. KARTICA: KARTICA */}
           <div className="profile-card">
             <div className="register-form-section profile-form-section">
               <div className="form-header">
@@ -269,29 +267,30 @@ function Profile() {
               </div>
 
               <div className="input-group-modern">
-                  <label>ŠTEVILKA KARTICE: </label>
-                  <input
-                    type="text"
-                    placeholder="ŠTEVILKA KARTICE"
-                    required
-                    className="input-group-modern"
-                    value={stevilkaKartice}
-                    onChange={handleStevilkaKarticeChange}
-                    maxLength={19}
-                  />
+                <label>ŠTEVILKA KARTICE: </label>
+                <input
+                  type="text"
+                  placeholder="ŠTEVILKA KARTICE"
+                  required
+                  className="input-group-modern"
+                  value={stevilkaKartice}
+                  onChange={handleStevilkaKarticeChange}
+                  maxLength={19}
+                />
               </div>
 
               <div className="input-group-modern">
-                  <label>IME NA KARTICI: </label>
-                  <input
-                    type="text"
-                    placeholder="IME NA KARTICI"
-                    required
-                    className="input-group-modern"
-                    value={imeNaKartici}
-                    onChange={handleImeNaKarticiChange}
-                  />
+                <label>IME NA KARTICI: </label>
+                <input
+                  type="text"
+                  placeholder="IME NA KARTICI"
+                  required
+                  className="input-group-modern"
+                  value={imeNaKartici}
+                  onChange={handleImeNaKarticiChange}
+                />
               </div>
+              
               <div className="card-input-row">
                 <div className="input-group-modern">
                   <label>DATUM POTEKA: </label>
@@ -307,19 +306,18 @@ function Profile() {
                 </div>
 
                 <div className="input-group-modern">
-                    <label>CVV: </label>
-                    <input
-                      type="text"
-                      placeholder="CVV"
-                      required
-                      className="input-group-modern"
-                      value={cvv}
-                      onChange={handleCvvChange}
-                      maxLength={3}
-                    />
+                  <label>CVV: </label>
+                  <input
+                    type="text"
+                    placeholder="CVV"
+                    required
+                    className="input-group-modern"
+                    value={cvv}
+                    onChange={handleCvvChange}
+                    maxLength={3}
+                  />
                 </div>
               </div>
-
 
               <button
                 type="button"
@@ -329,35 +327,31 @@ function Profile() {
                 Dodaj kartico
               </button>
 
-              {sporociloKartica && (
-                <div className="profile-message">
-                  {sporociloKartica}
-                </div>
-              )}
+              {sporociloKartica && <div className="profile-message">{sporociloKartica}</div>}
             </div>
           </div>
-        </div>
 
-        {/* SPODAJ: Zgodovina naročil */}
-        <div className="profile-card order-history-card">
-          <div className="register-form-section profile-form-section">
-            <div className="form-header">
-              <h1 className="uppercase-text">Zgodovina naročil</h1>
-              <p>Pregled vseh vaših preteklih naročil.</p>
-            </div>
+          {/* 3. KARTICA: ZGODOVINA NAROČIL (Prestavljeno sem!) */}
+          <div className="profile-card order-history-card">
+            <div className="register-form-section profile-form-section">
+              <div className="form-header">
+                <h1 className="uppercase-text">Zgodovina naročil</h1>
+                <p>Pregled vseh vaših preteklih naročil.</p>
+              </div>
 
-            <div className="order-history-list">
-              {/* Tukaj boš kasneje prikazala naročila iz baze */}
-              <div className="order-history-empty">
-                Trenutno še nimate nobenega naročila.
+              <div className="order-history-list">
+                <div className="order-history-empty">
+                  Trenutno še nimate nobenega naročila.
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
+        </div> 
+        {/* KONEC GRID-A */}
       </div>
     </div>
   );
 }
 
-export default Profile; 
+export default Profile;
