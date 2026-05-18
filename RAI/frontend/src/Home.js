@@ -6,9 +6,6 @@ import { UserContext } from './userContext'
 import './index.css';
 import paketnikImg from './images/pametni_paketnik_open.png';
 
-PAK-125-dodan-izgled-in-funkcionalnost-za-review
-
-main
 function Home() {
     const { user } = useContext(UserContext); 
     const [plants, setPlants] = useState([]); 
@@ -78,13 +75,8 @@ function Home() {
             });
         }
     }, [plants.length, selectedPlant]);
-PAK-100-prilagodljivo-za-zaslove
-Updated upstream
 
     const navigate = useNavigate(); 
-    const navigate = useNavigate(); 
-
-main
     const handleAddToCart = () => {
     const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
 
@@ -97,12 +89,7 @@ main
         localStorage.setItem('cart', JSON.stringify(updatedCart));
 
         setCartCount(updatedCart.length);
-PAK-100-prilagodljivo-za-zaslove
         alert(`${selectedPlant.name} dodana v košarico!`);
-
-        alert(`${selectedPlant.name} dodana v košarico!`);
-
-main
         setSelectedPlant(null);
 
         requestAnimationFrame(() => {
@@ -111,9 +98,6 @@ main
             }
         });
     };
-PAK-100-prilagodljivo-za-zaslove
-Stashed changes
-main
 
     const [outOfStock, setOutOfStock] = useState([]); 
     const toggleStock = async (id, currentState) => {
@@ -189,12 +173,8 @@ main
     }, [plants.length, selectedPlant]);
     
     const isAdmin = user && user.vloga === 'admin'; 
-Updated upstream
-    const displayPlants = window.innerWidth > 768 ? [...plants, ...plants] : plants;
-    
-PAK-100-prilagodljivo-za-zaslove
-main
-    const getGraphData = () => {
+
+  const getGraphData = () => {
     switch (activeFeature) {
         case 'light':
             return {
@@ -224,9 +204,6 @@ main
     const graph = getGraphData(); 
     const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S']; 
 
-PAK-100-prilagodljivo-za-zaslove
-Stashed changes
-main
     return (
         <div className="split-home-container">
             <section className="preview-side">
