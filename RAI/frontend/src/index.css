@@ -1935,3 +1935,164 @@ nav {
         font-size: 32px;
     }
 }
+
+/* Cvetlicarne list of plants*/
+.flower-order-card {
+  border: none !important;
+  outline: none !important;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 30px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+
+  width: 100%;
+  box-sizing: border-box;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.flower-order-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.22);
+}
+
+.flower-orders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 25px;
+  width: 100%;
+}
+
+.flower-order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.flower-order-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(111, 78, 55, 0.08);
+  color: #6F4E37;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.flower-order-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(54, 80, 22, 0.12);
+  color: rgb(54, 80, 22);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.flower-order-customer {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 8px 0;
+  letter-spacing: 1px;
+}
+
+.flower-order-email {
+  font-size: 0.9rem;
+  color: #444;
+  margin: 0 0 30px 0;
+  line-height: 1.6;
+}
+
+.flower-order-info {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 35px;
+}
+
+.flower-order-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(54, 80, 22, 0.08);
+}
+
+.flower-order-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgb(54, 80, 22);
+}
+
+.flower-order-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.flower-order-price {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #6F4E37;
+}
+
+.flower-order-accept-btn {
+  margin-top: auto;
+  width: 100%;
+  border: none;
+  border-radius: 14px;
+  padding: 15px 20px;
+  background: rgb(54, 80, 22);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.flower-order-accept-btn:hover {
+  background: rgb(54, 80, 22);
+  filter: brightness(1.1);
+  box-shadow: 0 10px 20px rgba(54, 80, 22, 0.25);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 900px) {
+  .flower-orders-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .flower-order-card {
+    padding: 30px 20px;
+    border-radius: 20px;
+  }
+
+  .flower-order-customer {
+    font-size: 1.4rem;
+  }
+
+  .flower-order-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
