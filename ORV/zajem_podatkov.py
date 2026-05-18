@@ -13,6 +13,17 @@ def zajemi_obraz():
         os.makedirs(path)
         print(f"Ustvarjena mapa za: {ime_osebe}")
 
+    # Prešteje obstoječe slike v mapi
+    obstojece_slike = [f for f in os.listdir(path) if f.endswith('.jpg')]
+    st_obstojecih = len(obstojece_slike)
+
+    if st_obstojecih >= 30:
+        print(f"\n[!] Napaka: Za osebo '{ime_osebe}' je že zajetih {st_obstojecih} slik.")
+        print(f"Če želite zamenjati slike, jih ročno izbrišite iz mape: {path}")
+        return
+
+    print(f"\nTrenutno v mapi: {st_obstojecih} slik. Cilj: 30 slik.")
+
     # 2. Inicializacija kamere in detektorja
     # Uporabi vgrajen Haar Cascade za detekcijo obraza (standard)
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
