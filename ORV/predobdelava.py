@@ -32,12 +32,21 @@ def predobdelaj_podatke():
     proc_path = "dataset/obdelani_podatki"
     target_size = (224, 224) #velikost
 
-    if not os.path.exists(proc_path):
-        os.makedirs(proc_path)
+    # 1. PREVERJANJE POGOJEV (Data Validation)
+    if not os.path.exists(raw_path):
+        print("[!] Napaka: Mapa 'surovi_podatki' ne obstaja!")
+        return
+    osebe = [f for f in os.listdir(raw_path) if os.path.isdir(os.path.join(raw_path, f))]
+  
+    # Preveri če so vsaj 3 osebe (članice ekipe)
+    if len(osebe) < 3:
+        print(f"[!] STOP: Premalo map oseb. Potrebujemo vsaj 3 (najdeno: {len(osebe)}).")
+        return
 
-    print("Začenjam s predobdelavo...")
+    # Preveri če ima vsaka mapa točno ali več kot 30 slik
+    vse_ok = True
 
-     # Gre čez vse mape oseb (iris, nika, itd.)
+    # Gre čez vse mape oseb (iris, nika, ipd.)
     for oseba in os.listdir(raw_path):
         oseba_raw_dir = os.path.join(raw_path, oseba)
         oseba_proc_dir = os.path.join(proc_path, oseba)
