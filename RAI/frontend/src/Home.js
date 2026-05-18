@@ -6,7 +6,6 @@ import { UserContext } from './userContext'
 import './index.css';
 import paketnikImg from './images/pametni_paketnik_open.png';
 
-
 function Home() {
     const { user } = useContext(UserContext); 
     const [plants, setPlants] = useState([]); 
@@ -58,10 +57,9 @@ function Home() {
             }
         }
     }, [plants.length, selectedPlant]);
-<<<<<<< Updated upstream
-=======
 
     const navigate = useNavigate(); 
+
     const handleAddToCart = () => {
     const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
 
@@ -83,7 +81,6 @@ function Home() {
             }
         });
     };
->>>>>>> Stashed changes
 
     const [outOfStock, setOutOfStock] = useState([]); 
     const toggleStock = async (id, currentState) => {
@@ -159,10 +156,7 @@ function Home() {
     }, [plants.length, selectedPlant]);
     
     const isAdmin = user && user.vloga === 'admin'; 
-<<<<<<< Updated upstream
-    const displayPlants = window.innerWidth > 768 ? [...plants, ...plants] : plants;
-    
-=======
+
     const getGraphData = () => {
     switch (activeFeature) {
         case 'light':
@@ -193,7 +187,6 @@ function Home() {
     const graph = getGraphData(); 
     const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S']; 
 
->>>>>>> Stashed changes
     return (
         <div className="split-home-container">
             <section className="preview-side">

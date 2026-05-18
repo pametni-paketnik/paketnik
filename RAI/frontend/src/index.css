@@ -116,12 +116,8 @@ nav {
 
 .card-floating-img {
   position: absolute;
-<<<<<<< Updated upstream
-  left: 5%;
-=======
   bottom: 4%;
   left: 6%;
->>>>>>> Stashed changes
   width: 275px;
   height: auto;
   pointer-events: none;
