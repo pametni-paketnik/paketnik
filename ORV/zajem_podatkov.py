@@ -29,7 +29,7 @@ def zajemi_obraz():
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     
     cap = cv2.VideoCapture(0) # 0 je privzeta kamera
-    st_slik = 0
+    st_zajetih_v_tej_seji = 0
 
     print("\n--- NAVODILA ---")
     print("Pritisnite 's' za shranjevanje slike.")
@@ -65,23 +65,30 @@ def zajemi_obraz():
             cv2.putText(frame, "Zaznan obraz", (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
         # Prikaz okna
-        cv2.imshow('Zajem podatkov za Smart Flower Locker', frame)
+        skupno_slik = st_obstojecih + st_zajetih_v_tej_seji
+        cv2.imshow(f'Zajem podatkov za Smart Flower Locker ({skupno_slik}/30) - S za slikaj, Q za izhod', frame)
 
         tipka = cv2.waitKey(1) & 0xFF
 
         if tipka == ord('s'):
+            if skupno_slik < 30:
             # Če je zaznan vsaj en obraz shrani izrezek
-            if len(faces) > 0:
-                for (x, y, w, h) in faces:
-                    # Izreže samo obraz
-                    # širši izrezek (x1, y1, x2, y2 izračunan zgoraj)
-                    face_roi = frame[y1:y2, x1:x2]
-                    img_name = f"{ime_osebe}_{st_slik}.jpg"
-                    cv2.imwrite(os.path.join(path, img_name), face_roi)
-                    print(f"Shranjena slika {st_slik}: {img_name}")
-                    st_slik += 1
+                if len(faces) > 0:
+                    for (x, y, w, h) in faces:
+                        # Shrani z unikatnim imenom (uporabi indeks, ki še ne obstaja)
+                        indeks = skupno_slik
+                        # Izreže samo obraz
+                        # širši izrezek (x1, y1, x2, y2 izračunan zgoraj)
+                        face_roi = frame[y1:y2, x1:x2]
+                        img_name = f"{ime_osebe}_{st_zajetih_v_tej_seji }.jpg"
+                        cv2.imwrite(os.path.join(path, f"{ime_osebe}_{indeks}.jpg"), face_roi)
+                        st_zajetih_v_tej_seji  += 1
+                        print(f"Shranjena slika {skupno_slik + 1}/30 : {img_name}")
+                else:
+                    print("Napaka: Obraz ni zaznan, slika ni shranjena!")
+
             else:
-                print("Napaka: Obraz ni zaznan, slika ni shranjena!")
+                print("\n[!] Dosegli ste limit 30 slik. Pritisnite 'q' za izhod.")
 
         elif tipka == ord('q'):
             break
@@ -89,7 +96,7 @@ def zajemi_obraz():
     # Čiščenje
     cap.release()
     cv2.destroyAllWindows()
-    print(f"\nZajem končan. Skupaj zajetih slik za {ime_osebe}: {st_slik}")
+    print(f"\nZajem končan. Skupaj zajetih slik za {ime_osebe}: {st_zajetih_v_tej_seji }")
 
 if __name__ == "__main__":
     zajemi_obraz()
