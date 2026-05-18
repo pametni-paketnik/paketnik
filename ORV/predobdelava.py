@@ -4,6 +4,14 @@ import numpy as np
 import random
 
 
+def dodaj_sum(img):
+    """Simulira grainy (zrnat) efekt."""
+    row, col, ch = img.shape
+    gauss = np.random.normal(0, 15, (row, col, ch))
+    noisy = img + gauss
+    return np.clip(noisy, 0, 255).astype(np.uint8)
+
+
 def predobdelaj_podatke():
     raw_path = "dataset/surovi_podatki"
     proc_path = "dataset/obdelani_podatki"
