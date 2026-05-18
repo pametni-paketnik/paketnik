@@ -116,8 +116,14 @@ nav {
 
 .card-floating-img {
   position: absolute;
+PAK-100-prilagodljivo-za-zaslove
+Updated upstream
   top: -150px;
+main
   left: 5%;
+  bottom: 4%;
+  left: 6%;
+Stashed changes
   width: 275px;
   height: auto;
   pointer-events: none;
@@ -131,9 +137,9 @@ nav {
 
 .plant-in-paketnik {
   position: absolute;
-  width: 650px;      
+  width: 680px;      
   height: auto;
-  left: 28%;
+  left: 30%;
   top: 60%;
   transform: translate(-50%, -50%) scale(0.6);
   z-index: 999;
@@ -149,7 +155,7 @@ nav {
         opacity: 0;
     }
     to {
-        left: 28%;   
+        left: 27%;   
         top: 60%;   
         transform: translate(-45%, -50%) scale(0.7); 
         opacity: 1;
@@ -537,12 +543,12 @@ nav {
     from {
         left: 80%; 
         top: 50%;
-        transform: translate(-50%, -50%) scale(0.3);
+        transform: translate(-50%, -50%) scale(0.2);
         opacity: 0;
     }
     to {
-        left: 28%;   
-        top: 60%;   
+        left: 27%;   
+        top: 59%;   
         transform: translate(-65%, -55%) scale(0.7); 
         opacity: 1;
     }
