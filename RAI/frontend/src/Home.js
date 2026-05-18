@@ -6,6 +6,9 @@ import { UserContext } from './userContext'
 import './index.css';
 import paketnikImg from './images/pametni_paketnik_open.png';
 
+PAK-125-dodan-izgled-in-funkcionalnost-za-review
+
+main
 function Home() {
     const { user } = useContext(UserContext); 
     const [plants, setPlants] = useState([]); 
@@ -41,11 +44,24 @@ function Home() {
     }, []);
 
     useEffect(() => {
+        const currentCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
+        setCartCount(currentCart.length);
+    }, []);
+
+    const multiplyFactor = plants.length > 0 && plants.length < 6 ? 6 : 3;
+    const displayPlants = !isMobile && plants.length > 0 
+        ? Array(multiplyFactor).fill(plants).flat() 
+        : plants;
+
+    useEffect(() => {
         if (plants.length > 0 && scrollRef.current && !selectedPlant) {
             const container = scrollRef.current;
             
             if (window.innerWidth > 768) {
-                container.scrollTop = container.scrollHeight / 4;
+                requestAnimationFrame(() => {
+                    const singleSetHeight = container.scrollHeight / multiplyFactor;
+                    container.scrollTop = singleSetHeight * 2;
+                })
             }
         }
         if(selectedPlant){
@@ -65,8 +81,13 @@ function Home() {
             });
         }
     }, [plants.length, selectedPlant]);
+PAK-100-prilagodljivo-za-zaslove
+Updated upstream
+
+    const navigate = useNavigate(); 
     const navigate = useNavigate(); 
 
+main
     const handleAddToCart = () => {
     const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
 
@@ -79,9 +100,12 @@ function Home() {
         localStorage.setItem('cart', JSON.stringify(updatedCart));
 
         setCartCount(updatedCart.length);
+PAK-100-prilagodljivo-za-zaslove
+        alert(`${selectedPlant.name} dodana v košarico!`);
 
         alert(`${selectedPlant.name} dodana v košarico!`);
 
+main
         setSelectedPlant(null);
 
         requestAnimationFrame(() => {
@@ -90,6 +114,9 @@ function Home() {
             }
         });
     };
+PAK-100-prilagodljivo-za-zaslove
+Stashed changes
+main
 
     const [outOfStock, setOutOfStock] = useState([]); 
     const toggleStock = async (id, currentState) => {
@@ -118,24 +145,58 @@ function Home() {
     const scrollRef = useRef(null);
     const handleScroll = () => {
         const container = scrollRef.current;
-        if (!container || isMobile) return;
+        if (!container || isMobile || plants.length === 0) return;
 
         const currentScroll = container.scrollTop;
         const scrollHeight = container.scrollHeight;
         const viewportHeight = container.clientHeight;
-        const halfHeight = scrollHeight / 2;
+        
+        const singleSetHeight = scrollHeight / multiplyFactor;
 
-        if (currentScroll + viewportHeight >= scrollHeight - 10) {
-            container.scrollTop = currentScroll - halfHeight;
+        if (currentScroll + viewportHeight >= scrollHeight - singleSetHeight) {
+            const overflow = currentScroll % singleSetHeight;
+            container.scrollTop = singleSetHeight + overflow;
         } 
-        else if (currentScroll <= 5) {
-            container.scrollTop = currentScroll + halfHeight;
+        else if (currentScroll <= 20) {
+            container.scrollTop = currentScroll + singleSetHeight;
         }
     };
+
+    useEffect(() => {
+        if (plants.length > 0 && scrollRef.current && !selectedPlant) {
+            const container = scrollRef.current;
+            
+            if (window.innerWidth > 768) {
+                const multiplyFactor = plants.length < 10 ? 6 : 3;
+                requestAnimationFrame(() => {
+                    container.scrollTop = (container.scrollHeight / multiplyFactor) * 2;
+                });
+            }
+        }
+        if (selectedPlant) {
+            setActiveFeature('water'); 
+
+            const currentCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
+            setCartCount(currentCart.length); 
+
+            requestAnimationFrame(() => {
+                if (detailsRef.current) {
+                    detailsRef.current.scrollTop = 0;
+                }
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
+    }, [plants.length, selectedPlant]);
     
     const isAdmin = user && user.vloga === 'admin'; 
+Updated upstream
     const displayPlants = window.innerWidth > 768 ? [...plants, ...plants] : plants;
     
+PAK-100-prilagodljivo-za-zaslove
+main
     const getGraphData = () => {
     switch (activeFeature) {
         case 'light':
@@ -166,6 +227,9 @@ function Home() {
     const graph = getGraphData(); 
     const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S']; 
 
+PAK-100-prilagodljivo-za-zaslove
+Stashed changes
+main
     return (
         <div className="split-home-container">
             <section className="preview-side">
