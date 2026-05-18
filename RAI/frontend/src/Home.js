@@ -7,7 +7,7 @@ import './index.css';
 import paketnikImg from './images/pametni_paketnik_open.png';
 import axios from 'axios';
 
-function Home() {
+function Home({ orderFilter = "oddano" }) {
     const { user } = useContext(UserContext); 
     const [plants, setPlants] = useState([]); 
     const [selectedPlant, setSelectedPlant] = useState(null); 
@@ -31,20 +31,17 @@ function Home() {
 
         const fetchOrders = async () => {
             try {
-                const res = await api.get(
-                    'http://localhost:3001/narocilo',
-                    { withCredentials: true }
-                );
-                const avalableOrders = res.data.filter(
-                    (order) => order.status === 'oddano'
+                const res = await api.get('/narocilo');
+
+                const filteredOrders = res.data.filter(
+                    (order) => order.status === orderFilter
                 );
 
-                console.log('Odprta naročila:', avalableOrders);
-                setOrders(avalableOrders);
+                setOrders(filteredOrders);
             } catch (err) {
-                console.error("Napaka pri pridobivanju narocil", err);
+                console.error("Napaka pri pridobivanju naročil:", err);
             }
-        }
+        };
 
         const handleResize = () => {
             setIsMobile(window.innerWidth <= 768); 
@@ -61,7 +58,7 @@ function Home() {
         return () => {
             window.removeEventListener('resize', handleResize); 
         };
-    }, [isFlowerShop]);
+    }, [isFlowerShop, orderFilter]);
 
     useEffect(() => {
         const currentCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
@@ -104,36 +101,69 @@ function Home() {
 
     const navigate = useNavigate(); 
     const handleAddToCart = () => {
-    const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-    if (currentCart.length >= 2) {
-        alert("Naročilo je omejeno na največ 2 roži naenkrat. Prosim dokončajte svoje naročilo");
-        return;
-    }
+        if (currentCart.length >= 2) {
+            alert("Naročilo je omejeno na največ 2 roži naenkrat. Prosim dokončajte svoje naročilo");
+            return;
+        }
 
-    const updatedCart = [...currentCart, selectedPlant];
-        localStorage.setItem('cart', JSON.stringify(updatedCart));
+        const updatedCart = [...currentCart, selectedPlant];
+            localStorage.setItem('cart', JSON.stringify(updatedCart));
 
-        setCartCount(updatedCart.length);
-        alert(`${selectedPlant.name} dodana v košarico!`);
-        setSelectedPlant(null);
+            setCartCount(updatedCart.length);
+            alert(`${selectedPlant.name} dodana v košarico!`);
+            setSelectedPlant(null);
 
-        requestAnimationFrame(() => {
-            if (scrollRef.current) {
-                scrollRef.current.scrollTop = 0;
-            }
-        });
+            requestAnimationFrame(() => {
+                if (scrollRef.current) {
+                    scrollRef.current.scrollTop = 0;
+                }
+            });
+    };
+
+    const handleAcceptOrder = async (orderId) => {
+        try {
+            await api.put(`/narocilo/${orderId}/status`, {
+                status: 'v_dostavi'
+            });
+
+            setOrders((prevOrders) =>
+                prevOrders.filter((order) => order._id !== orderId)
+            );
+
+            alert('Naročilo je bilo uspešno sprejeto.');
+        } catch (err) {
+            console.error('Napaka pri sprejemu naročila:', err);
+            alert('Prišlo je do napake pri posodabljanju statusa.');
+        }
+    };
+    const handleDeliveredOrder = async (orderId) => {
+        try {
+            await api.put(`/narocilo/${orderId}/status`, {
+                status: 'dostavljeno'
+            });
+
+            setOrders((prevOrders) =>
+                prevOrders.filter((order) => order._id !== orderId)
+            );
+
+            alert('Naročilo je označeno kot dostavljeno.');
+        } catch (err) {
+            console.error('Napaka pri označevanju dostave:', err);
+            alert('Prišlo je do napake pri posodabljanju statusa.');
+        }
     };
 
     const [outOfStock, setOutOfStock] = useState([]); 
     const toggleStock = async (id, currentState) => {
-        try{
+        try {
             const res = await api.put(`/plant/${id}`, {
                 naZalogi: !currentState
             }, { withCredentials: true }); 
 
             setPlants(plants.map(p => p._id === id ? res.data : p)); 
-        }catch(err){
+        } catch(err) {
             alert("Napak pri posodabljanu zaloge"); 
         }
     }; 
@@ -243,7 +273,7 @@ function Home() {
 
                     {orders.length === 0 ? (
                         <div className="flower-orders-empty">
-                            Trenutno ni odprtih naročil.
+                            Trenutno tu ni naročil.
                         </div>
                     ) : (
                         <div className="flower-orders-grid">
@@ -288,11 +318,15 @@ function Home() {
 
                                     <button className="flower-order-accept-btn"
                                         onClick={() =>
-                                            alert(
-                                                `Naročilo ${order._id.slice(-6)} sprejeto.`
-                                            )
+                                            order.status === 'v_dostavi'
+                                                ? handleDeliveredOrder(order._id)
+                                                : handleAcceptOrder(order._id)
                                         }
-                                    >Sprejmi naročilo</button>
+                                    >
+                                        {order.status === 'v_dostavi'
+                                            ? 'Dostavljeno'
+                                            : 'Sprejmi naročilo'}
+                                    </button>
                                 </div>
                             ))}
                         </div>

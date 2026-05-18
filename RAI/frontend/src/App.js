@@ -17,35 +17,58 @@ function AppContent() {
 
   return (
     <>
-      <nav style={{ 
-        padding: "20px 80px", 
-        display: "flex", 
-        justifyContent: "space-between", 
-        alignItems: "center"
-      }}>
-        <div className="logo uppercase-text" style={{ color: "#000", fontWeight: "900", fontSize: "1.2rem" }}>
-            InPlant
+      <nav
+        style={{
+          padding: "20px 80px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}
+      >
+        <div
+          className="logo uppercase-text"
+          style={{
+            color: "#000",
+            fontWeight: "900",
+            fontSize: "1.2rem"
+          }}
+        >
+          InPlant
         </div>
+
         <div style={{ display: "flex", gap: "20px" }}>
-            <Link to="/" className="navbar-text">Domov</Link>
-            
-            {user ? (
+          {/* NAVIGACIJA ZA CVETLIČARNO */}
+          {user && user.vloga === "cvetlicarna" ? (
+            <>
+              <Link to="/allOrders" className="navbar-text">All</Link>
+              <Link to="/takenOrders" className="navbar-text">Taken</Link>
+              <Link to="/deliveredOrders" className="navbar-text">Delivered</Link>
+              <Link to="/profile" className="navbar-text">Profile</Link>
+              <Link to="/logout" className="navbar-text">Odjava</Link>
+            </>
+          ) : (
+            <>
+              {/* NAVIGACIJA ZA OSTALE UPORABNIKE */}
+              <Link to="/" className="navbar-text">Domov</Link>
+
+              {user ? (
                 <>
-                {user.vloga === 'admin' && (
-                  <Link to="/addImage" className="navbar-text" style={{ color: "red", fontWeight: "bold" }}>
-                      Dodaj Sliko
-                  </Link>
-                )}
+                  {user.vloga === "admin" && (
+                    <Link to="/addImage" className="navbar-text" style={{ color: "red", fontWeight: "bold" }}>Dodaj Sliko</Link>
+                  )}
+
                   <Link to="/profile" className="navbar-text">Profil</Link>
                   <Link to="/logout" className="navbar-text">Odjava</Link>
                   <Link to="/order" className="navbar-text">Naročilo</Link>
                 </>
-            ) : (
+              ) : (
                 <>
-                <Link to="/login" className="navbar-text">Prijava</Link>
-                <Link to="/register" className="navbar-text">Registracija</Link>
+                  <Link to="/login" className="navbar-text">Prijava</Link>
+                  <Link to="/register" className="navbar-text">Registracija</Link>
                 </>
-            )}
+              )}
+            </>
+          )}
         </div>
       </nav>
 
@@ -60,6 +83,10 @@ function AppContent() {
             <Route path="/order" element={<Order />} />
 
             <Route path="/review" element={<ReviewForm/>}/>
+            
+            <Route path="/allOrders" element={<Home orderFilter="oddano" />} />
+            <Route path="/takenOrders" element={<Home orderFilter="v_dostavi" />} />
+            <Route path="/deliveredOrders" element={<Home orderFilter="dostavljeno" />} />
 
             {user && user.vloga === 'admin' && (
                 <Route path="/addImage" element={<AddPlant />} />
