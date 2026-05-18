@@ -6,7 +6,7 @@ import { UserContext } from './userContext'
 import './index.css';
 import paketnikImg from './images/pametni_paketnik_open.png';
 
-// popravek slike na vrhu 
+
 function Home() {
     const { user } = useContext(UserContext); 
     const [plants, setPlants] = useState([]); 
@@ -37,14 +37,53 @@ function Home() {
     }, []);
 
     useEffect(() => {
+        const currentCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
+        setCartCount(currentCart.length);
+    }, []);
+
+    const multiplyFactor = plants.length > 0 && plants.length < 6 ? 6 : 3;
+    const displayPlants = !isMobile && plants.length > 0 
+        ? Array(multiplyFactor).fill(plants).flat() 
+        : plants;
+
+    useEffect(() => {
         if (plants.length > 0 && scrollRef.current && !selectedPlant) {
             const container = scrollRef.current;
             
             if (window.innerWidth > 768) {
-                container.scrollTop = container.scrollHeight / 4;
+                requestAnimationFrame(() => {
+                    const singleSetHeight = container.scrollHeight / multiplyFactor;
+                    container.scrollTop = singleSetHeight * 2;
+                })
             }
         }
     }, [plants.length, selectedPlant]);
+<<<<<<< Updated upstream
+=======
+
+    const navigate = useNavigate(); 
+    const handleAddToCart = () => {
+    const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+    if (currentCart.length >= 2) {
+        alert("Naročilo je omejeno na največ 2 roži naenkrat. Prosim dokončajte svoje naročilo");
+        return;
+    }
+
+    const updatedCart = [...currentCart, selectedPlant];
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
+
+        setCartCount(updatedCart.length);
+        alert(`${selectedPlant.name} dodana v košarico!`);
+        setSelectedPlant(null);
+
+        requestAnimationFrame(() => {
+            if (scrollRef.current) {
+                scrollRef.current.scrollTop = 0;
+            }
+        });
+    };
+>>>>>>> Stashed changes
 
     const [outOfStock, setOutOfStock] = useState([]); 
     const toggleStock = async (id, currentState) => {
@@ -73,24 +112,88 @@ function Home() {
     const scrollRef = useRef(null);
     const handleScroll = () => {
         const container = scrollRef.current;
-        if (!container || isMobile) return;
+        if (!container || isMobile || plants.length === 0) return;
 
         const currentScroll = container.scrollTop;
         const scrollHeight = container.scrollHeight;
         const viewportHeight = container.clientHeight;
-        const halfHeight = scrollHeight / 2;
+        
+        const singleSetHeight = scrollHeight / multiplyFactor;
 
-        if (currentScroll + viewportHeight >= scrollHeight - 10) {
-            container.scrollTop = currentScroll - halfHeight;
+        if (currentScroll + viewportHeight >= scrollHeight - singleSetHeight) {
+            const overflow = currentScroll % singleSetHeight;
+            container.scrollTop = singleSetHeight + overflow;
         } 
-        else if (currentScroll <= 5) {
-            container.scrollTop = currentScroll + halfHeight;
+        else if (currentScroll <= 20) {
+            container.scrollTop = currentScroll + singleSetHeight;
         }
     };
+
+    useEffect(() => {
+        if (plants.length > 0 && scrollRef.current && !selectedPlant) {
+            const container = scrollRef.current;
+            
+            if (window.innerWidth > 768) {
+                const multiplyFactor = plants.length < 10 ? 6 : 3;
+                requestAnimationFrame(() => {
+                    container.scrollTop = (container.scrollHeight / multiplyFactor) * 2;
+                });
+            }
+        }
+        if (selectedPlant) {
+            setActiveFeature('water'); 
+
+            const currentCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
+            setCartCount(currentCart.length); 
+
+            requestAnimationFrame(() => {
+                if (detailsRef.current) {
+                    detailsRef.current.scrollTop = 0;
+                }
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
+    }, [plants.length, selectedPlant]);
     
     const isAdmin = user && user.vloga === 'admin'; 
+<<<<<<< Updated upstream
     const displayPlants = window.innerWidth > 768 ? [...plants, ...plants] : plants;
     
+=======
+    const getGraphData = () => {
+    switch (activeFeature) {
+        case 'light':
+            return {
+                value: selectedPlant?.iskanja_light || 140,
+                path: "M 0,50 C 20,50 30,15 50,15 C 70,15 80,65 100,65 C 130,65 140,35 170,35 C 200,35 220,55 250,55 C 270,55 285,40 300,40",
+                activeDayIdx: 1, 
+                badgeLeft: '17%'
+            };
+        case 'cost':
+            return {
+                value: selectedPlant?.iskanja_cost || 85,
+                path: "M 0,35 C 30,35 45,60 75,60 C 105,60 120,40 150,40 C 180,40 200,60 220,60 C 240,60 245,15 265,15 C 285,15 290,45 300,45",
+                activeDayIdx: 5, 
+                badgeLeft: '84%'
+            };
+        case 'water':
+        default:
+            return {
+                value: selectedPlant?.iskanja_water || 215,
+                path: "M 0,40 C 15,15 30,15 45,50 C 60,80 85,35 110,35 C 130,35 135,55 155,55 C 175,55 190,20 215,20 C 240,20 250,45 270,45 C 285,45 292,25 300,25",
+                activeDayIdx: 3, 
+                badgeLeft: '49%'
+            };
+        }
+    };
+
+    const graph = getGraphData(); 
+    const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S']; 
+
+>>>>>>> Stashed changes
     return (
         <div className="split-home-container">
             <section className="preview-side">
