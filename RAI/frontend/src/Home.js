@@ -14,12 +14,9 @@ function Home() {
     const [plants, setPlants] = useState([]); 
     const [selectedPlant, setSelectedPlant] = useState(null); 
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    
     const [activeFeature, setActiveFeature] = useState('water'); 
     const [cartCount, setCartCount] = useState(0); 
-
-    const detailsRef = useRef(null);
-    const [cartCount, setCartCount] = useState(0); 
-    const [activeFeature, setActiveFeature] = useState('water'); 
     const detailsRef = useRef(null);
 
     useEffect(() => {
