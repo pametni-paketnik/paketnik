@@ -1,6 +1,8 @@
 import cv2
 import os
 import numpy as np
+import random
+
 
 def predobdelaj_podatke():
     raw_path = "dataset/surovi_podatki"
