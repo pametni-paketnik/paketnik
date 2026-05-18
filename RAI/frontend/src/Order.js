@@ -1,93 +1,151 @@
 import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from './userContext';
 import { useNavigate } from "react-router-dom";
-import ProgressBar from './ProgressBar'; 
+import { ArrowRight, ShoppingCart } from 'lucide-react';
 import PaymentForm from "./Payment";
-import './index.css'; 
 import PaketnikMap from './PaketnikMap'; 
+import DodajPaketnik from './DodajPaketnik';
+import paketnikImg from './images/pametni_paketnik_open.png';
+import './index.css';
 
 const OrderForm = () =>{
-    const [currentStep, setCurrentStep] = useState(0); 
+    const { user } = useContext(UserContext); 
+    const navigate = useNavigate(); 
+
+    const [cart, setCart] = useState([]); 
+    const [currentIndex, setCurrentIndex] = useState(0); 
+    const [processedOrders, setProcessedOrders] = useState([]);
     const [selectedLocker, setSelectedLocker] = useState(null);
 
-    const { user: contextUser } = useContext(UserContext);
-    const [user, setUser] = useState(() => {
-        if(contextUser) return contextUser; 
-        const stored = localStorage.getItem("user"); 
-        return stored ? JSON.parse(stored) : null; 
-    });
-
-    const navigate = useNavigate();
-
-    const nextStep = () => setCurrentStep(prev => prev + 1);
-    const prevStep = () => setCurrentStep(prev => prev - 1);
-    const goToStep = (step) => setCurrentStep(step); 
+    const [orderItems, setOrderItems] = useState([]);
+    const [paymentData, setPaymentData] = useState(null);
 
     useEffect(() => {
-        if (contextUser) {
-            setUser(contextUser);
+        const storedCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
+        setCart(storedCart.slice(0, 2)); 
+    }, []); 
+
+    const currentProduct = cart[currentIndex]; 
+
+    const handleNextProduct = () => {
+        const lockerPayload = {
+            _id: selectedLocker?._id || selectedLocker?.id, 
+            name: selectedLocker?.ime || selectedLocker?.name || null, 
+            address: selectedLocker?.lokacija || selectedLocker?.naslov || selectedLocker?.address || "Naslov ni na voljo"
+        }; 
+
+        const newOrderEntry = {
+            ...currentProduct, 
+            selectedLocker: lockerPayload
+        }; 
+
+        const updatedProcessed = [...processedOrders, newOrderEntry];
+        setProcessedOrders(updatedProcessed);
+
+        if (currentIndex < cart.length -1) {
+            setCurrentIndex(prev => prev + 1); 
+            setSelectedLocker(null); 
+        } else { 
+            const total = updatedProcessed.reduce((sum, item) => sum + (Number(item.price) || 0), 0); 
+
+            const finalOrderPayload = {
+                customer: {
+                    firstName: user?.name || "Unknown", 
+                    lastName: user?.priimek || "Unknown", 
+                    email: user?.email || "", 
+                    phone: "/"
+                }, 
+                items: updatedProcessed, 
+                locker: updatedProcessed[0]?.selectedLocker, 
+                payment: paymentData, 
+                totalPrice: total
+            }; 
+
+            localStorage.setItem('final_orders', JSON.stringify(finalOrderPayload)); 
+            navigate('/review'); 
         }
-    }, [contextUser]); 
+    }; 
 
-    return (
-    <div className="checkout-container">
-        <ProgressBar currentStep={currentStep} setStep={goToStep} />
+    const handleRemoveFromCart = () => {
+        const updatedCart = cart.filter((_, index) => index !== currentIndex);
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
 
-        <div className="form-content-wrapper" style={{ marginTop: '40px' }}>
-        
-        {currentStep === 0 && (
-          <div className="step-content">
-            <h1>Order Summary</h1>
-            <p>Tukaj so vaši izdelki...</p>
-            <button onClick={nextStep} className="pay-button">Dostava</button>
-          </div>
-        )}
+        setCart(updatedCart);
 
-        {currentStep === 1 && (
-            <div className="step-content">
-                <h1>Izberite lokacijo dostave</h1>
-            
-                <div className="map-wrapper">
-                    <PaketnikMap onSelect={(locker) => setSelectedLocker(locker)} user={user} />
+        if (updatedCart.length === 0) {
+            navigate('/home');
+            return;
+        }
+
+        if (currentIndex >= updatedCart.length) {
+            setCurrentIndex(updatedCart.length - 1);
+        }
+
+        setSelectedLocker(null);
+
+        setProcessedOrders(prev =>
+            prev.filter((_, index) => index !== currentIndex)
+        );
+    };
+
+    if (cart.length === 0) return <div>Vaša košarica je prazna</div>; 
+    if (!currentProduct) return <div>Nalagam...</div>; 
+
+return (
+    <div className="checkout-page-custom">
+        <div className="checkout-main-wrapper">
+            <div className="checkout-preview-area">
+                <div className="checkout-visual-box">
+                    <img src={paketnikImg} alt="Paketnik" className="checkout-paketnik-img" />
+                    <img 
+                        key={currentProduct._id} 
+                        src={`http://localhost:3001${currentProduct.path}`} 
+                        alt={currentProduct.name} 
+                        className="checkout-plant-overlay"
+                    />
                 </div>
-
-            {selectedLocker && (
-                <div className="selected-info">
-                    <p>Izbran paketnik: <strong>{selectedLocker.name}</strong></p>
-                </div>
-            )}
-
-            <div className="button-group" style={{ display: 'flex', gap: '10px' }}>
-                <button onClick={prevStep} className="pay-button secondary">Nazaj</button>
-                <button 
-                    onClick={nextStep} 
-                    className="pay-button" 
-                    disabled={!selectedLocker}>
-                    Nadaljuj na plačilo
-                </button>
             </div>
-          </div>
-        )}
 
-        {currentStep === 2 && (
-            <PaymentForm 
-                currentStep={currentStep}
-                onNext={nextStep}
-                onBack={prevStep} 
-            />
-        )}
+            <div className="checkout-details-area">
+                <div className="checkout-content-scrollable">
+                    <div className="checkout-header-info" style={{ position: 'relative' }}>
+                        <button onClick={handleRemoveFromCart} className="btn-delete-item">ODSTRANI</button>
+                        <span className="checkout-step-label">IZDELEK {currentIndex + 1} OD {cart.length}</span>
+                        <h1 className="checkout-product-name">{currentProduct.name.toUpperCase()}</h1>
+                        <p className="checkout-product-price">{currentProduct.price}€</p>
+                    </div>
 
-        {currentStep === 3 && (
-          <div className="step-content">
-            <h1>Review your order</h1>
-            <p>Preverite podatke pred koncem...</p>
-            <button onClick={prevStep} className="pay-button">Nazaj</button>
-            <button onClick={() => alert("Naročilo oddano!")} className="pay-button">FINISH</button>
-          </div>
-        )}
+                    <p className="checkout-description-text">{currentProduct.description}</p>
+
+                    <section className="checkout-form-section">
+                        <h3 className="checkout-section-title">1. LOKACIJE NAŠIH PAKETIKOV</h3>
+                        <div className="checkout-map-outer-wrapper">
+                            <PaketnikMap onSelect={setSelectedLocker} user={user} selectedLocker={selectedLocker} />
+                        </div>
+                    </section>
+
+                    <section className="checkout-form-section">
+                        <h3 className="checkout-section-title">2. NAČIN PLAČILA</h3>
+                        <PaymentForm hideButtons={true} />
+                    </section>
+
+                    <div className="checkout-footer-action">
+                        <button 
+                            className="checkout-submit-btn" 
+                            disabled={!selectedLocker}
+                            onClick={handleNextProduct}
+                        >
+                            <span>
+                                {currentIndex < cart.length - 1 ? "NASLEDNJA RASTLINA" : "PREGLEJ NAROČILO"}
+                            </span>
+                            <ShoppingCart size={24} />
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-  );
+    );
 };
 
 export default OrderForm;

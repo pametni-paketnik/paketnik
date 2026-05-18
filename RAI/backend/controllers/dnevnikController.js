@@ -1,72 +1,68 @@
 const DnevnikOdklepov = require('../models/DnevnikOdklepov');
 
-module.exports = {
+exports.dodajZapis = async (req, res) => {
+  try {
+    const zapis = new DnevnikOdklepov(req.body);
+    const shranjen = await zapis.save();
 
-    /**
-     * Zabeleži nov dogodek odklepanja.
-     * To funkcijo pokličeš, ko nekdo odpre paketnik preko aplikacije ali obraza.
-     */
-    ustvariZapis: async function (req, res) {
-        try {
-            const novZapis = new DnevnikOdklepov({
-                uporabnik_id: req.body.uporabnik_id,
-                paketnik_id: req.body.paketnik_id,
-                nacin: req.body.nacin, // 'aplikacija' ali 'obraz'
-                uspesno: req.body.uspesno !== undefined ? req.body.uspesno : true
-            });
+    res.status(201).json(shranjen);
+  } catch (napaka) {
+    res.status(400).json({
+      sporocilo: 'Napaka pri dodajanju zapisa v dnevnik',
+      napaka: napaka.message
+    });
+  }
+};
 
-            const shranjeno = await novZapis.save();
-            return res.status(201).json(shranjeno);
-        } catch (napaka) {
-            return res.status(500).json({
-                sporocilo: "Napaka pri beleženju odklepa.",
-                napaka: napaka.message
-            });
-        }
-    },
+exports.pridobiVseZapise = async (req, res) => {
+  try {
+    const zapisi = await DnevnikOdklepov.find()
+      .populate('narocilo_id')
+      .populate('paketnik_id')
+      .populate('uporabnik_id', 'ime priimek email')
+      .sort({ createdAt: -1 });
 
-    /**
-     * Pridobi celotno zgodovino odklepov (za administratorja).
-     */
-    list: async function (req, res) {
-        try {
-            const zapisi = await DnevnikOdklepov.find()
-                .populate('uporabnik_id', 'ime priimek email')
-                .populate('paketnik_id', 'lokacija')
-                .sort({ casovna_znacka: -1 }); // Najnovejši zapisi na vrhu
-            return res.json(zapisi);
-        } catch (napaka) {
-            return res.status(500).json({ sporocilo: "Napaka pri pridobivanju dnevnika.", napaka });
-        }
-    },
+    res.status(200).json(zapisi);
+  } catch (napaka) {
+    res.status(500).json({
+      sporocilo: 'Napaka pri pridobivanju dnevnika',
+      napaka: napaka.message
+    });
+  }
+};
 
-    /**
-     * Pridobi zgodovino odklepov za določenega uporabnika.
-     */
-    listZaUporabnika: async function (req, res) {
-        try {
-            const uporabnikId = req.params.uporabnikId;
-            const zapisi = await DnevnikOdklepov.find({ uporabnik_id: uporabnikId })
-                .populate('paketnik_id', 'lokacija')
-                .sort({ casovna_znacka: -1 });
-            return res.json(zapisi);
-        } catch (napaka) {
-            return res.status(500).json({ sporocilo: "Napaka pri pridobivanju zgodovine za uporabnika.", napaka });
-        }
-    },
+exports.pridobiZapiseZaPaketnik = async (req, res) => {
+  try {
+    const zapisi = await DnevnikOdklepov.find({
+      paketnik_id: req.params.paketnikId
+    })
+      .populate('narocilo_id')
+      .populate('uporabnik_id', 'ime priimek email')
+      .sort({ createdAt: -1 });
 
-    /**
-     * Pridobi zgodovino odklepov za določen paketnik.
-     */
-    listZaPaketnik: async function (req, res) {
-        try {
-            const paketnikId = req.params.paketnikId;
-            const zapisi = await DnevnikOdklepov.find({ paketnik_id: paketnikId })
-                .populate('uporabnik_id', 'ime priimek')
-                .sort({ casovna_znacka: -1 });
-            return res.json(zapisi);
-        } catch (napaka) {
-            return res.status(500).json({ sporocilo: "Napaka pri pridobivanju zgodovine paketnika.", napaka });
-        }
-    }
+    res.status(200).json(zapisi);
+  } catch (napaka) {
+    res.status(500).json({
+      sporocilo: 'Napaka pri pridobivanju zapisov paketnika',
+      napaka: napaka.message
+    });
+  }
+};
+
+exports.pridobiZapiseZaUporabnika = async (req, res) => {
+  try {
+    const zapisi = await DnevnikOdklepov.find({
+      uporabnik_id: req.params.uporabnikId
+    })
+      .populate('narocilo_id')
+      .populate('paketnik_id')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(zapisi);
+  } catch (napaka) {
+    res.status(500).json({
+      sporocilo: 'Napaka pri pridobivanju zapisov uporabnika',
+      napaka: napaka.message
+    });
+  }
 };

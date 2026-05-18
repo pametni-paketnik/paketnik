@@ -33,7 +33,8 @@ module.exports = {
             const plant = new Plant({
                 name: req.body.name,
                 path: "/images/" + req.file.filename,
-                message: req.body.message,
+                description: req.body.description,
+                care: req.body.care,
                 price: req.body.price,
                 date: req.body.date,
                 naZalogi: req.body.naZalogi === 'true' || req.body.naZalogi === true || req.body.naZalogi === undefined
@@ -57,7 +58,8 @@ module.exports = {
 
             plant.name = req.body.name || plant.name;
             plant.path = req.file ? "/images/" + req.file.filename : plant.path;
-            plant.message = req.body.message || plant.message;
+            plant.description = req.body.description || plant.description;
+            plant.care = req.body.care || plant.care;
             plant.price = req.body.price || plant.price;
             plant.naZalogi = (req.body.naZalogi !== undefined) ? (req.body.naZalogi === 'true' || req.body.naZalogi === true) : plant.naZalogi;
 
