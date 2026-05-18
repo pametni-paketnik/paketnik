@@ -31,6 +31,8 @@ def zajemi_obraz():
     cap = cv2.VideoCapture(0) # 0 je privzeta kamera
     st_zajetih_v_tej_seji = 0
 
+    print(f"\nTrenutno v mapi: {st_obstojecih}. Potrebujemo še {30 - st_obstojecih}.")
+
     print("\n--- NAVODILA ---")
     print("Pritisnite 's' za shranjevanje slike.")
     print("Pritisnite 'q' za izhod.")

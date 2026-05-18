@@ -2,6 +2,10 @@ import cv2
 import os
 import numpy as np
 import random
+import shutil
+
+def odstrani_sum(img):
+    return cv2.GaussianBlur(img, (3, 3), 0)
 
 
 def dodaj_sum(img):
