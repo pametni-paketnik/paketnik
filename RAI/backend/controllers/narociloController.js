@@ -72,18 +72,22 @@ exports.dodajNarocilo = async (req, res) => {
 };
 
 // pridobi vsa narocila 
-exports.pripraviVsaNarocila = async(req, res) => {
+exports.pripraviVsaNarocila = async (req, res) => {
     try {
         const narocila = await Narocilo.find()
-            .populate('uporabnik_id', 'ime priimek')
-            .populate('podatki_id', 'lokacija')
+            .populate('uporabnik_id', 'ime priimek email')
             .sort({ createdAt: -1 });
-        res.status(200),json(narocila); 
 
+        res.status(200).json(narocila);
     } catch (napaka) {
-        res.status(500).json({sporocilo: "Napaka pri pridobivanju podatkov", sporocilo}); 
+        console.error('Napaka pri pridobivanju naročil:', napaka);
+
+        res.status(500).json({
+            sporocilo: 'Napaka pri pridobivanju podatkov',
+            napaka: napaka.message
+        });
     }
-}; 
+};
 
 // pridobi posamezno narocilo po ID 
 exports.pridobiNarociloPodId = async(req, res) => {
