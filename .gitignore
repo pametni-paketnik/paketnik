@@ -1,6 +1,7 @@
 # --- NODE.JS / BACKEND (RAIN) ---
 node_modules/
 .env
+.env.local
 .vscode/
 
 # --- ANDROID (RAI) ---
@@ -14,3 +15,8 @@ build/
 # --- SISTEMSKO ---
 Thumbs.db
 desktop.ini
+
+# --- ORV python ---
+venv/
+__pycache__/
+*.py[cod]

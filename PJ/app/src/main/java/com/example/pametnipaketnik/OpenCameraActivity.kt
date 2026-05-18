@@ -54,7 +54,10 @@ class OpenCameraActivity : AppCompatActivity() {
         setContentView(previewView)
         startCamera(previewView)
     }
-
+    override fun onResume() {
+        super.onResume()
+        isScanned = false
+    }
     @OptIn(ExperimentalGetImage::class)
     private fun startCamera(previewView: PreviewView) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
@@ -88,7 +91,15 @@ class OpenCameraActivity : AppCompatActivity() {
                                 barcode.rawValue?.let { value ->
                                     isScanned = true
                                     Log.d("QR", "QR CODE: $value")
-                                    openBox(this, value)
+                                    val boxId = extractBoxId(value)
+
+                                    if (boxId != null) {
+                                        Log.d("QR", "BOX ID: $boxId")
+                                        openBox(this, boxId)
+                                    } else {
+                                        Log.e("QR", "Ne morem prebrati ID paketnika iz QR kode: $value")
+                                        isScanned = false
+                                    }
                                 }
                             }
                         }
@@ -107,6 +118,16 @@ class OpenCameraActivity : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
+    private fun extractBoxId(qrValue: String): String? {
+        val value = qrValue.trim()
+
+        if (value.contains("b.direct4.me", ignoreCase = true)) {
+            val parts = value.split("/")
+            return parts.getOrNull(4)?.toIntOrNull()?.toString()
+        }
+
+        return value.toIntOrNull()?.toString()
+    }
     private fun openBox(context: Context, boxId: String) {
         lastBoxId = boxId
         val client = OkHttpClient()
@@ -125,24 +146,36 @@ class OpenCameraActivity : AppCompatActivity() {
             .enqueue(object: Callback {
                 override fun onFailure(call: Call, e: java.io.IOException) {
                     Log.e("API", e.toString())
+                    runOnUiThread {
+                        isScanned = false
+                    }
                 }
 
                 override fun onResponse(call: Call, response: Response) {
                     val jsonResponse = response.body?.string()
                     Log.d("API_STATUS", "Code: ${response.code}")
                     Log.d("API_BODY", jsonResponse ?: "PRAZEN ODGOVOR")
-                    if(!response.isSuccessful) {
+                    if (!response.isSuccessful) {
                         Log.e("API", "API napaka: ${response.code}")
+                        runOnUiThread {
+                            isScanned = false
+                        }
                         return
                     }
                     if(jsonResponse.isNullOrBlank()) {
                         Log.e("API", "Prazen odgovor iz API-ja")
+                        runOnUiThread {
+                            isScanned = false
+                        }
                         return
                     }
                     val obj = JSONObject(jsonResponse)
                     val base64Data = obj.optString("data", "")
                     if(base64Data.isBlank()) {
                         Log.e("API", "V odgovoru ni data tokena")
+                        runOnUiThread {
+                            isScanned = false
+                        }
                         return
                     }
                     playToken(this@OpenCameraActivity, base64Data)
@@ -153,31 +186,44 @@ class OpenCameraActivity : AppCompatActivity() {
         try {
             val decodedBytes = Base64.decode(base64Data, Base64.DEFAULT)
 
-            val file = File(context.cacheDir, "token.wav")
-            FileOutputStream(file).use { fos ->
+            val header = decodedBytes.take(10).joinToString(" ") { "%02X".format(it) }
+            Log.d("TOKEN_HEADER", header)
+
+            val tokenFile = File(context.cacheDir, "token.wav")
+
+            FileOutputStream(tokenFile).use { fos ->
                 fos.write(decodedBytes)
             }
 
-            val mediaPlayer = MediaPlayer()
-            mediaPlayer.setDataSource(file.absolutePath)
-            mediaPlayer.prepare()
-            mediaPlayer.start()
+            runOnUiThread {
+                val mediaPlayer = MediaPlayer()
+                mediaPlayer.setDataSource(tokenFile.absolutePath)
+                mediaPlayer.prepare()
+                mediaPlayer.start()
 
-            Log.d("TOKEN", "Zvok se predvaja: ${file.absolutePath}")
+                Log.d("TOKEN", "Zvok se predvaja: ${tokenFile.absolutePath}")
 
-            mediaPlayer.setOnCompletionListener {
-                Log.d("TOKEN", "Zvok se je koncal")
-                it.release()
+                android.os.Handler(mainLooper).postDelayed({
+                    try {
+                        if (mediaPlayer.isPlaying) {
+                            mediaPlayer.stop()
+                        }
+                    } catch (_: Exception) {
+                    }
 
-                val resultIntent = Intent()
-                resultIntent.putExtra("boxId", lastBoxId)
+                    mediaPlayer.release()
 
-                setResult(RESULT_OK, resultIntent)
-                finish()
+                    val resultIntent = Intent()
+                    resultIntent.putExtra("boxId", lastBoxId)
+
+                    setResult(RESULT_OK, resultIntent)
+                    finish()
+                }, 4000)
             }
 
         } catch (e: Exception) {
             Log.e("TOKEN", "Napaka pri predvajanju tokena", e)
+            isScanned = false
         }
     }
 }

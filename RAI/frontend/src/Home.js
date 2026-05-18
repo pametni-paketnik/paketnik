@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import api from './api';
-import { ArrowLeft, ShoppingCart, Trash, Heart, ArrowRight, Bold } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ArrowLeft, ShoppingCart, Trash, Heart, ArrowRight, Bold, Sun, Droplet, Tag, Cast } from 'lucide-react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { UserContext } from './userContext'
 import './index.css';
 import paketnikImg from './images/pametni_paketnik_open.png';
@@ -10,10 +10,12 @@ import paketnikImg from './images/pametni_paketnik_open.png';
 function Home() {
     const { user } = useContext(UserContext); 
     const [plants, setPlants] = useState([]); 
-
     const [selectedPlant, setSelectedPlant] = useState(null); 
-
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    const [activeFeature, setActiveFeature] = useState('water'); 
+    const [cartCount, setCartCount] = useState(0); 
+
+    const detailsRef = useRef(null);
 
     useEffect(() => {
         const fetchPlants = async () => {
@@ -57,11 +59,30 @@ function Home() {
                 })
             }
         }
+        if(selectedPlant){
+            setActiveFeature('water'); 
+
+            const currentCart = JSON.parse(localStorage.getItem('cart') || []); 
+            setCartCount(currentCart.length); 
+
+            requestAnimationFrame(() => {
+                if (detailsRef.current) {
+                    detailsRef.current.scrollTop = 0;
+                }
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
     }, [plants.length, selectedPlant]);
-<<<<<<< Updated upstream
-=======
+PAK-100-prilagodljivo-za-zaslove
+Updated upstream
 
     const navigate = useNavigate(); 
+    const navigate = useNavigate(); 
+
+main
     const handleAddToCart = () => {
     const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
 
@@ -74,7 +95,12 @@ function Home() {
         localStorage.setItem('cart', JSON.stringify(updatedCart));
 
         setCartCount(updatedCart.length);
+PAK-100-prilagodljivo-za-zaslove
         alert(`${selectedPlant.name} dodana v košarico!`);
+
+        alert(`${selectedPlant.name} dodana v košarico!`);
+
+main
         setSelectedPlant(null);
 
         requestAnimationFrame(() => {
@@ -83,7 +109,9 @@ function Home() {
             }
         });
     };
->>>>>>> Stashed changes
+PAK-100-prilagodljivo-za-zaslove
+Stashed changes
+main
 
     const [outOfStock, setOutOfStock] = useState([]); 
     const toggleStock = async (id, currentState) => {
@@ -159,10 +187,11 @@ function Home() {
     }, [plants.length, selectedPlant]);
     
     const isAdmin = user && user.vloga === 'admin'; 
-<<<<<<< Updated upstream
+Updated upstream
     const displayPlants = window.innerWidth > 768 ? [...plants, ...plants] : plants;
     
-=======
+PAK-100-prilagodljivo-za-zaslove
+main
     const getGraphData = () => {
     switch (activeFeature) {
         case 'light':
@@ -193,7 +222,9 @@ function Home() {
     const graph = getGraphData(); 
     const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S']; 
 
->>>>>>> Stashed changes
+PAK-100-prilagodljivo-za-zaslove
+Stashed changes
+main
     return (
         <div className="split-home-container">
             <section className="preview-side">
@@ -218,33 +249,124 @@ function Home() {
 
             <section className="content-side">
                 {selectedPlant ? (
-                    <div className="plant-details-view">
+                    <div className="plant-details-view" ref={detailsRef}>
+                        {isAdmin && (
+                            <button 
+                                className="admin-delete-top-btn" 
+                                onClick={() => deletePlant(selectedPlant._id)}
+                                style={{
+                                    position: 'absolute', top: '5px', right: '10px', border: 'none',
+                                    background: 'transparent', color: '#ff4d4d', padding: '10px',
+                                    width: '90px', cursor: 'pointer', display: 'flex',
+                                    alignItems: 'center', gap: '8px', fontWeight: 'bold', transition: '0.3s'
+                                }}
+                            > 
+                                <Trash size={20} />
+                            </button>
+                        )}
+                        
                         <div className="details-container">
                             <h2 className="details-title">{selectedPlant.name}</h2>
                             <p className="details-price">{selectedPlant.price}€</p>
-                            <p className="details-description">
-                                {selectedPlant.opis || "Ta čudovita rastlina bo osvežila vaš prostor in prinesla naravno energijo v vaš dom."}
-                            </p>
+                            <p><b>DESCRIPTION: </b></p>
+                            <p className="details-description">{selectedPlant.description}</p>
+                            <p><b>CARE: </b></p>
+                            <p className="details-care">{selectedPlant.care}</p>
+
+                            <div className="plant-features-row">
+                                <div 
+                                    className={`feature-item clickable ${activeFeature === 'light' ? 'highlight' : ''}`}
+                                    onClick={() => setActiveFeature('light')}
+                                >
+                                    <div className="feature-icon-circle">
+                                        <Sun size={20} />
+                                    </div>
+                                    <span>{selectedPlant.svetloba || "Low light"}</span>
+                                </div>
+
+                                <div 
+                                    className={`feature-item clickable ${activeFeature === 'water' ? 'highlight' : ''}`}
+                                    onClick={() => setActiveFeature('water')}
+                                >
+                                    <div className="feature-icon-circle">
+                                        <Droplet size={24} />
+                                    </div>
+                                    <span>{selectedPlant.zalivanje || "Water daily"}</span>
+                                </div>
+
+                                <div 
+                                    className={`feature-item clickable ${activeFeature === 'cost' ? 'highlight' : ''}`}
+                                    onClick={() => setActiveFeature('cost')}
+                                >
+                                    <div className="feature-icon-circle">
+                                        <Tag size={20} />
+                                    </div>
+                                    <span>{selectedPlant.cena_rang || "Low cost"}</span>
+                                </div>
+                            </div>
+
+                            <div className="searches-section">
+                                <h3 className="searches-title">
+                                    Searches ({activeFeature === 'light' ? 'Light interest' : activeFeature === 'cost' ? 'Price checks' : 'Water needs'})
+                                </h3>
+                                <div className="graph-container">
+                                    <svg viewBox="0 0 300 80" className="graph-svg">
+                                        <path 
+                                            d={graph.path} 
+                                            fill="none" 
+                                            strokeWidth="2" 
+                                            className="graph-path"
+                                        />
+                                    </svg>
+                                    
+                                    <div className="graph-badge" style={{ left: graph.badgeLeft }}>
+                                        {graph.value}
+                                    </div>
+
+                                    <div className="graph-days">
+                                        {days.map((day, idx) => (
+                                            <span 
+                                                key={idx} 
+                                                className={idx === graph.activeDayIdx ? 'active-day' : ''}
+                                            >
+                                                {day}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
 
                         <div className="details-footer">
-                            <button className="main-add-btn full-width">
-                                Dodaj v košarico <ShoppingCart size={24} strokeWidth={3} />
+                            <button 
+                                className="main-add-btn full-width" 
+                                onClick={handleAddToCart}
+                                disabled={cartCount >= 2}
+                                style={cartCount >= 2 ? { 
+                                    backgroundColor: '#b3b3b3', 
+                                    cursor: 'not-allowed', 
+                                    color: '#ffffff',
+                                    opacity: 0.8
+                                } : {}}
+                            >
+                                {cartCount >= 2 ? (
+                                    <>Košarica je polna <ShoppingCart size={24} /></>
+                                ) : (
+                                    <>Dodaj v košarico <ShoppingCart size={24} strokeWidth={3} /></>
+                                )}
                             </button>
                         </div>
                     </div>
                 ) : (
-                    <div 
-                        className="infinite-scroll-viewport" 
-                        ref={scrollRef} 
-                        onScroll={handleScroll}
-                    >
+                    <div className="infinite-scroll-viewport" ref={scrollRef} onScroll={handleScroll}>
                         <div className="bubble-list">
                             {displayPlants.map((plant, index) => (
                                 <div 
                                     key={`${plant._id}-${index}`} 
                                     className="bubble-card"
-                                    onClick={() => setSelectedPlant({...plant, clickId: Date.now()})}>
+                                    onClick={() => setSelectedPlant({...plant, clickId: Date.now()})}
+                                >
                                     <img 
                                         src={`http://localhost:3001${plant.path}`} 
                                         alt={plant.name} 
