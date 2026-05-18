@@ -110,7 +110,24 @@ def predobdelaj_podatke():
             grainy = dodaj_sum(img)
             cv2.imwrite(os.path.join(oseba_proc_dir, f"{ime_osnova}_grainy.jpg"), grainy)
 
-    print("\nPredobdelava končana! Slike so v mapi 'dataset/obdelani_podatki'.")
+            # 6. KOMBINACIJE (Zmeša filtre)
+            # Ustvari še 5 unikatnih kombinacij
+            for i in range(5):
+                # Naključna rotacija + naključna svetlost
+                c_img = rotiraj_sliko(img, random.randint(-20, 20))
+                c_img = spremeni_svetlost(c_img, random.uniform(0.5, 1.5))
+                # 50% možnosti, da dodamo še zrnatost
+                if random.random() > 0.5:
+                    c_img = dodaj_sum(c_img)
+                
+                cv2.imwrite(os.path.join(oseba_proc_dir, f"{ime_osnova}_comb_{i}.jpg"), c_img)
+
+        print(f"  [OK] Iz 30 slik za '{oseba}' je nastalo cca. 450+ različic.")
+
+    print("\nUspeh! Predobdelava končana. Celoten dataset je pripravljen v 'dataset/obdelani_podatki'.")
+    print("Mapa 'obdelani_podatki' je ignorirana v Git-u, surove slike pa so pripravljene za Push.")
+
+
 
 if __name__ == "__main__":
     predobdelaj_podatke()
