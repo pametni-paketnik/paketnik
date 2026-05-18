@@ -1,75 +1,155 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle } from 'lucide-react';
+import api from './api';
 import './index.css';
 
 const ReviewForm = () => {
     const navigate = useNavigate(); 
     const [finalOrder, setFinalOrder] = useState(null); 
+    const [loading, setLoading] = useState(true);
 
     useEffect (() => {
         const storedOrder = JSON.parse(localStorage.getItem('final_orders')); 
-        console.log("Podatki iz localStorage:", storedOrder);
-        if(storedOrder) {
-            setFinalOrder(storedOrder); 
+        
+        if (!storedOrder) {
+            setLoading(false);
+            return;
         }
-    }, []); 
+        const imaPlacilo = storedOrder.payment && 
+                storedOrder.payment.cardNumber && 
+                storedOrder.payment.cardNumber.trim() !== '';
+
+        if (imaPlacilo && !storedOrder.payment?.useProfileCard) {
+            setFinalOrder(storedOrder);
+            setLoading(false);
+        } else{
+            api.get('uporabnik/profile') 
+                .then(res => {
+                    const podatkiUporabnika = res.data; 
+
+                    if(podatkiUporabnika && podatkiUporabnika.stevilka_kartice){
+                        const posodobljenoPlacilo = {
+                            cardNumber: podatkiUporabnika.stevilka_kartice,
+                            cardholder: podatkiUporabnika.ime_na_kartici || `${podatkiUporabnika.ime || ''} ${podatkiUporabnika.priimek || ''}`.trim(),
+                            month: podatkiUporabnika.datum_poteka ? podatkiUporabnika.datum_poteka.split('/')[0] : "MM",
+                            year: podatkiUporabnika.datum_poteka ? podatkiUporabnika.datum_poteka.split('/')[1] : "YY"
+                        };
+
+                    const celotnoNarociloSKartico = {
+                        ...storedOrder, 
+                        payment: posodobljenoPlacilo
+                    }; 
+                    setFinalOrder(celotnoNarociloSKartico); 
+                } else{
+                    setFinalOrder(storedOrder); 
+                }
+            })
+            .catch(err=> {
+                setFinalOrder(storedOrder); 
+            })
+            .finally(() => {
+                setLoading(false); 
+            });
+        }
+    }, []);     
 
     const handleConfirmOrder = async () => {
+        if(!finalOrder){
+            alert("Podatki o naročilu še niso naloženi"); 
+            return; 
+        }
+
         try{
             const trenutniUporabnikId = localStorage.getItem('user_id') || null;
 
             const podatkiZaBackend = {
-                ...finalOrder,
-                uporabnik_id: trenutniUporabnikId
+                ...trenutniUporabnikId, 
+                stranka: {
+                    ime: finalOrder.customer?.firstName, 
+                    priimek: finalOrder.customer?.lastName, 
+                    email: finalOrder.customer?.email, 
+                    telefon: finalOrder.customer?.telefon
+                }, 
+                izdelki: finalOrder.items?.map(item => ({
+                    izdelek_id: item._id, 
+                    ime_izdelka: item.name || "Roža", 
+                    kolicina: item.kolicina || 1, 
+                    paketnik: {
+                        paketnik_id: item.selectedLocker?._id || null,
+                        ime: item.selectedLocker?.name || "Glavni Paketnik",
+                        naslov: item.selectedLocker?.address || "Naslov paketnika ni izbran"
+                    }
+                })), 
+                placilo: {
+                    imetnik: finalOrder.payment?.cardholder || "Neznan",
+                    kartica_maskirana: finalOrder.payment?.cardNumber ? `•••• •••• •••• ${finalOrder.payment.cardNumber.replace(/\s/g, '').slice(-4)}` : "••••",
+                    potek: `${finalOrder.payment?.month}/${finalOrder.payment?.year}`
+                },
+                skupna_cena: Number(finalOrder.totalPrice)
             };
 
             const response = await fetch('http://localhost:3001/api/orders', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'}, 
-            body: JSON.stringify(finalOrder)
+            body: JSON.stringify(podatkiZaBackend)
         }); 
 
         if(!response.ok){
             throw new Error("Nekaj je šlo narobe pri shranjevanju naročil v bazo"); 
         }
         const data = await response.json(); 
-        console.log("Narocilo uspesno shranjeno"); 
-
-        alert("Naročilo uspešno oddano"); 
-        navigate('/success', { state: { order: finalOrder } });
+        const uspesnoNarociloStanje = finalOrder;
 
         localStorage.removeItem('cart'); 
         localStorage.removeItem('final_orders'); 
+        
+        navigate('/success', { state: { order: uspesnoNarociloStanje } });
+
         } catch(error) {
             console.error("Napaka: ", error); 
+            alert("Prišlo je do napake pri oddaji naročila.");
         }
     }; 
 
-    if(!finalOrder) return <div className="empty-cart">Nalagam podatke o naročilu...</div>
+    if (loading || !finalOrder) {
+        return <div className="empty-cart">Nalagam podatke o naročilu...</div>;
+    }
 
-    const {customer, items, locker, payment, totalPrice} = finalOrder; 
-    const maskedCardNumber = payment?.cardNumber 
-        ? `•••• •••• •••• ${payment.cardNumber.slice(-4)}` 
-        : "Ni podatka o kartici";
+    const surovoStevilo = finalOrder.payment?.cardNumber ? String(finalOrder.payment.cardNumber).replace(/\s/g, '') : "";
+    const maskedCardNumber = surovoStevilo.includes("•")
+        ? surovoStevilo 
+        : surovoStevilo
+            ? `•••• •••• •••• ${surovoStevilo.slice(-4)}` 
+            : "•••• •••• •••• ••••";
 
-    const displayMonth = payment?.month ? String(payment.month).padStart(2, '0') : "MM"; 
-    const displayYear = payment?.year ? payment.year.toString().slice(-2) : "YY";
-
+    const displayMonth = finalOrder.payment?.month ? String(finalOrder.payment.month).padStart(2, '0') : "MM";
+    
+    let displayYear = "YY";
+    if (finalOrder.payment?.year) {
+        const letoStr = String(finalOrder.payment.year);
+        displayYear = letoStr.length > 2 ? letoStr.slice(-2) : letoStr.padStart(2, '0');
+    }
+    
+    const imeZaPrikazNaKartici = (finalOrder.payment?.cardholder && finalOrder.payment.cardholder.trim() !== "")
+        ? finalOrder.payment.cardholder.toUpperCase()
+        : `${finalOrder.customer?.firstName || ''} ${finalOrder.customer?.lastName || ''}`.trim() !== ""
+            ? `${finalOrder.customer?.firstName || ''} ${finalOrder.customer?.lastName || ''}`.trim().toUpperCase()
+            : "IME IN PRIIMEK";
+    
+            
     return (
-        /* POPRAVLJENO: Razredi se sedaj 100% ujemajo z vašim CSS-om za sivo-belo postavitev */
         <div className="checkout-page-review">
             <div className="checkout-main-wrapper-review">
                 
-                {/* Levi del - siva podlaga */}
                 <div className="checkout-preview-review">
                     <div className="checkout-summary-sticky">
-                        <h2 className="summary-title">Izbrane rože ({items?.length || 0})</h2>
+                        <h2 className="summary-title">Izbrane rože ({finalOrder.items?.length || 0})</h2>
                         
                         <div className="cart-items-list">
-                            {items && items.map((item, index) => (
-                                <div key={item._id || index} className="cart-item-row-custom">
-                                    <div className="item-img-container-custom">
+                        {finalOrder.items && finalOrder.items.map((item, index) => (
+                            <div key={`cart-item-${item._id}-${index}`} className="cart-item-row-custom">
+                                <div className="item-img-container-custom">
                                         <img src={`http://localhost:3001${item.path}`} alt={item.name} />
                                     </div>
                                     <div className="item-details-custom">
@@ -77,7 +157,7 @@ const ReviewForm = () => {
                                             <h3>{item.name ? item.name.toUpperCase() : "ROŽA"}</h3>
                                             <span className="item-price-custom">{(Number(item.price) || 0).toFixed(2)} €</span>
                                         </div>
-                                        <p className="item-meta-custom">Količina: 1</p>
+                                        <p className="item-meta-custom">Količina: {item.kolicina || 1}</p>
                                         <p className="item-subtext-custom">📍 {item.selectedLocker?.name || "Prevzemno mesto"}</p>
                                     </div>
                                 </div>
@@ -92,13 +172,12 @@ const ReviewForm = () => {
                             <hr className="divider-custom" />
                             <div className="breakdown-row-custom total-row-custom">
                                 <span>Skupaj za plačilo:</span>
-                                <span>{(Number(totalPrice) || 0).toFixed(2)} €</span>
+                                <span>{(Number(finalOrder.totalPrice) || 0).toFixed(2)} €</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Desni del - ČISTO BELO OZADJE + DRSNIK */}
                 <div className="checkout-details-review">
                     <span className="checkout-step-label-review">KORAK 3 OD 3</span>
                     <h1 className="checkout-product-name-review">PREGLED NAROČILA</h1>
@@ -110,22 +189,22 @@ const ReviewForm = () => {
                         <div className="review-data-box">
                             <div className="input-group-static">
                                 <label>Ime in priimek</label>
-                                <p>{customer?.firstName} {customer?.lastName}</p>
+                                <p>{finalOrder.customer?.firstName} {finalOrder.customer?.lastName}</p>
                             </div>
                             <div className="input-group-static">
                                 <label>E-pošta</label>
-                                <p>{customer?.email}</p>
+                                <p>{finalOrder.customer?.email}</p>
                             </div>
                             <div className="input-group-static">
                                 <label>Telefon</label>
-                                <p>{customer?.phone}</p>
+                                <p>{finalOrder.customer?.telefon || finalOrder.customer?.phone}</p>
                             </div>
                         </div>
 
                         <h3 className="checkout-section-title-review">2. PREVZEMNA MESTA ROŽ</h3>
-                        <div className="review-data-box">
-                            {items && items.map((item, idx) => (
-                                <div key={idx} className="locker-review-item">
+                            <div className="review-data-box">
+                                {finalOrder.items && finalOrder.items.map((item, idx) => (
+                                    <div key={`locker-item-${item._id}-${idx}`} className="locker-review-item">
                                     <div className="locker-icon-min">📍</div>
                                     <div>
                                         <p className="locker-item-title"><strong>{item.name}</strong> → {item.selectedLocker?.name || "Glavni Paketnik"}</p>
@@ -149,7 +228,7 @@ const ReviewForm = () => {
                                     <div className="card-bottom">
                                         <div className="card-info">
                                             <span className="label">Imetnik kartice</span>
-                                            <span className="value">{payment?.cardholder || "Ni podatka"}</span>
+                                            <span className="value">{imeZaPrikazNaKartici}</span>
                                         </div>
                                         <div className="card-info">
                                             <span className="label">Potek</span>

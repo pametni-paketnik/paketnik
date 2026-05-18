@@ -1310,24 +1310,25 @@ nav {
 }
 
 /* PROFILE */
-/* Profile */
 .profile-layout {
   width: 100%;
+  max-width: 1400px; /* Dodano za lepši izgled na ultra-širokih zaslonih */
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 30px;
+  box-sizing: border-box;
 }
 
 .profile-top-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)); /* Čisto in varno definira 3 enake stolpce */
-  gap: 20px;
+  /* Ustvari 3 enake stolpce */
+  grid-template-columns: repeat(3, minmax(0, 1fr)); 
+  gap: 25px;
   width: 100%;
-  align-items: stretch; /* Poskrbi, da so vse kartice v vrsti enako visoke */
+  align-items: stretch; /* Vse kartice v vrsti bodo enako visoke */
 }
 
-/* Uporabimo skupne lastnosti za vse tri kartice, da bodo vizualno usklajene */
 .profile-card, 
 .payment-card-wrapper, 
 .order-history-card {
@@ -1340,26 +1341,26 @@ nav {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 30px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); 
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); 
   overflow: hidden;
-  display: flex; /* Omogoči, da se notranji elementi raztegnejo do dna */
+  display: flex; 
+  flex-direction: column; /* Pomembno za pravilno delovanje flex: 1 znotraj */
 }
 
-/* Popravljen selektor za formo znotraj zgodovine naročil, če uporablja isti razred */
 .profile-form-section, 
 .payment-content {
   width: 100%;
   box-sizing: border-box;
-  padding: 40px 30px; /* Zmanjšan padding iz 60px, da imajo elementi v ožjih stolpcih dovolj prostora */
+  padding: 40px 25px; /* Malenkost optimiziran stranski padding */
   background: rgba(255, 255, 255, 0.4); 
   display: flex;
   flex-direction: column;
-  flex: 1; /* Raztegne vsebino čez celotno višino kartice */
+  flex: 1; /* Raztegne celotno vsebino do dna kartice */
 }
 
 .profile-header-row {
   display: flex;
-  flex-direction: column-reverse; /* Zaradi ožjih stolpcev je bolje, da je slika nad besedilom */
+  flex-direction: column-reverse; /* Slika nad besedilom */
   align-items: center;
   text-align: center;
   gap: 15px;
@@ -1371,19 +1372,18 @@ nav {
 }
 
 .profile-header-text h1 {
-  font-size: 1.5rem; /* Malenkost zmanjšano, da se besedilo ne lomi grdo */
+  font-size: 1.4rem; 
   font-weight: 800;
   color: #1a1a1a;
   margin-bottom: 8px;
   letter-spacing: 1px;
-  padding-top: 0;
 }
 
 .profile-header-text p {
   font-size: 0.85rem;
   color: #444;
   margin: 0;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 .profile-header-image-wrapper {
@@ -1391,18 +1391,22 @@ nav {
 }
 
 .profile-header-image {
-  width: 90px;  /* Prilagojena velikost za tri-stolpčno postavitev */
-  height: 90px;
+  width: 85px;  
+  height: 85px;
   border-radius: 50%;
   object-fit: cover;
-  border: none;
   box-shadow: 0 10px 20px rgba(54, 80, 22, 0.15); 
 }
 
-.profile-form-section .submit-btn:last-child,
-.payment-content .submit-btn:last-child,
-.payment-content .pay-button:last-child {
-  margin-top: auto; /* Potisne gumbe na dno kartice, da so lepo poravnani */
+/* Potisne gumb na dno obrazca v vseh karticah, da so gumbi poravnani */
+.profile-form-section form,
+.profile-form-section .submit-btn:last-of-type {
+  margin-top: auto; 
+}
+
+.card-input-row {
+  display: flex;
+  gap: 15px;
 }
 
 .file-upload-wrapper {
@@ -1427,71 +1431,60 @@ nav {
   background: transparent;
   font-size: 0.9rem;
   font-weight: 600;
-  box-sizing: border-box;
   cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.file-upload-input:focus {
-  outline: none;
-  border-bottom-color: rgb(54, 80, 22);
-}
-
-.file-upload-input::file-selector-button {
-  background: rgb(54, 80, 22);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  margin-right: 15px;
-  font-weight: 700;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.file-upload-input::file-selector-button:hover {
-  background: rgb(54, 80, 22);
-  box-shadow: 0 5px 15px rgba(54, 80, 22, 0.3);
-  filter: brightness(1.1);
-}
-
-.profile-message {
-  margin-top: 20px;
-  font-weight: bold;
-  text-align: center;
-  font-size: 0.85rem;
 }
 
 .order-history-list {
   margin-top: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .order-history-empty {
-  padding: 30px 20px;
+  padding: 40px 20px;
   border: 2px dashed rgba(54, 80, 22, 0.2); 
   border-radius: 20px;
   text-align: center;
   color: #666;
   font-weight: 600;
   background: rgba(255, 255, 255, 0.3);
+  margin-auto: auto;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-message {
+  margin-top: 15px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 0.85rem;
 }
 
 /* ODZIVNOST (Media Queries) */
-@media (max-width: 1100px) {
-  /* Na manjših prenosnikih in tablicah zložimo kartice eno pod drugo */
+
+/* Vmesna stopnja: na tablicah/manjših ekranih preklopimo na 2 stolpca, da elementi ne "stisnejo" */
+@media (max-width: 1250px) {
+  .profile-top-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Tablice vertikalno in večji telefoni: vse v en stolpec */
+@media (max-width: 900px) {
   .profile-top-grid {
     grid-template-columns: 1fr;
     gap: 25px;
   }
 
-  .profile-form-section, .payment-content {
-    padding: 40px; 
+  .profile-form-section {
+    padding: 35px 30px; 
   }
 
   .profile-header-row {
-    flex-direction: row-reverse; /* Na širšem zaslonu vrnemo sliko na desno stran */
+    flex-direction: row-reverse; 
     text-align: left;
     align-items: center;
   }
@@ -1502,24 +1495,19 @@ nav {
     padding: 10px;
   }
 
-  .profile-form-section, .payment-content {
+  .profile-form-section {
     padding: 30px 20px !important; 
-    background: rgba(255, 255, 255, 0.7);
   }
 
   .profile-header-row {
     flex-direction: column-reverse;
     text-align: center;
-    gap: 20px;
+    gap: 15px;
   }
 
-  .profile-header-text h1 {
-    font-size: 1.4rem;
-  }
-
-  .profile-header-image {
-    width: 90px;
-    height: 90px;
+  .card-input-row {
+    flex-direction: column;
+    gap: 0;
   }
 }
 
@@ -1953,11 +1941,6 @@ nav {
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
-}
-
-.flower-order-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.22);
 }
 
 .flower-orders-grid {
