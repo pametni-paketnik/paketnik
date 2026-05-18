@@ -6,7 +6,6 @@ import { UserContext } from './userContext'
 import './index.css';
 import paketnikImg from './images/pametni_paketnik_open.png';
 
-// popravek slike na vrhu 
 function Home() {
     const { user } = useContext(UserContext); 
     const [plants, setPlants] = useState([]); 
@@ -15,6 +14,9 @@ function Home() {
     const [activeFeature, setActiveFeature] = useState('water'); 
     const [cartCount, setCartCount] = useState(0); 
 
+    const detailsRef = useRef(null);
+    const [cartCount, setCartCount] = useState(0); 
+    const [activeFeature, setActiveFeature] = useState('water'); 
     const detailsRef = useRef(null);
 
     useEffect(() => {
