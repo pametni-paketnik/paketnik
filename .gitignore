@@ -20,3 +20,9 @@ desktop.ini
 venv/
 __pycache__/
 *.py[cod]
+*.py[cod]
+*.ipynb_checkpoints/
+# --- ORV PODATKI ---
+# Ignorira mapo z generiranimi/obdelanimi slikami (ker jih je 1000+ in jih lahko sami generirate iz surovih podatkov z preobdelava.py)
+ORV/dataset/obdelani_podatki/
+ORV/dataset/final_split/
