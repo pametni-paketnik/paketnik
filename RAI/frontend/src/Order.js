@@ -50,10 +50,10 @@ const OrderForm = () =>{
 
             const finalOrderPayload = {
                 customer: {
-                    firstName: user?.name || "Unknown", 
+                    firstName: user?.ime || "Unknown", 
                     lastName: user?.priimek || "Unknown", 
                     email: user?.email || "", 
-                    phone: "/"
+                    phone: user?.telefon || "/"
                 }, 
                 items: updatedProcessed, 
                 locker: updatedProcessed[0]?.selectedLocker, 

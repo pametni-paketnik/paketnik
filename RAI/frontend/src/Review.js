@@ -9,6 +9,7 @@ const ReviewForm = () => {
     const [finalOrder, setFinalOrder] = useState(null); 
     const [loading, setLoading] = useState(true);
 
+
     useEffect (() => {
         const storedOrder = JSON.parse(localStorage.getItem('final_orders')); 
         
@@ -38,6 +39,13 @@ const ReviewForm = () => {
 
                     const celotnoNarociloSKartico = {
                         ...storedOrder, 
+                        customer: {
+                            ...storedOrder.customer,
+                            ime: storedOrder.customer?.ime || storedOrder.customer?.firstName || podatkiUporabnika.ime || "",
+                            priimek: storedOrder.customer?.priimek || storedOrder.customer?.lastName || podatkiUporabnika.priimek || "",
+                            email: storedOrder.customer?.email || podatkiUporabnika.email || "",
+                            telefon: storedOrder.customer?.telefon || storedOrder.customer?.telefon || ""
+                        },
                         payment: posodobljenoPlacilo
                     }; 
                     setFinalOrder(celotnoNarociloSKartico); 
@@ -64,10 +72,10 @@ const ReviewForm = () => {
             const trenutniUporabnikId = localStorage.getItem('user_id') || null;
 
             const podatkiZaBackend = {
-                ...trenutniUporabnikId, 
+                uporabnik_id: trenutniUporabnikId, 
                 stranka: {
-                    ime: finalOrder.customer?.firstName, 
-                    priimek: finalOrder.customer?.lastName, 
+                    ime: finalOrder.customer?.firstName || finalOrder.customer?.ime || "", 
+                    priimek: finalOrder.customer?.lastName || finalOrder.customer?.priimek || "", 
                     email: finalOrder.customer?.email, 
                     telefon: finalOrder.customer?.telefon
                 }, 
@@ -99,7 +107,10 @@ const ReviewForm = () => {
             throw new Error("Nekaj je šlo narobe pri shranjevanju naročil v bazo"); 
         }
         const data = await response.json(); 
-        const uspesnoNarociloStanje = finalOrder;
+        const uspesnoNarociloStanje = {
+            ...finalOrder, 
+            backendOrderId: data._id || data.id
+        };
 
         localStorage.removeItem('cart'); 
         localStorage.removeItem('final_orders'); 
@@ -133,10 +144,9 @@ const ReviewForm = () => {
     
     const imeZaPrikazNaKartici = (finalOrder.payment?.cardholder && finalOrder.payment.cardholder.trim() !== "")
         ? finalOrder.payment.cardholder.toUpperCase()
-        : `${finalOrder.customer?.firstName || ''} ${finalOrder.customer?.lastName || ''}`.trim() !== ""
-            ? `${finalOrder.customer?.firstName || ''} ${finalOrder.customer?.lastName || ''}`.trim().toUpperCase()
+        : `${finalOrder.customer?.ime || finalOrder.customer?.firstName || ''} ${finalOrder.customer?.priimek || finalOrder.customer?.lastName || ''}`.trim() !== ""
+            ? `${finalOrder.customer?.ime || finalOrder.customer?.firstName || ''} ${finalOrder.customer?.priimek || finalOrder.customer?.lastName || ''}`.trim().toUpperCase()
             : "IME IN PRIIMEK";
-    
             
     return (
         <div className="checkout-page-review">
@@ -189,7 +199,9 @@ const ReviewForm = () => {
                         <div className="review-data-box">
                             <div className="input-group-static">
                                 <label>Ime in priimek</label>
-                                <p>{finalOrder.customer?.firstName} {finalOrder.customer?.lastName}</p>
+                                <p>
+                                   {finalOrder.customer?.ime || finalOrder.customer?.firstName || ""} {finalOrder.customer?.priimek || finalOrder.customer?.lastName || ""}
+                                </p>
                             </div>
                             <div className="input-group-static">
                                 <label>E-pošta</label>
