@@ -1994,7 +1994,7 @@ nav {
 
 .flower-orders-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
   gap: 25px;
   width: 100%;
 }

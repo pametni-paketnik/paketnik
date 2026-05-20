@@ -40,7 +40,8 @@ const NarociloSchema = new mongoose.Schema({
     datum_dostave: { type: Date, required: true },
     status: { type: String, enum: ['oddano', 'v_dostavi', 'dostavljeno', 'prevzeto', 'preklicano'], default: 'oddano' },
     prevzeto: { type: Boolean, default: false },
-    datum_prevzema: { type: Date, default: null }
+    datum_prevzema: { type: Date, default: null },
+    cvetlicarna_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Uporabnik', default: null }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Narocilo', NarociloSchema, 'narocila');
