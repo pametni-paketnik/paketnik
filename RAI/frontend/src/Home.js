@@ -84,7 +84,7 @@ function Home({ orderFilter = "oddano" }) {
         if(selectedPlant){
             setActiveFeature('water'); 
 
-            const currentCart = JSON.parse(localStorage.getItem('cart') || []); 
+            const currentCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
             setCartCount(currentCart.length); 
 
             requestAnimationFrame(() => {
@@ -173,6 +173,10 @@ function Home({ orderFilter = "oddano" }) {
             try{
                 await api.delete(`/plant/${id}`, { withCredentials: true }); 
                 setPlants(plants.filter(p => p._id !== id)); 
+
+                setSelectedPlant(null);
+                
+                navigate('/');
             } catch(err){
                 alert("Napaka pri brisanju"); 
             }
