@@ -13,8 +13,6 @@ exports.dodajNarocilo = async (req, res) => {
             skupna_cena
         } = req.body;
 
-        console.log("BODY:", req.body);
-
         if (!izdelki || izdelki.length < 1 || izdelki.length > 2) {
             return res.status(400).json({
                 sporocilo: 'Na eno naročilo lahko dodate najmanj 1 in največ 2 izdelka.'
@@ -117,9 +115,14 @@ exports.pridobiNarocilaUporabnika = async (req, res) => {
 // Posodobi Status Narocila
 exports.posodobiStatusNarocila = async (req, res) => {
     try {
+        const posodobitve = { status: req.body.status };
+        if (req.body.cvetlicarna_id) {
+            posodobitve.cvetlicarna_id = req.body.cvetlicarna_id;
+        }
+
         const narocilo = await Narocilo.findByIdAndUpdate(
             req.params.id,
-            { status: req.body.status },
+            posodobitve,
             { new: true, runValidators: true }
         );
 

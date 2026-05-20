@@ -33,9 +33,14 @@ function Home({ orderFilter = "oddano" }) {
             try {
                 const res = await api.get('/narocilo');
 
-                const filteredOrders = res.data.filter(
-                    (order) => order.status === orderFilter
-                );
+                const currentUserId = user ? (user._id || user.id) : null;
+                const filteredOrders = res.data.filter((order) => {
+                    if (orderFilter === 'oddano') {
+                        return order.status === 'oddano';
+                    } else {
+                        return order.status === orderFilter && order.cvetlicarna_id === currentUserId;
+                    }
+                });
 
                 setOrders(filteredOrders);
             } catch (err) {
@@ -125,7 +130,8 @@ function Home({ orderFilter = "oddano" }) {
     const handleAcceptOrder = async (orderId) => {
         try {
             await api.put(`/narocilo/${orderId}/status`, {
-                status: 'v_dostavi'
+                status: 'v_dostavi',
+                cvetlicarna_id: user ? (user._id || user.id) : null
             });
 
             setOrders((prevOrders) =>
@@ -296,11 +302,11 @@ function Home({ orderFilter = "oddano" }) {
                                     </div>
 
                                     <h3 className="flower-order-customer">
-                                        {order.stranka?.ime} {order.stranka?.priimek}
+                                        {order.izdelki?.[0]?.paketnik?.naslov || "Neznan paketnik"}
                                     </h3>
 
-                                    <p className="flower-order-email">
-                                        {order.stranka?.email}
+                                    <p className="flower-order-email" style={{marginBottom: "15px", color: "#666"}}>
+                                        {order.izdelki?.[0]?.paketnik?.ime || "Naslov ni izbran"}
                                     </p>
 
                                     <div className="flower-order-info">
