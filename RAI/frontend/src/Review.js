@@ -69,7 +69,20 @@ const ReviewForm = () => {
         }
 
         try{
-            const trenutniUporabnikId = localStorage.getItem('user_id') || null;
+            const storedUserStr = localStorage.getItem('user');
+            let trenutniUporabnikId = null;
+            if (storedUserStr) {
+                try {
+                    const parsed = JSON.parse(storedUserStr);
+                    trenutniUporabnikId = parsed._id || parsed.id || null;
+                } catch(e) {}
+            }
+
+            if (!trenutniUporabnikId) {
+                alert("Za oddajo naročila se morate prijaviti.");
+                navigate('/login');
+                return;
+            }
 
             const podatkiZaBackend = {
                 uporabnik_id: trenutniUporabnikId, 
@@ -97,16 +110,8 @@ const ReviewForm = () => {
                 skupna_cena: Number(finalOrder.totalPrice)
             };
 
-            const response = await fetch('http://localhost:3001/api/orders', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'}, 
-            body: JSON.stringify(podatkiZaBackend)
-        }); 
-
-        if(!response.ok){
-            throw new Error("Nekaj je šlo narobe pri shranjevanju naročil v bazo"); 
-        }
-        const data = await response.json(); 
+            const response = await api.post('/narocilo', podatkiZaBackend); 
+            const data = response.data; 
         const uspesnoNarociloStanje = {
             ...finalOrder, 
             backendOrderId: data._id || data.id
@@ -115,7 +120,8 @@ const ReviewForm = () => {
         localStorage.removeItem('cart'); 
         localStorage.removeItem('final_orders'); 
         
-        navigate('/success', { state: { order: uspesnoNarociloStanje } });
+        alert('Naročilo je bilo uspešno oddano!');
+        navigate('/');
 
         } catch(error) {
             console.error("Napaka: ", error); 
