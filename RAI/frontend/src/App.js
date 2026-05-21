@@ -58,8 +58,8 @@ function AppContent() {
                   )}
 
                   <Link to="/profile" className="navbar-text">Profile</Link>
-                  <Link to="/logout" className="navbar-text">Logout</Link>
                   <Link to="/order" className="navbar-text">Order</Link>
+                  <Link to="/logout" className="navbar-text">Logout</Link>
                 </>
               ) : (
                 <>
