@@ -100,13 +100,15 @@ exports.pridobiNarociloPodId = async (req, res) => {
 // Pridobi Narocilo Uporabnika
 exports.pridobiNarocilaUporabnika = async (req, res) => {
     try {
-        const narocilo = await Narocilo.find({
+        console.log("USER PARAM:", req.params.uporabnikId);
+        
+        const narocila = await Narocilo.find({
             uporabnik_id: req.params.uporabnikId
         })
-            .populate('paketnik_id', 'ime lokacija lat lng')
+            .populate('uporabnik_id', 'ime priimek email')
             .sort({ createdAt: -1 });
 
-        res.status(200).json(narocilo);
+        res.status(200).json(narocila);
     } catch (napaka) {
         res.status(500).json({ sporocilo: "Napaka na strežniku", napaka });
     }

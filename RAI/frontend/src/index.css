@@ -1312,7 +1312,7 @@ nav {
 /* PROFILE */
 .profile-layout {
   width: 100%;
-  max-width: 1400px; /* Dodano za lepši izgled na ultra-širokih zaslonih */
+  max-width: 1100px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -1322,11 +1322,16 @@ nav {
 
 .profile-top-grid {
   display: grid;
-  /* Ustvari 3 enake stolpce */
-  grid-template-columns: repeat(3, minmax(0, 1fr)); 
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 25px;
   width: 100%;
-  align-items: stretch; /* Vse kartice v vrsti bodo enako visoke */
+  align-items: stretch;
+}
+
+.order-history-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 350px;
 }
 
 .profile-card, 
@@ -1344,23 +1349,23 @@ nav {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); 
   overflow: hidden;
   display: flex; 
-  flex-direction: column; /* Pomembno za pravilno delovanje flex: 1 znotraj */
+  flex-direction: column;
 }
 
 .profile-form-section, 
 .payment-content {
   width: 100%;
   box-sizing: border-box;
-  padding: 40px 25px; /* Malenkost optimiziran stranski padding */
+  padding: 40px 25px;
   background: rgba(255, 255, 255, 0.4); 
   display: flex;
   flex-direction: column;
-  flex: 1; /* Raztegne celotno vsebino do dna kartice */
+  flex: 1;
 }
 
 .profile-header-row {
   display: flex;
-  flex-direction: column-reverse; /* Slika nad besedilom */
+  flex-direction: row;
   align-items: center;
   text-align: center;
   gap: 15px;
@@ -1398,7 +1403,11 @@ nav {
   box-shadow: 0 10px 20px rgba(54, 80, 22, 0.15); 
 }
 
-/* Potisne gumb na dno obrazca v vseh karticah, da so gumbi poravnani */
+.full-width {
+  width: 100%;
+  grid-column: 1 / -1;
+}
+
 .profile-form-section form,
 .profile-form-section .submit-btn:last-of-type {
   margin-top: auto; 
@@ -1442,18 +1451,31 @@ nav {
 }
 
 .order-history-empty {
-  padding: 40px 20px;
-  border: 2px dashed rgba(54, 80, 22, 0.2); 
-  border-radius: 20px;
-  text-align: center;
-  color: #666;
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.3);
-  margin: auto;
-  flex: 1;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #777;
+  font-size: 14px;
+}
+
+.order-history-list.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.order-history-list.scroll-area::-webkit-scrollbar {
+  width: 6px;
+}
+
+.order-history-list.scroll-area::-webkit-scrollbar-thumb {
+  background: #4B7337;
+  border-radius: 10px;
+}
+
+.order-history-list.scroll-area::-webkit-scrollbar-track {
+  background: #eee;
 }
 
 .profile-message {
@@ -1463,16 +1485,76 @@ nav {
   font-size: 0.85rem;
 }
 
-/* ODZIVNOST (Media Queries) */
+.orders-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 10px;
+}
 
-/* Vmesna stopnja: na tablicah/manjših ekranih preklopimo na 2 stolpca, da elementi ne "stisnejo" */
+.order-card-modern {
+  background: whitesmoke;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.order-details {
+  color: rgb(54, 80, 22);
+  text-transform: uppercase;
+}
+
+.status {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.status.oddano {
+  background: rgba(54, 80, 22, 0.12);
+  color: rgb(54, 80, 22);
+}
+
+.status.dostavljeno {
+  background: rgba(54, 80, 22, 0.12);
+  color: rgb(54, 80, 22);
+}
+
+.status.v_dostavi {
+  background: rgba(54, 80, 22, 0.12);
+  color: rgb(54, 80, 22);
+}
+
+.order-products {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-weight: bold;
+}
+
+.order-product {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #333;
+}
+
+
 @media (max-width: 1250px) {
   .profile-top-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-/* Tablice vertikalno in večji telefoni: vse v en stolpec */
 @media (max-width: 900px) {
   .profile-top-grid {
     grid-template-columns: 1fr;

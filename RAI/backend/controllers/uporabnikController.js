@@ -110,6 +110,9 @@ module.exports = {
         if (req.body.priimek) uporabnik.priimek = req.body.priimek;
         if (req.body.email) uporabnik.email = req.body.email;
         if (req.body.geslo) uporabnik.geslo = req.body.geslo; // To bo sprožilo kriptiranje!
+        if (req.body.telefonska_stevilka !== undefined) {
+            uporabnik.telefonska_stevilka = String(req.body.telefonska_stevilka).replace(/\s/g, '');
+        }
         if (req.file) {
             uporabnik.profilna_slika = '/uploads/' + req.file.filename;
 
