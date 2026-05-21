@@ -44,27 +44,27 @@ function AppContent() {
               <Link to="/takenOrders" className="navbar-text">Taken</Link>
               <Link to="/deliveredOrders" className="navbar-text">Delivered</Link>
               <Link to="/profile" className="navbar-text">Profile</Link>
-              <Link to="/logout" className="navbar-text">Odjava</Link>
+              <Link to="/logout" className="navbar-text">Logout</Link>
             </>
           ) : (
             <>
               {/* NAVIGACIJA ZA OSTALE UPORABNIKE */}
-              <Link to="/" className="navbar-text">Domov</Link>
+              <Link to="/" className="navbar-text">Home</Link>
 
               {user ? (
                 <>
                   {user.vloga === "admin" && (
-                    <Link to="/addImage" className="navbar-text" style={{ color: "red", fontWeight: "bold" }}>Dodaj Sliko</Link>
+                    <Link to="/addImage" className="navbar-text" style={{ color: "red", fontWeight: "bold" }}>Add plant</Link>
                   )}
 
-                  <Link to="/profile" className="navbar-text">Profil</Link>
-                  <Link to="/logout" className="navbar-text">Odjava</Link>
-                  <Link to="/order" className="navbar-text">Naročilo</Link>
+                  <Link to="/profile" className="navbar-text">Profile</Link>
+                  <Link to="/logout" className="navbar-text">Logout</Link>
+                  <Link to="/order" className="navbar-text">Order</Link>
                 </>
               ) : (
                 <>
-                  <Link to="/login" className="navbar-text">Prijava</Link>
-                  <Link to="/register" className="navbar-text">Registracija</Link>
+                  <Link to="/login" className="navbar-text">Login</Link>
+                  <Link to="/register" className="navbar-text">Registration</Link>
                 </>
               )}
             </>

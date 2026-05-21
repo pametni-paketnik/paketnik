@@ -154,7 +154,7 @@ function PaketnikMap({ onSelect, user, selectedLocker }) {
                                                     width: '100%'
                                                 }}
                                             >
-                                                {selectedLocker?._id === pId ? "✓ IZBRANO" : "IZBERI TO LOKACIJO"}
+                                                {selectedLocker?._id === pId ? "✓ SELECTED" : "CHOOSE THIS LOCATION"}
                                             </button>
                                         </div>
                                     </Popup>
@@ -169,7 +169,7 @@ function PaketnikMap({ onSelect, user, selectedLocker }) {
                 {isAdmin && (
                     <div className="form-container-modern">
                         <div className="input-group-modern">
-                            <label>Ime paketnika</label>
+                            <label>Package name</label>
                             <input type="text" name="ime" value={formData.ime} onChange={handleInputChange} placeholder="052" />
                         </div>
                         <div className="row-modern" style={{ gridTemplateColumns: '1fr 1fr' }}>
@@ -183,18 +183,18 @@ function PaketnikMap({ onSelect, user, selectedLocker }) {
                             </div>
                         </div>
                         <div className="input-group-modern">
-                            <label>Naslov</label>
+                            <label>Address</label>
                             <input type="text" name="lokacija" value={formData.lokacija} onChange={handleInputChange} placeholder="Petrol, Celovška cesta" />
                         </div>
                         <button onClick={handleSubmit} className="checkout-submit-btn" style={{ padding: '10px 5px', fontSize: '12px'}}>
-                            <span>SHRANI NOV PAKETNIK</span>
+                            <span>SAVE NEW PACKAGE</span>
                         </button>
                     </div>
                 )}
             </div>
             <div className="content-box-modern">
                 <div className="location-list-container">
-                    <h4>{isAdmin ? "Pregled vseh paketnikov:" : "Izberi lokacijo prevzema:"}</h4>
+                    <h4>{isAdmin ? "Overview of all parcels:" : "Select pickup location:"}</h4>
                     <div className="location-list" style={{ maxHeight: isAdmin ? '200px' : '400px', overflowY: 'auto' }}>
                         {paketniki.map((p) => {
                             const pId = p._id || p.id;
@@ -220,7 +220,7 @@ function PaketnikMap({ onSelect, user, selectedLocker }) {
                                 >
                                     <div>
                                         <strong>{p.ime}</strong> - {p.lokacija}
-                                        {isSelected && <span style={{ color: '#28a745', marginLeft: '10px', fontSize: '12px' }}>✓ Izbrano</span>}
+                                        {isSelected && <span style={{ color: '#28a745', marginLeft: '10px', fontSize: '12px' }}>✓ Selected</span>}
                                     </div>
 
                                     {isAdmin && (

@@ -275,15 +275,12 @@ function Home({ orderFilter = "oddano" }) {
             <div className="flower-orders-page">
                 <div className="flower-orders-wrapper">
                     <div className="flower-orders-header">
-                        <h1 className="flower-orders-title">Vsa naročila</h1>
-                        <p className="flower-orders-subtitle">
-                            Tukaj so prikazana vsa odprta naročila, ki jih lahko sprejmete v obdelavo.
-                        </p>
+                        <h1 className="flower-orders-title">All orders</h1>
                     </div>
 
                     {orders.length === 0 ? (
                         <div className="flower-orders-empty">
-                            Trenutno tu ni naročil.
+                            There are currently no orders here.
                         </div>
                     ) : (
                         <div className="flower-orders-grid">
@@ -311,17 +308,17 @@ function Home({ orderFilter = "oddano" }) {
 
                                     <div className="flower-order-info">
                                         <div className="flower-order-info-row">
-                                            <span className="flower-order-label">Ime izdelka</span>
+                                            <span className="flower-order-label">Product name</span>
                                             <span className="flower-order-price">{order.izdelki?.[0]?.ime_izdelka || "ni podatka"}</span>
                                         </div>
 
                                         <div className="flower-order-info-row">
-                                            <span className="flower-order-label">Število izdelkov</span>
+                                            <span className="flower-order-label">Number of products</span>
                                             <span className="flower-order-value">{order.izdelki?.length || 0}</span>
                                         </div>
 
                                         <div className="flower-order-info-row">
-                                            <span className="flower-order-label">Skupna cena</span>
+                                            <span className="flower-order-label">Total price</span>
                                             <span className="flower-order-price">{order.skupna_cena} €</span>
                                         </div>
                                     </div>
@@ -334,8 +331,8 @@ function Home({ orderFilter = "oddano" }) {
                                         }
                                     >
                                         {order.status === 'v_dostavi'
-                                            ? 'Dostavljeno'
-                                            : 'Sprejmi naročilo'}
+                                            ? 'Delivered'
+                                            : 'Accept order'}
                                     </button>
                                 </div>
                             ))}
@@ -350,7 +347,7 @@ function Home({ orderFilter = "oddano" }) {
             <section className="preview-side">
                 {selectedPlant && (
                     <button className="back-button" onClick={() => setSelectedPlant(null)}> 
-                        <ArrowLeft size={24} strokeWidth={3} /> Nazaj
+                        <ArrowLeft size={24} strokeWidth={3} /> Back
                     </button>
                 )}
                 
@@ -457,8 +454,8 @@ function Home({ orderFilter = "oddano" }) {
                             </div>
 
                         </div>
-
-                        <div className="details-footer">
+                        {user && (
+                            <div className="details-footer">
                             <button 
                                 className="main-add-btn full-width" 
                                 onClick={handleAddToCart}
@@ -471,12 +468,13 @@ function Home({ orderFilter = "oddano" }) {
                                 } : {}}
                             >
                                 {cartCount >= 2 ? (
-                                    <>Košarica je polna <ShoppingCart size={24} /></>
+                                    <>Cart is full <ShoppingCart size={24} /></>
                                 ) : (
-                                    <>Dodaj v košarico <ShoppingCart size={24} strokeWidth={3} /></>
+                                    <>Add to cart <ShoppingCart size={24} strokeWidth={3} /></>
                                 )}
                             </button>
                         </div>
+                        )}
                     </div>
                 ) : (
                     <div className="infinite-scroll-viewport" ref={scrollRef} onScroll={handleScroll}>

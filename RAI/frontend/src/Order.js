@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from './userContext';
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ShoppingCart } from 'lucide-react';
+import { ArrowRight, ShoppingCart, Trash } from 'lucide-react';
 import PaymentForm from "./Payment";
 import PaketnikMap from './PaketnikMap'; 
 import DodajPaketnik from './DodajPaketnik';
@@ -88,8 +88,8 @@ const OrderForm = () =>{
         );
     };
 
-    if (cart.length === 0) return <div>Vaša košarica je prazna</div>; 
-    if (!currentProduct) return <div>Nalagam...</div>; 
+    if (cart.length === 0) return <div>Your cart is empty</div>; 
+    if (!currentProduct) return <div>Loading...</div>; 
 
 return (
     <div className="checkout-page-custom">
@@ -109,8 +109,19 @@ return (
             <div className="checkout-details-area">
                 <div className="checkout-content-scrollable">
                     <div className="checkout-header-info" style={{ position: 'relative' }}>
-                        <button onClick={handleRemoveFromCart} className="btn-delete-item">ODSTRANI</button>
-                        <span className="checkout-step-label">IZDELEK {currentIndex + 1} OD {cart.length}</span>
+                        <button 
+                                className="admin-delete-top-btn" 
+                                onClick={handleRemoveFromCart}
+                                style={{
+                                    position: 'absolute', top: '5px', right: '10px', border: 'none',
+                                    background: 'transparent', color: '#ff4d4d', padding: '10px',
+                                    width: '90px', cursor: 'pointer', display: 'flex',
+                                    alignItems: 'center', gap: '8px', fontWeight: 'bold', transition: '0.3s'
+                                }}
+                            > 
+                                <Trash size={20} />
+                            </button>
+                        <span className="checkout-step-label">PRODUCT {currentIndex + 1} OF {cart.length}</span>
                         <h1 className="checkout-product-name">{currentProduct.name.toUpperCase()}</h1>
                         <p className="checkout-product-price">{currentProduct.price}€</p>
                     </div>
@@ -118,14 +129,14 @@ return (
                     <p className="checkout-description-text">{currentProduct.description}</p>
 
                     <section className="checkout-form-section">
-                        <h3 className="checkout-section-title">1. LOKACIJE NAŠIH PAKETIKOV</h3>
+                        <h3 className="checkout-section-title">1. LOCATIONS OF OUR PACKAGES</h3>
                         <div className="checkout-map-outer-wrapper">
                             <PaketnikMap onSelect={setSelectedLocker} user={user} selectedLocker={selectedLocker} />
                         </div>
                     </section>
 
                     <section className="checkout-form-section">
-                        <h3 className="checkout-section-title">2. NAČIN PLAČILA</h3>
+                        <h3 className="checkout-section-title">2. PAYMENT METHOD</h3>
                         <PaymentForm onCardDataChange={setPaymentData} />
                     </section>
 
@@ -136,7 +147,7 @@ return (
                             onClick={handleNextProduct}
                         >
                             <span>
-                                {currentIndex < cart.length - 1 ? "NASLEDNJA RASTLINA" : "PREGLEJ NAROČILO"}
+                                {currentIndex < cart.length - 1 ? "NEXT PLANT" : "VIEW ORDER"}
                             </span>
                             <ShoppingCart size={24} />
                         </button>

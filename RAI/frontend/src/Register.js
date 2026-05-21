@@ -7,6 +7,7 @@ function Register() {
     const [priimek, setPriimek] = useState("");
     const [email, setEmail] = useState("");
     const [geslo, setGeslo] = useState("");
+    const [gesloAgain, setGesloAgain] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     
@@ -16,6 +17,12 @@ function Register() {
         e.preventDefault();
         setLoading(true);
         setError("");
+
+        if (geslo !== gesloAgain) {
+            setError("Gesli se ne ujemata.");
+            setLoading(false);
+            return;
+        }
 
         try {
             // Prepričaj se, da backend teče na portu 3000
@@ -49,10 +56,10 @@ function Register() {
                 
                 <div className="register-visual">
                     <div className="visual-content">
-                        <h2 className="visual-title uppercase-text">Registracija</h2>
+                        <h2 className="visual-title uppercase-text">Registration</h2>
                         <div className="visual-divider"></div>
                         <p className="visual-text">
-                            Ustvarite svoj profil in se pridružite <br/> digitalnemu ekosistemu InPlant.
+                            Create your profile and join the <br/> InPlant digital ecosystem.
                         </p>
                     </div>
                 </div>
@@ -62,8 +69,8 @@ function Register() {
                         <div className="icon-box">
                             <UserPlus size={24} />
                         </div>
-                        <h1 className="uppercase-text">Ustvari račun</h1>
-                        <p>Vnesite svoje podatke za dostop.</p>
+                        <h1 className="uppercase-text">Create an account</h1>
+                        <p>Enter your access details.</p>
                     </div>
 
                     {error && (
@@ -76,7 +83,7 @@ function Register() {
                         
                         <div className="row-modern">
                             <div className="input-group-modern">
-                                <label>Ime</label>
+                                <label>Name</label>
                                 <input 
                                     type="text" 
                                     placeholder="Joe" 
@@ -86,7 +93,7 @@ function Register() {
                                 />
                             </div>
                             <div className="input-group-modern">
-                                <label>Priimek</label>
+                                <label>Surname</label>
                                 <input 
                                     type="text" 
                                     placeholder="Doe" 
@@ -96,26 +103,39 @@ function Register() {
                                 />
                             </div>
                             <div className="input-group-modern">
-                                <label>E-pošta</label>
+                                <label>E-mail</label>
                                 <input 
                                     type="email" 
-                                    placeholder="ime@primer.si" 
+                                    placeholder="name@example.si" 
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
                             </div>
                         </div>
+                        <div className="row-modern-password">
+                            <div className="input-group-modern">
+                                <label>Password</label>
+                                <input 
+                                    type="password" 
+                                    placeholder="••••••••" 
+                                    required
+                                    value={geslo}
+                                    onChange={(e) => setGeslo(e.target.value)}
+                                />
+                            </div>
 
-                        <div className="input-group-modern">
-                            <label>Geslo</label>
-                            <input 
-                                type="password" 
-                                placeholder="••••••••" 
-                                required
-                                value={geslo}
-                                onChange={(e) => setGeslo(e.target.value)}
-                            />
+                            <div className="input-group-modern">
+                                <label>Password again</label>
+                                <input 
+                                    type="password" 
+                                    placeholder="••••••••" 
+                                    required
+                                    value={gesloAgain}
+                                    onChange={(e) => setGesloAgain(e.target.value)}
+                                />
+                            </div>
+
                         </div>
 
                         <button 
@@ -123,12 +143,12 @@ function Register() {
                             className="submit-btn uppercase-text"
                             disabled={loading}
                         >
-                            {loading ? 'Pošiljanje...' : 'Registracija'} <ArrowRight size={18} style={{ marginLeft: '10px' }} />
+                            {loading ? 'Sending...' : 'Registration'} <ArrowRight size={18} style={{ marginLeft: '10px' }} />
                         </button>
                     </form>
 
                     <p className="login-link">
-                        Že imate račun? <Link to="/login" className="uppercase-text">Prijavi se</Link>
+                        Already have an account? <Link to="/login" className="uppercase-text">Login</Link>
                     </p>
                 </div>
             </div>

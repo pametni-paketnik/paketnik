@@ -105,7 +105,7 @@ function Profile() {
         fileInputRef.current.value = "";
       }
 
-      setSporocilo("Profil je bil uspešno posodobljen.");
+      setSporocilo("Profile has been successfully updated.");
 
       setTimeout(() => {
         setSporocilo("");
@@ -113,7 +113,7 @@ function Profile() {
 
     } catch (err) {
       console.error(err);
-      setSporocilo("Napaka pri posodabljanju profila.");
+      setSporocilo("Error updating profile.");
     }
   };
 
@@ -198,7 +198,7 @@ function Profile() {
       setDatumPoteka(podatki.datum_poteka || "");
       setCvv(podatki.cvv || "");
 
-      setSporociloKartica("Kartica je bila uspešno shranjena.");
+      setSporociloKartica("The card was successfully saved.");
 
       setTimeout(() => {
         setSporociloKartica("");
@@ -206,7 +206,7 @@ function Profile() {
 
     } catch (err) {
       console.error(err);
-      setSporociloKartica("Napaka pri shranjevanju kartice.");
+      setSporociloKartica("Error saving card.");
     }
   };
 
@@ -231,13 +231,13 @@ function Profile() {
             <div className="register-form-section profile-form-section">
               <div className="form-header profile-header-row">
                 <div className="profile-header-text">
-                  <h1 className="uppercase-text">Profil</h1>
-                  <p>Spremenite ime, priimek in profilno sliko.</p>
+                  <h1 className="uppercase-text">Profile</h1>
+                  <p>Change your first name, last name, and profile picture.</p>
                 </div>
                 <div className="profile-header-image-wrapper">
                   <img
                     src={profilnaSlika || defaultImage}
-                    alt="Profilna slika"
+                    alt="Profile image"
                     className="profile-header-image"
                   />
                 </div>
@@ -246,10 +246,10 @@ function Profile() {
               <form onSubmit={shraniProfil} className="register-form">
                 <div className="input-group-row">
                   <div className="input-group-modern">
-                    <label>IME: </label>
+                    <label>Name: </label>
                     <input
                       type="text"
-                      placeholder="IME"
+                      placeholder="NAME"
                       required
                       className="input-group-modern"
                       value={ime}
@@ -257,10 +257,10 @@ function Profile() {
                     />
                   </div>
                   <div className="input-group-modern">
-                    <label>PRIIMEK: </label>
+                    <label>Surname: </label>
                     <input
                       type="text"
-                      placeholder="PRIIMEK"
+                      placeholder="SURNAME"
                       required
                       className="input-group-modern"
                       value={priimek}
@@ -269,10 +269,10 @@ function Profile() {
                   </div>
 
                   <div className="input-group-modern">
-                    <label>TELEFONSKA ŠTEVILKA: </label>
+                    <label>Phone number: </label>
                     <input
                       type="text"
-                      placeholder="TELEFONSKA ŠTEVILKA"
+                      placeholder="PHONE NUMBER"
                       className="input-group-modern"
                       value={telefonskaStevilka}
                       maxLength={11}
@@ -281,7 +281,7 @@ function Profile() {
                   </div>
 
                   <div className="file-upload-wrapper">
-                    <label className="file-upload-label uppercase-text">Izberi profilno sliko</label>
+                    <label className="file-upload-label uppercase-text">Choose a profile image</label>
                     <input
                       type="file"
                       accept="image/*"
@@ -293,7 +293,7 @@ function Profile() {
                 </div>
 
                 <button type="submit" className="submit-btn uppercase-text">
-                  Shrani spremembe
+                  Save changes
                 </button>
               </form>
 
@@ -305,15 +305,15 @@ function Profile() {
           <div className="profile-card">
             <div className="register-form-section profile-form-section">
               <div className="form-header">
-                <h1 className="uppercase-text">Kartica</h1>
-                <p>Dodajte podatke za plačilo.</p>
+                <h1 className="uppercase-text">Card</h1>
+                <p>Add payment information.</p>
               </div>
 
               <div className="input-group-modern">
-                <label>ŠTEVILKA KARTICE: </label>
+                <label>Card number: </label>
                 <input
                   type="text"
-                  placeholder="ŠTEVILKA KARTICE"
+                  placeholder="CARD NUMBER"
                   required
                   className="input-group-modern"
                   value={stevilkaKartice}
@@ -323,10 +323,10 @@ function Profile() {
               </div>
 
               <div className="input-group-modern">
-                <label>IME NA KARTICI: </label>
+                <label>Name on the card: </label>
                 <input
                   type="text"
-                  placeholder="IME NA KARTICI"
+                  placeholder="NAME ON THE CARD"
                   required
                   className="input-group-modern"
                   value={imeNaKartici}
@@ -336,10 +336,10 @@ function Profile() {
               
               <div className="card-input-row">
                 <div className="input-group-modern">
-                  <label>DATUM POTEKA: </label>
+                  <label>Expiry Date: </label>
                   <input
                     type="text"
-                    placeholder="DATUM POTEKA"
+                    placeholder="EXPIRY DATE"
                     required
                     className="input-group-modern"
                     value={datumPoteka}
@@ -367,7 +367,7 @@ function Profile() {
                 className="submit-btn uppercase-text"
                 onClick={shraniKartico}
               >
-                Dodaj kartico
+                Add card
               </button>
 
               {sporociloKartica && <div className="profile-message">{sporociloKartica}</div>}
@@ -380,8 +380,8 @@ function Profile() {
           <div className="profile-card order-history-card">
             <div className="register-form-section profile-form-section">
               <div className="form-header">
-                <h1 className="uppercase-text">Zgodovina naročil</h1>
-                <p>Pregled vseh vaših preteklih naročil.</p>
+                <h1 className="uppercase-text">Order history</h1>
+                <p>Overview of all your past orders.</p>
                 <div className="order-history-list scroll-area">
                   {orders.length === 0 ? (
                     <div className="order-history-empty">
@@ -393,15 +393,15 @@ function Profile() {
                         <div key={order._id} className="order-card-modern">
 
                           <div className="order-header">
-                            <h3><span className="order-details">Naročilo</span> #{order.koda_za_odpiranje}</h3>
+                            <h3><span className="order-details">Order</span> #{order.koda_za_odpiranje}</h3>
                             <span className={`status ${order.status}`}>
                               {order.status}
                             </span>
                           </div>
 
                           <div className="order-body">
-                            <p><b className="order-details">Cena:</b> {order.skupna_cena} €</p>
-                            <p><b className="order-details">Datum:</b> {new Date(order.createdAt).toLocaleDateString()}</p>
+                            <p><b className="order-details">Price:</b> {order.skupna_cena} €</p>
+                            <p><b className="order-details">Date:</b> {new Date(order.createdAt).toLocaleDateString()}</p>
 
                             <div className="order-products">
                               {order.izdelki.map((i, idx) => (
