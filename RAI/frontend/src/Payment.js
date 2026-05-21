@@ -93,7 +93,7 @@ const PaymentForm = ({ onCardDataChange }) => {
 
       <div className="payment-fields">
         <div className="input-group-modern">
-          <label>Ime kartice</label>
+          <label>Name on the card</label>
           <input 
             type="text" 
             value={formData.cardholder}
@@ -103,7 +103,7 @@ const PaymentForm = ({ onCardDataChange }) => {
         </div>
 
         <div className="input-group-modern">
-          <label>Številka kartice</label>
+          <label>Card number</label>
           <input 
             type="text" 
             value={formData.cardNumber}
@@ -114,11 +114,11 @@ const PaymentForm = ({ onCardDataChange }) => {
 
         <div className="row-modern">
           <div className="input-group-modern">
-            <label>Mesec</label>
+            <label>Month</label>
             <input type="text" value={formData.month} onChange={(e) => handleNumberInput('month', e.target.value, 2)} placeholder="MM" />
           </div>
           <div className="input-group-modern">
-            <label>Leto</label>
+            <label>Year</label>
             <input type="text" value={formData.year} onChange={(e) => handleNumberInput('year', e.target.value, 4)} placeholder="YYYY" />
           </div>
           <div className="input-group-modern">

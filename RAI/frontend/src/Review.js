@@ -160,7 +160,7 @@ const ReviewForm = () => {
                 
                 <div className="checkout-preview-review">
                     <div className="checkout-summary-sticky">
-                        <h2 className="summary-title">Izbrane rože ({finalOrder.items?.length || 0})</h2>
+                        <h2 className="summary-title">Selected plants ({finalOrder.items?.length || 0})</h2>
                         
                         <div className="cart-items-list">
                         {finalOrder.items && finalOrder.items.map((item, index) => (
@@ -170,10 +170,10 @@ const ReviewForm = () => {
                                     </div>
                                     <div className="item-details-custom">
                                         <div className="item-header-custom">
-                                            <h3>{item.name ? item.name.toUpperCase() : "ROŽA"}</h3>
+                                            <h3>{item.name ? item.name.toUpperCase() : "Plant"}</h3>
                                             <span className="item-price-custom">{(Number(item.price) || 0).toFixed(2)} €</span>
                                         </div>
-                                        <p className="item-meta-custom">Količina: {item.kolicina || 1}</p>
+                                        <p className="item-meta-custom">Quantity: {item.kolicina || 1}</p>
                                         <p className="item-subtext-custom">📍 {item.selectedLocker?.name || "Prevzemno mesto"}</p>
                                     </div>
                                 </div>
@@ -182,12 +182,12 @@ const ReviewForm = () => {
 
                         <div className="price-breakdown-custom">
                             <div className="breakdown-row-custom">
-                                <span>Dostava v paketnik</span>
-                                <span className="free-text-custom">Brezplačno</span>
+                                <span>Delivery to parcel box</span>
+                                <span className="free-text-custom">Free</span>
                             </div>
                             <hr className="divider-custom" />
                             <div className="breakdown-row-custom total-row-custom">
-                                <span>Skupaj za plačilo:</span>
+                                <span>Total for payment:</span>
                                 <span>{(Number(finalOrder.totalPrice) || 0).toFixed(2)} €</span>
                             </div>
                         </div>
@@ -195,31 +195,31 @@ const ReviewForm = () => {
                 </div>
 
                 <div className="checkout-details-review">
-                    <span className="checkout-step-label-review">KORAK 3 OD 3</span>
-                    <h1 className="checkout-product-name-review">PREGLED NAROČILA</h1>
-                    <p className="checkout-description-review">Prosimo, preverite pravilnost vaših podatkov pred potrditvijo naročila.</p>
+                    <span className="checkout-step-label-review">STEP 3 OF 3</span>
+                    <h1 className="checkout-product-name-review">ORDER REVIEW</h1>
+                    <p className="checkout-description-review">Please check the correctness of your information before confirming your order.</p>
 
                     <div className="review-sections-wrapper">
                         
-                        <h3 className="checkout-section-title-review">1. VAŠI PODATKI</h3>
+                        <h3 className="checkout-section-title-review">1. YOUR DATA</h3>
                         <div className="review-data-box">
                             <div className="input-group-static">
-                                <label>Ime in priimek</label>
+                                <label>First and last name</label>
                                 <p>
                                    {finalOrder.customer?.ime || finalOrder.customer?.firstName || ""} {finalOrder.customer?.priimek || finalOrder.customer?.lastName || ""}
                                 </p>
                             </div>
                             <div className="input-group-static">
-                                <label>E-pošta</label>
+                                <label>E-mail</label>
                                 <p>{finalOrder.customer?.email}</p>
                             </div>
                             <div className="input-group-static">
-                                <label>Telefon</label>
+                                <label>Phone number</label>
                                 <p>{finalOrder.customer?.telefonska_stevilka || finalOrder.customer?.phone}</p>
                             </div>
                         </div>
 
-                        <h3 className="checkout-section-title-review">2. PREVZEMNA MESTA ROŽ</h3>
+                        <h3 className="checkout-section-title-review">2. PLANT PICK-UP POINT</h3>
                             <div className="review-data-box">
                                 {finalOrder.items && finalOrder.items.map((item, idx) => (
                                     <div key={`locker-item-${item._id}-${idx}`} className="locker-review-item">
@@ -232,7 +232,7 @@ const ReviewForm = () => {
                             ))}
                         </div>
 
-                        <h3 className="checkout-section-title-review">3. PLAČILO</h3>
+                        <h3 className="checkout-section-title-review">3. PAYMENT</h3>
                         <div className="payment-container-minimal">
                             <div className="card-visual-modern">
                                 <div className="card-inner">
@@ -245,11 +245,11 @@ const ReviewForm = () => {
                                     </div>
                                     <div className="card-bottom">
                                         <div className="card-info">
-                                            <span className="label">Imetnik kartice</span>
+                                            <span className="label">FIRST AND NAME</span>
                                             <span className="value">{imeZaPrikazNaKartici}</span>
                                         </div>
                                         <div className="card-info">
-                                            <span className="label">Potek</span>
+                                            <span className="label">EXPIRY</span>
                                             <span className="value">{displayMonth}/{displayYear}</span>
                                         </div>
                                     </div>
@@ -259,11 +259,11 @@ const ReviewForm = () => {
 
                         <div className="action-buttons-wrapper">
                             <button onClick={handleConfirmOrder} className="checkout-submit-btn-review">
-                                <span>POTRDI IN ODDAJ NAROČILO</span>
+                                <span>CONFIRM AND SUBMIT ORDER</span>
                             </button>
                             
                             <button onClick={() => navigate(-1)} className="checkout-back-btn">
-                                ← Popravi podatke naročila
+                                ← Correct order details
                             </button>
                         </div>
 

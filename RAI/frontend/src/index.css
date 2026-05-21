@@ -210,13 +210,11 @@ nav {
   font-size: 1.1rem;
   line-height: 1.6;
   color: #000;
-  max-width: 400px;
 }
 .details-care {
   font-size: 1.1rem;
   line-height: 1.6;
   color: #000;
-  max-width: 400px;
   margin-bottom: 80px;
 }
 
@@ -646,6 +644,12 @@ nav {
   gap: 20px;
 }
 
+.row-modern-password {
+  display: grid;
+  grid-template-columns: 2fr 2fr; 
+  gap: 20px;
+}
+
 .input-group-modern {
   display: flex;
   flex-direction: column;
@@ -895,7 +899,6 @@ nav {
     line-height: 1.6;
     color: #333;
     margin-bottom: 40px;
-    max-width: 450px;
 }
 
 .checkout-section-title {
@@ -1367,7 +1370,7 @@ nav {
   display: flex;
   flex-direction: row;
   align-items: center;
-  text-align: center;
+  text-align: left;
   gap: 15px;
   margin-bottom: 25px;
 }
@@ -2079,6 +2082,10 @@ nav {
   grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
   gap: 25px;
   width: 100%;
+}
+
+.flower-orders-title {
+  text-transform: uppercase;
 }
 
 .flower-order-card-header {

@@ -43,10 +43,10 @@ function Login() {
                 
                 <div className="register-visual">
                     <div className="visual-content">
-                        <h2 className="visual-title uppercase-text">Dobrodošli nazaj</h2>
+                        <h2 className="visual-title uppercase-text">Welcome back</h2>
                         <div className="visual-divider"></div>
                         <p className="visual-text">
-                            Prijavite se v svoj račun in nadaljujte <br/> z upravljanjem sistema InPlant.
+                            Log in to your account and continue <br/> z upravljanjem sistema InPlant.
                         </p>
                     </div>
                 </div>
@@ -56,8 +56,8 @@ function Login() {
                         <div className="icon-box">
                             <LogIn size={24} />
                         </div>
-                        <h1 className="uppercase-text">Prijava</h1>
-                        <p>Vnesite svoje podatke za dostop do profila.</p>
+                        <h1 className="uppercase-text">Login</h1>
+                        <p>Enter your information to access your profile.</p>
                     </div>
 
                     {error && (
@@ -69,10 +69,10 @@ function Login() {
                     <form onSubmit={handleSubmit} className="register-form">
                         <div className="row-modern">
                             <div className="input-group-modern">
-                                <label>E-pošta</label>
+                                <label>E-mail</label>
                                 <input 
                                     type="email" 
-                                    placeholder="ime@primer.si" 
+                                    placeholder="name@example.si" 
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -81,7 +81,7 @@ function Login() {
                         </div>
 
                         <div className="input-group-modern">
-                            <label>Geslo</label>
+                            <label>Password</label>
                             <input 
                                 type="password" 
                                 placeholder="••••••••" 
@@ -96,12 +96,12 @@ function Login() {
                             className="submit-btn uppercase-text"
                             disabled={loading}
                         >
-                            {loading ? 'Prijavljanje...' : 'Prijava'} <ArrowRight size={18} style={{ marginLeft: '10px' }} />
+                            {loading ? 'Logging...' : 'Login'} <ArrowRight size={18} style={{ marginLeft: '10px' }} />
                         </button>
                     </form>
 
                     <p className="login-link">
-                        Še nimate računa? <Link to="/register" className="uppercase-text">Registriraj se</Link>
+                        Don't have an account yet? <Link to="/register" className="uppercase-text">Register</Link>
                     </p>
                 </div>
             </div>
