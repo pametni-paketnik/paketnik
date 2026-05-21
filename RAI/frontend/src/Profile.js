@@ -12,6 +12,7 @@ function Profile() {
 
   const [ime, setIme] = useState('');
   const [priimek, setPriimek] = useState('');
+  const [telefonskaStevilka, setTelefonskaStevilka] = useState('');
   const [profilnaSlika, setSlika] = useState('');
 
   const [sporocilo, setSporocilo] = useState('');
@@ -25,6 +26,8 @@ function Profile() {
 
   const fileInputRef = useRef(null);
 
+  const [orders, setOrders] = useState([]);
+
   useEffect(() => {
     api.get('/uporabnik/profile')
       .then(res => {
@@ -33,6 +36,7 @@ function Profile() {
 
         setIme(podatki.ime || '');
         setPriimek(podatki.priimek || '');
+        setTelefonskaStevilka(formatirajTelefonsko(podatki.telefonska_stevilka || ''));
         setSlika(podatki.profilna_slika || '');
 
         setStevilkaKartice(podatki.stevilka_kartice || '');
@@ -47,6 +51,15 @@ function Profile() {
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    if (!user?._id) return;
+
+    api.get(`/narocilo/uporabnik/${user._id}`)
+      .then(res => setOrders(res.data))
+      .catch(err => console.log(err));
+
+  }, [user]);
 
   const [izbranaDatoteka, setIzbranaDatoteka] = useState(null);
 
@@ -64,6 +77,7 @@ function Profile() {
       const formData = new FormData();
       formData.append("ime", ime);
       formData.append("priimek", priimek);
+      formData.append("telefonska_stevilka", telefonskaStevilka.replace(/\s/g, ''));
 
       if (izbranaDatoteka) {
         formData.append("profilna_slika", izbranaDatoteka);
@@ -82,6 +96,7 @@ function Profile() {
 
       setIme(podatki.ime || '');
       setPriimek(podatki.priimek || '');
+      setTelefonskaStevilka(formatirajTelefonsko(podatki.telefonska_stevilka));
       setSlika(podatki.profilna_slika || '');
 
       setIzbranaDatoteka(null);
@@ -100,6 +115,24 @@ function Profile() {
       console.error(err);
       setSporocilo("Napaka pri posodabljanju profila.");
     }
+  };
+
+  const handleTelefonskaStevilkaChange = (e) => {
+    let value = e.target.value.replace(/\D/g, '');
+    value = value.slice(0, 9);
+
+    value = value.match(/.{1,3}/g)?.join(' ') || '';
+
+    setTelefonskaStevilka(value);
+  };
+
+  const formatirajTelefonsko = (value) => {
+    if (!value) return '';
+
+    value = value.replace(/\D/g, '');
+    value = value.slice(0, 9);
+
+    return value.match(/.{1,3}/g)?.join(' ') || '';
   };
 
   const handleStevilkaKarticeChange = (e) => {
@@ -235,10 +268,20 @@ function Profile() {
                     />
                   </div>
 
+                  <div className="input-group-modern">
+                    <label>TELEFONSKA ŠTEVILKA: </label>
+                    <input
+                      type="text"
+                      placeholder="TELEFONSKA ŠTEVILKA"
+                      className="input-group-modern"
+                      value={telefonskaStevilka}
+                      maxLength={11}
+                      onChange={handleTelefonskaStevilkaChange}
+                    />
+                  </div>
+
                   <div className="file-upload-wrapper">
-                    <label className="file-upload-label uppercase-text">
-                      Izberi profilno sliko
-                    </label>
+                    <label className="file-upload-label uppercase-text">Izberi profilno sliko</label>
                     <input
                       type="file"
                       accept="image/*"
@@ -330,18 +373,50 @@ function Profile() {
               {sporociloKartica && <div className="profile-message">{sporociloKartica}</div>}
             </div>
           </div>
+        </div>
 
+        <div className="profile-card order-history-card full-width">
           {/* 3. KARTICA: ZGODOVINA NAROČIL (Prestavljeno sem!) */}
           <div className="profile-card order-history-card">
             <div className="register-form-section profile-form-section">
               <div className="form-header">
                 <h1 className="uppercase-text">Zgodovina naročil</h1>
                 <p>Pregled vseh vaših preteklih naročil.</p>
-              </div>
+                <div className="order-history-list scroll-area">
+                  {orders.length === 0 ? (
+                    <div className="order-history-empty">
+                      Trenutno še nimate nobenega naročila.
+                    </div>
+                  ) : (
+                    <div className="orders-grid">
+                      {orders.map((order) => (
+                        <div key={order._id} className="order-card-modern">
 
-              <div className="order-history-list">
-                <div className="order-history-empty">
-                  Trenutno še nimate nobenega naročila.
+                          <div className="order-header">
+                            <h3><span className="order-details">Naročilo</span> #{order.koda_za_odpiranje}</h3>
+                            <span className={`status ${order.status}`}>
+                              {order.status}
+                            </span>
+                          </div>
+
+                          <div className="order-body">
+                            <p><b className="order-details">Cena:</b> {order.skupna_cena} €</p>
+                            <p><b className="order-details">Datum:</b> {new Date(order.createdAt).toLocaleDateString()}</p>
+
+                            <div className="order-products">
+                              {order.izdelki.map((i, idx) => (
+                                <div key={idx} className="order-product">
+                                  <span>{i.ime_izdelka}</span>
+                                  <span>x{i.kolicina}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

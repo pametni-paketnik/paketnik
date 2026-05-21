@@ -215,7 +215,7 @@ const ReviewForm = () => {
                             </div>
                             <div className="input-group-static">
                                 <label>Telefon</label>
-                                <p>{finalOrder.customer?.telefon || finalOrder.customer?.phone}</p>
+                                <p>{finalOrder.customer?.telefonska_stevilka || finalOrder.customer?.phone}</p>
                             </div>
                         </div>
 
