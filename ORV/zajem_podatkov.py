@@ -50,6 +50,8 @@ def zajemi_obraz():
         # Iskanje obrazov
         faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
+        trenutni_obraz = []
+
         for (x, y, w, h) in faces:
             # Doda 20% zamika (padding)
             offset_w = int(w * 0.2)
@@ -60,6 +62,8 @@ def zajemi_obraz():
             x1 = max(0, x - offset_w)
             x2 = min(frame.shape[1], x + w + offset_w)
 
+            trenutni_obraz.append((x1, y1, x2, y2))
+            
             # Narise moder kvadrat okoli obraza (guideline)
             cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), 2)
             
@@ -75,8 +79,8 @@ def zajemi_obraz():
         if tipka == ord('s'):
             if skupno_slik < 30:
             # Če je zaznan vsaj en obraz shrani izrezek
-                if len(faces) > 0:
-                    for (x, y, w, h) in faces:
+                if len(trenutni_obraz) > 0:
+                    for (x, y, w, h) in trenutni_obraz:
                         # Shrani z unikatnim imenom (uporabi indeks, ki še ne obstaja)
                         indeks = skupno_slik
                         # Izreže samo obraz
