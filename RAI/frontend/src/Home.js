@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import api from './api';
-import { ArrowLeft, ShoppingCart, Trash, Heart, ArrowRight, Bold, Sun, Droplet, Tag, Cast } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Trash, Heart, ArrowRight, Bold, Sun, Droplet, Tag, Cast, Pencil } from 'lucide-react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { UserContext } from './userContext'
 import './index.css';
@@ -17,6 +17,13 @@ function Home({ orderFilter = "oddano" }) {
     const detailsRef = useRef(null);
     const [orders, setOrders] = useState([]);
     const isFlowerShop = user && user.vloga === 'cvetlicarna';
+
+    const [isEditing, setIsEditing] = useState(false);
+
+    const [editName, setEditName] = useState('');
+    const [editPrice, setEditPrice] = useState('');
+    const [editDescription, setEditDescription] = useState('');
+    const [editCare, setEditCare] = useState('');
 
 
     useEffect(() => {
@@ -183,11 +190,39 @@ function Home({ orderFilter = "oddano" }) {
                 setSelectedPlant(null);
                 
                 navigate('/');
-            } catch(err){
+            } catch(err) {
                 alert("Napaka pri brisanju"); 
             }
         }
     }
+
+    const updatePlant = async (id) => {
+        try {
+            const updatedData = {
+                name: editName,
+                price: editPrice,
+                description: editDescription,
+                care: editCare
+            };
+
+            const res = await api.put(`/plant/${id}`, updatedData, {
+                withCredentials: true
+            });
+
+            setPlants(plants.map(p => 
+                p._id === id ? res.data : p
+            ));
+
+            setSelectedPlant(res.data);
+
+            setIsEditing(false);
+
+            alert("Rastlina uspešno posodobljena!");
+        } catch(err) {
+            console.error(err);
+            alert("Napaka pri posodabljanju");
+        }
+    };
 
     const scrollRef = useRef(null);
     const handleScroll = () => {
@@ -367,114 +402,191 @@ function Home({ orderFilter = "oddano" }) {
             <section className="content-side">
                 {selectedPlant ? (
                     <div className="plant-details-view" ref={detailsRef}>
-                        {isAdmin && (
-                            <button 
-                                className="admin-delete-top-btn" 
-                                onClick={() => deletePlant(selectedPlant._id)}
-                                style={{
-                                    position: 'absolute', top: '5px', right: '10px', border: 'none',
-                                    background: 'transparent', color: '#ff4d4d', padding: '10px',
-                                    width: '90px', cursor: 'pointer', display: 'flex',
-                                    alignItems: 'center', gap: '8px', fontWeight: 'bold', transition: '0.3s'
-                                }}
-                            > 
-                                <Trash size={20} />
-                            </button>
-                        )}
-                        
                         <div className="details-container">
-                            <h2 className="details-title">{selectedPlant.name}</h2>
-                            <p className="details-price">{selectedPlant.price}€</p>
-                            <p><b>DESCRIPTION: </b></p>
-                            <p className="details-description">{selectedPlant.description}</p>
-                            <p><b>CARE: </b></p>
-                            <p className="details-care">{selectedPlant.care}</p>
-
-                            <div className="plant-features-row">
-                                <div 
-                                    className={`feature-item clickable ${activeFeature === 'light' ? 'highlight' : ''}`}
-                                    onClick={() => setActiveFeature('light')}
-                                >
-                                    <div className="feature-icon-circle">
-                                        <Sun size={20} />
-                                    </div>
-                                    <span>{selectedPlant.svetloba || "Low light"}</span>
-                                </div>
-
-                                <div 
-                                    className={`feature-item clickable ${activeFeature === 'water' ? 'highlight' : ''}`}
-                                    onClick={() => setActiveFeature('water')}
-                                >
-                                    <div className="feature-icon-circle">
-                                        <Droplet size={24} />
-                                    </div>
-                                    <span>{selectedPlant.zalivanje || "Water daily"}</span>
-                                </div>
-
-                                <div 
-                                    className={`feature-item clickable ${activeFeature === 'cost' ? 'highlight' : ''}`}
-                                    onClick={() => setActiveFeature('cost')}
-                                >
-                                    <div className="feature-icon-circle">
-                                        <Tag size={20} />
-                                    </div>
-                                    <span>{selectedPlant.cena_rang || "Low cost"}</span>
-                                </div>
-                            </div>
-
-                            <div className="searches-section">
-                                <h3 className="searches-title">
-                                    Searches ({activeFeature === 'light' ? 'Light interest' : activeFeature === 'cost' ? 'Price checks' : 'Water needs'})
-                                </h3>
-                                <div className="graph-container">
-                                    <svg viewBox="0 0 300 80" className="graph-svg">
-                                        <path 
-                                            d={graph.path} 
-                                            fill="none" 
-                                            strokeWidth="2" 
-                                            className="graph-path"
+                            {isEditing ? (
+                                <>
+                                    <div className="input-group-modern">
+                                        <label>Name</label>
+                                        <input
+                                            type="text"
+                                            value={editName}
+                                            onChange={(e) => setEditName(e.target.value)}
+                                            placeholder="Plant name"
                                         />
-                                    </svg>
-                                    
-                                    <div className="graph-badge" style={{ left: graph.badgeLeft }}>
-                                        {graph.value}
                                     </div>
 
-                                    <div className="graph-days">
-                                        {days.map((day, idx) => (
-                                            <span 
-                                                key={idx} 
-                                                className={idx === graph.activeDayIdx ? 'active-day' : ''}
-                                            >
-                                                {day}
-                                            </span>
-                                        ))}
+                                    <div className="input-group-modern">
+                                        <label>Price</label>
+                                        <input
+                                            type="text"
+                                            value={editPrice}
+                                            onChange={(e) => setEditPrice(e.target.value)}
+                                            placeholder="25"
+                                        />
+                                    </div>
+
+                                    <div className="input-group-modern">
+                                        <label>Price</label>
+                                        <textarea
+                                            value={editDescription}
+                                            onChange={(e) => setEditDescription(e.target.value)}
+                                            className="edit-plant-textarea"
+                                            placeholder="Opis"
+                                        />
+                                    </div>
+
+                                    <div className="input-group-modern">
+                                        <label>Price</label>
+                                        <textarea
+                                            value={editCare}
+                                            onChange={(e) => setEditCare(e.target.value)}
+                                            className="edit-plant-textarea"
+                                            placeholder="Nega"
+                                        />
+                                    </div>
+
+                                    <button
+                                        className="main-add-btn"
+                                        onClick={() => updatePlant(selectedPlant._id)}
+                                    >
+                                        Save changes
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    {isAdmin && (
+                                        <button 
+                                            className="admin-delete-top-btn" 
+                                            onClick={() => deletePlant(selectedPlant._id)}
+                                            style={{
+                                                position: 'absolute', top: '5px', right: '10px', border: 'none',
+                                                background: 'transparent', color: '#ff4d4d', padding: '10px',
+                                                width: '90px', cursor: 'pointer', display: 'flex',
+                                                alignItems: 'center', gap: '8px', fontWeight: 'bold', transition: '0.3s'
+                                            }}
+                                        > 
+                                            <Trash size={20} />
+                                        </button>
+                                    )}
+                                    
+                                    {isAdmin && (
+                                        <button 
+                                            className="admin-delete-top-btn" 
+                                            onClick={() => {
+                                                setIsEditing(true);
+
+                                                setEditName(selectedPlant.name);
+                                                setEditPrice(selectedPlant.price);
+                                                setEditDescription(selectedPlant.description);
+                                                setEditCare(selectedPlant.care);
+                                            }}  
+                                            style={{
+                                                position: 'absolute', top: '5px', right: '50px', border: 'none',
+                                                background: 'transparent', color: '#643f13', padding: '10px',
+                                                width: '90px', cursor: 'pointer', display: 'flex',
+                                                alignItems: 'center', gap: '8px', fontWeight: 'bold', transition: '0.3s'
+                                            }}
+                                        > 
+                                            <Pencil size={20} />
+                                        </button>
+                                    )}
+                                    <h2 className="details-title">{selectedPlant.name}</h2>
+                                    <p className="details-price">{selectedPlant.price}€</p>
+
+                                    <p><b>DESCRIPTION: </b></p>
+                                    <p className="details-description">{selectedPlant.description}</p>
+
+                                    <p><b>CARE: </b></p>
+                                    <p className="details-care">{selectedPlant.care}</p>
+
+                                    <div className="plant-features-row">
+                                    <div 
+                                        className={`feature-item clickable ${activeFeature === 'light' ? 'highlight' : ''}`}
+                                        onClick={() => setActiveFeature('light')}
+                                    >
+                                        <div className="feature-icon-circle">
+                                            <Sun size={20} />
+                                        </div>
+                                        <span>{selectedPlant.svetloba || "Low light"}</span>
+                                    </div>
+
+                                    <div 
+                                        className={`feature-item clickable ${activeFeature === 'water' ? 'highlight' : ''}`}
+                                        onClick={() => setActiveFeature('water')}
+                                    >
+                                        <div className="feature-icon-circle">
+                                            <Droplet size={24} />
+                                        </div>
+                                        <span>{selectedPlant.zalivanje || "Water daily"}</span>
+                                    </div>
+
+                                    <div 
+                                        className={`feature-item clickable ${activeFeature === 'cost' ? 'highlight' : ''}`}
+                                        onClick={() => setActiveFeature('cost')}
+                                    >
+                                        <div className="feature-icon-circle">
+                                            <Tag size={20} />
+                                        </div>
+                                        <span>{selectedPlant.cena_rang || "Low cost"}</span>
                                     </div>
                                 </div>
-                            </div>
+
+                                <div className="searches-section">
+                                    <h3 className="searches-title">
+                                        Searches ({activeFeature === 'light' ? 'Light interest' : activeFeature === 'cost' ? 'Price checks' : 'Water needs'})
+                                    </h3>
+                                    <div className="graph-container">
+                                        <svg viewBox="0 0 300 80" className="graph-svg">
+                                            <path 
+                                                d={graph.path} 
+                                                fill="none" 
+                                                strokeWidth="2" 
+                                                className="graph-path"
+                                            />
+                                        </svg>
+                                        
+                                        <div className="graph-badge" style={{ left: graph.badgeLeft }}>
+                                            {graph.value}
+                                        </div>
+
+                                        <div className="graph-days">
+                                            {days.map((day, idx) => (
+                                                <span 
+                                                    key={idx} 
+                                                    className={idx === graph.activeDayIdx ? 'active-day' : ''}
+                                                >
+                                                    {day}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {user && (
+                                    <div className="details-footer">
+                                        <button 
+                                            className="main-add-btn full-width" 
+                                            onClick={handleAddToCart}
+                                            disabled={cartCount >= 2}
+                                            style={cartCount >= 2 ? { 
+                                                backgroundColor: '#b3b3b3', 
+                                                cursor: 'not-allowed', 
+                                                color: '#ffffff',
+                                                opacity: 0.8
+                                            } : {}}
+                                        >
+                                            {cartCount >= 2 ? (
+                                                <>Cart is full <ShoppingCart size={24} /></>
+                                            ) : (
+                                                <>Add to cart <ShoppingCart size={24} strokeWidth={3} /></>
+                                            )}
+                                        </button>
+                                    </div>
+                                )}
+                                </>
+                            )}
 
                         </div>
-                        {user && (
-                            <div className="details-footer">
-                            <button 
-                                className="main-add-btn full-width" 
-                                onClick={handleAddToCart}
-                                disabled={cartCount >= 2}
-                                style={cartCount >= 2 ? { 
-                                    backgroundColor: '#b3b3b3', 
-                                    cursor: 'not-allowed', 
-                                    color: '#ffffff',
-                                    opacity: 0.8
-                                } : {}}
-                            >
-                                {cartCount >= 2 ? (
-                                    <>Cart is full <ShoppingCart size={24} /></>
-                                ) : (
-                                    <>Add to cart <ShoppingCart size={24} strokeWidth={3} /></>
-                                )}
-                            </button>
-                        </div>
-                        )}
                     </div>
                 ) : (
                     <div className="infinite-scroll-viewport" ref={scrollRef} onScroll={handleScroll}>
