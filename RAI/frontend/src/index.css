@@ -218,6 +218,34 @@ nav {
   margin-bottom: 80px;
 }
 
+.edit-plant-input,
+.edit-plant-textarea {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 15px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.7);
+  font-size: 15px;
+  outline: none;
+}
+
+.edit-plant-textarea {
+  padding: 10px;
+  border: none;
+  border-bottom: 2px solid rgba(54, 80, 22, 0.08);
+  background: transparent;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  resize: vertical;
+  min-height: 120px;
+  font-family: inherit;
+}
+
+.edit-plant-textarea:focus {
+  outline: none;
+}
+
 .content-side {
   position: relative; 
   display: flex;
