@@ -306,11 +306,13 @@ function Home({ orderFilter = "oddano" }) {
     const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S']; 
 
     if (isFlowerShop) {
+        const pageTitle =
+        orderFilter === 'oddano' ? 'ALL ORDERS' : orderFilter === 'v_dostavi' ? 'TAKEN ORDERS' : 'DELIVERED ORDERS';
         return (
             <div className="flower-orders-page">
                 <div className="flower-orders-wrapper">
                     <div className="flower-orders-header">
-                        <h1 className="flower-orders-title">All orders</h1>
+                        <h1 className="flower-orders-title">{pageTitle}</h1>
                     </div>
 
                     {orders.length === 0 ? (
@@ -318,57 +320,59 @@ function Home({ orderFilter = "oddano" }) {
                             There are currently no orders here.
                         </div>
                     ) : (
+                        
                         <div className="flower-orders-grid">
                             {orders.map((order) => (
-                                <div
-                                    key={order._id}
-                                    className="flower-order-card"
-                                >
-                                    <div className="flower-order-card-header">
-                                        <span className="flower-order-badge">
-                                            #{order._id.slice(-6)}
-                                        </span>
-                                        <span className="flower-order-status">
-                                            {order.status}
-                                        </span>
+                                <div>
+                                    <div key={order._id} className="flower-order-card">
+                                        <div className="flower-order-card-header">
+                                            <span className="flower-order-badge">
+                                                #{order._id.slice(-6)}
+                                            </span>
+                                            <span className="flower-order-status">
+                                                {order.status}
+                                            </span>
+                                        </div>
+                    
+                                        <h3 className="flower-order-customer">
+                                            {order.izdelki?.[0]?.paketnik?.naslov ? order.izdelki[0].paketnik.naslov.split(',').map((part, idx) => (
+                                                <span key={idx} style={{display: 'block'}}>{part.trim()}</span>
+                                            )) : "Neznan paketnik"}
+                                        </h3>
+
+                                        <p className="flower-order-email" style={{marginBottom: "15px", color: "#666"}}>
+                                            {order.izdelki?.[0]?.paketnik?.ime || "Naslov ni izbran"}
+                                        </p>
+
+                                        <div className="flower-order-info">
+                                            <div className="flower-order-info-row">
+                                                <span className="flower-order-label">Product name</span>
+                                                <span className="flower-order-price">{order.izdelki?.[0]?.ime_izdelka || "ni podatka"}</span>
+                                            </div>
+
+                                            <div className="flower-order-info-row">
+                                                <span className="flower-order-label">Number of products</span>
+                                                <span className="flower-order-value">{order.izdelki?.length || 0}</span>
+                                            </div>
+
+                                            <div className="flower-order-info-row">
+                                                <span className="flower-order-label">Total price</span>
+                                                <span className="flower-order-price">{order.skupna_cena} €</span>
+                                            </div>
+                                        </div>
+
+                                        <button className="flower-order-accept-btn"
+                                            onClick={() =>
+                                                order.status === 'v_dostavi'
+                                                    ? handleDeliveredOrder(order._id)
+                                                    : handleAcceptOrder(order._id)
+                                            }
+                                        >
+                                            {order.status === 'v_dostavi'
+                                                ? 'Delivered'
+                                                : 'Accept order'}
+                                        </button>
                                     </div>
-
-                                    <h3 className="flower-order-customer">
-                                        {order.izdelki?.[0]?.paketnik?.naslov || "Neznan paketnik"}
-                                    </h3>
-
-                                    <p className="flower-order-email" style={{marginBottom: "15px", color: "#666"}}>
-                                        {order.izdelki?.[0]?.paketnik?.ime || "Naslov ni izbran"}
-                                    </p>
-
-                                    <div className="flower-order-info">
-                                        <div className="flower-order-info-row">
-                                            <span className="flower-order-label">Product name</span>
-                                            <span className="flower-order-price">{order.izdelki?.[0]?.ime_izdelka || "ni podatka"}</span>
-                                        </div>
-
-                                        <div className="flower-order-info-row">
-                                            <span className="flower-order-label">Number of products</span>
-                                            <span className="flower-order-value">{order.izdelki?.length || 0}</span>
-                                        </div>
-
-                                        <div className="flower-order-info-row">
-                                            <span className="flower-order-label">Total price</span>
-                                            <span className="flower-order-price">{order.skupna_cena} €</span>
-                                        </div>
-                                    </div>
-
-                                    <button className="flower-order-accept-btn"
-                                        onClick={() =>
-                                            order.status === 'v_dostavi'
-                                                ? handleDeliveredOrder(order._id)
-                                                : handleAcceptOrder(order._id)
-                                        }
-                                    >
-                                        {order.status === 'v_dostavi'
-                                            ? 'Delivered'
-                                            : 'Accept order'}
-                                    </button>
                                 </div>
                             ))}
                         </div>
