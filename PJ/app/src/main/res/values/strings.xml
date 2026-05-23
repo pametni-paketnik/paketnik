@@ -22,4 +22,9 @@
     <string name="danes">Danes</string>
     <string name="open_the_box">OPEN THE BOX</string>
     <string name="stevilka_paketnika">Številka paketnika</string>
+    <string name="settings_title">SETTINGS</string>
+    <string name="select_language_text">Izbira jezika / Select Language</string>
+    <string name="language_hint">Jezik / Language</string>
+    <string name="put_face_in_frame_text">Postavi obraz v okvir</string>
+    <string name="zajemi_sliko_description">Zajemi sliko</string>
 </resources>

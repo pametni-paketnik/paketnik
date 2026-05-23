@@ -27,7 +27,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Postavi obraz v okvir"
+        android:text="@string/put_face_in_frame_text"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:layout_marginTop="20dp"
@@ -36,15 +36,18 @@
         app:layout_constraintRight_toRightOf="parent" />
 
     <!-- 3. Gumb za zajem -->
-    <Button
+    <ImageButton
         android:id="@+id/btn_capture"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:background="@drawable/rounded_button"
-        android:text="📸"
-        android:layout_marginBottom="40dp"
+        android:src="@drawable/ic_camera_black"
+        android:contentDescription="@string/zajemi_sliko_description"
+        android:padding="20dp"
+        android:scaleType="fitCenter"
+        app:tint="@color/history_text_primary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
-
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginBottom="40dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
