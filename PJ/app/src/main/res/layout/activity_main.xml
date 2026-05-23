@@ -8,6 +8,21 @@
     android:background="@color/background"
     tools:context=".MainActivity">
 
+    <ImageButton
+        android:id="@+id/buttonSettings"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Settings"
+        android:padding="8dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_settings"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/history_text_primary" />
+
     <Button
         android:id="@+id/buttonLogin"
         android:layout_width="wrap_content"

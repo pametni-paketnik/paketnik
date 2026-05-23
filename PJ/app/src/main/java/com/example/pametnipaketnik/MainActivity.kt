@@ -26,6 +26,10 @@ class MainActivity : AppCompatActivity() {
         }
         checkPermissions()
 
+        binding.buttonSettings.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
 
         binding.buttonLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
