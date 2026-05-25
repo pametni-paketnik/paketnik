@@ -1,0 +1,333 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2869
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\froman\fcharset0 Times-Bold;\f2\froman\fcharset0 Times-Roman;
+\f3\fmodern\fcharset0 Courier-Bold;\f4\fmodern\fcharset0 Courier;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}}{\leveltext\leveltemplateid1\'01\'00;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh7680\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Naucen model dodaj v mapo api.\
+\
+main.py:\
+27	ime naucenega modela\
+\
+V terminalu pozeni: uvicorn app:app --reload in odpres brskalnik na 
+\fs26 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 http://127.0.0.1:8000/docs.\
+\
+\pard\pardeftab720\sa298\partightenfactor0
+
+\f1\b\fs36 \cf0 \strokec2 1. SPLETNA STRAN: React (Front-end) & Express (Back-end)\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f2\b0\fs24 \cf0 Najbolj\'9aa praksa za spletne aplikacije je, da React komunicira s tvojim Express stre\'9enikom, Express pa v ozadju pokli\uc0\u269 e FastAPI.\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f1\b\fs28 \cf0 A) Express Node.js Back-end (
+\f3\fs30\fsmilli15210 \strokec2 server.js
+\f1\fs28 \strokec2 )\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f2\b0\fs24 \cf0 Express mora sprejeti zahtevo za prijavo in po\uc0\u269 akati na potrditev, ali pa preprosto posredovati sliko na FastAPI. Tukaj je primer, kako v Expressu sprejme\'9a sliko in jo po\'9alje\'9a na FastAPI (
+\f4\fs26 http://localhost:8000/verify
+\f2\fs24 ).\
+Za delo s slikami v Expressu bo\'9a potrebovala knji\'9enici 
+\f4\fs26 multer
+\f2\fs24  in 
+\f4\fs26 axios
+\f2\fs24  (
+\f4\fs26 npm install multer axios form-data
+\f2\fs24 ).\
+\pard\pardeftab720\partightenfactor0
+\cf0 JavaScript\
+\
+
+\f4\fs26 const express = require('express');\
+const multer = require('multer');\
+const axios = require('axios');\
+const FormData = require('form-data');\
+const cors = require('cors');\
+\
+const app = express();\
+app.use(cors());\
+app.use(express.json());\
+\
+// Nastavitev pomnilnika za za\uc0\u269 asni sprejem slik\
+const upload = multer(\{ storage: multer.memoryStorage() \});\
+\
+// Endpoint, ki ga pokli\uc0\u269 e React ali Android\
+app.post('/api/spletna-prijava', upload.single('slika'), async (req, res) => \{\
+    try \{\
+        if (!req.file) \{\
+            return res.status(400).json(\{ error: 'Slika ni prilo\'9eena.' \});\
+        \}\
+\
+        // Pripravimo podatke za FastAPI (multipart/form-data)\
+        const form = new FormData();\
+        form.append('file', req.file.buffer, \{\
+            filename: req.file.originalname,\
+            contentType: req.file.mimetype,\
+        \});\
+\
+        // Po\'9aljemo sliko na tvoj FastAPI Docker vsebnik\
+        const fastapiResponse = await axios.post('http://localhost:8000/verify', form, \{\
+            headers: form.getHeaders()\
+        \});\
+\
+        // FastAPI vrne: \{ verified: true/false, label: "manja", confidence: 0.92 \}\
+        const rezultat = fastapiResponse.data;\
+\
+        if (rezultat.verified) \{\
+            return res.json(\{\
+                uspeh: true,\
+                sporocilo: `Dobrodo\'9ali, $\{rezultat.label\}!`,\
+                uporabnik: rezultat.label\
+            \});\
+        \} else \{\
+            return res.status(401).json(\{\
+                uspeh: false,\
+                sporocilo: 'Avtentikacija neuspe\'9ana. Obraz ni prepoznan.'\
+            \});\
+        \}\
+\
+    \} catch (error) \{\
+        console.error("Napaka na API-ju:", error.message);\
+        res.status(500).json(\{ error: 'Napaka pri komunikaciji z AI modelom.' \});\
+    \}\
+\});\
+\
+app.listen(5000, () => console.log('Express stre\'9enik te\uc0\u269 e na portu 5000'));\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f1\b\fs28 \cf0 B) React Front-end (Komponenta za prijavo)\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f2\b0\fs24 \cf0 V Reactu bo\'9a uporabila spletno kamero (lahko uporabi\'9a knji\'9enico 
+\f4\fs26 react-webcam
+\f2\fs24 ) ali pa preprost gumb za nalaganje datoteke, ki po\'9alje sliko na Express.\
+\pard\pardeftab720\partightenfactor0
+\cf0 JavaScript\
+\
+
+\f4\fs26 import React, \{ useState \} from 'react';\
+\
+function Prijava() \{\
+    const [slika, setSlika] = useState(null);\
+    const [status, setStatus] = useState('');\
+\
+    const handleFileChange = (e) => \{\
+        setSlika(e.target.files);\
+    \};\
+\
+    const handlePrijava = async () => \{\
+        if (!slika) \{\
+            setStatus('Prosim, izberi ali zajemi sliko obraza.');\
+            return;\
+        \}\
+\
+        const formData = new FormData();\
+        formData.append('slika', slika);\
+\
+        setStatus('Preverjam obraz...');\
+\
+        try \{\
+            const povratnaInformacija = await fetch('http://localhost:5000/api/spletna-prijava', \{\
+                method: 'POST',\
+                body: formData,\
+            \});\
+\
+            const podatki = await povratnaInformacija.json();\
+            \
+            if (podatki.uspeh) \{\
+                setStatus(`\uc0\u10003  Uspe\'9ana prijava! \'8eivijo $\{podatki.uporabnik\}`);\
+                // Tukaj jo preusmeri\'9a naprej v aplikacijo (npr. z react-router)\
+            \} else \{\
+                setStatus(`\uc0\u10007  Zavrnjeno: $\{podatki.sporocilo\}`);\
+            \}\
+        \} catch (err) \{\
+            setStatus('Napaka pri povezavi s stre\'9enikom.');\
+        \}\
+    \};\
+\
+    return (\
+        <div style=\{\{ padding: '20px', textAlign: 'center' \}\}>\
+            <h2>2FA Prepoznava Obraza</h2>\
+            <input type="file" accept="image/*" onChange=\{handleFileChange\} />\
+            <br /><br />\
+            <button onClick=\{handlePrijava\}>Preveri identiteto</button>\
+            <p><strong>Status:</strong> \{status\}</p>\
+        </div>\
+    );\
+\}\
+\
+export default Prijava;\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0 \cf0 \strokec2 \
+\
+\pard\pardeftab720\sa298\partightenfactor0
+
+\f1\b\fs36 \cf0 \strokec2 2. MOBILNA APLIKACIJA: Android Studio (Kotlin)\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f2\b0\fs24 \cf0 Mobilna aplikacija mora odpreti kamero, shraniti sliko v pomnilnik in jo preko knji\'9enice 
+\f1\b Retrofit
+\f2\b0  ali 
+\f1\b OkHttp
+\f2\b0  poslati direktno na tvoj FastAPI (ali pa preko Expressa).\
+\pard\pardeftab720\sa240\partightenfactor0
+\cf0 \uc0\u9888 \u65039  
+\f1\b Pomembno za Android:
+\f2\b0  \uc0\u268 e testira\'9a na emulatorju, tvoj ra\u269 unalnik ni 
+\f4\fs26 localhost
+\f2\fs24 , ampak ima v emulatorju poseben IP naslov: 
+\f3\b\fs26 http://10.0.2.2:8000
+\f2\b0\fs24  (to ka\'9ee na localhost tvojega ra\uc0\u269 unalnika, kjer te\u269 e FastAPI).\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f1\b\fs28 \cf0 A) Definicija Retrofit vmesnika v Kotlinu\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f2\b0\fs24 \cf0 Najprej ustvari vmesnik (Interface), ki pove, kako izgleda HTTP klic na FastAPI endpoint 
+\f4\fs26 /verify
+\f2\fs24 .\
+\pard\pardeftab720\partightenfactor0
+\cf0 Kotlin\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f4\fs26 \cf0 import okhttp3.MultipartBody\
+import okhttp3.ResponseBody\
+import retrofit2.Call\
+import retrofit2.http.Multipart\
+import retrofit2.http.POST\
+import retrofit2.http.Part\
+\
+interface FaceApiService \{\
+    @Multipart\
+    @POST("verify") // tvoj endpoint na FastAPI\
+    fun preveriObraz(\
+        @Part slika: MultipartBody.Part\
+    ): Call<ResponseBody> // Lahko ustvari\'9a tudi podatkovni razred (data class) namesto ResponseBody\
+\}\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f1\b\fs28 \cf0 B) Logika za po\'9ailjanje slike iz naprave\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f2\b0\fs24 \cf0 Ko uporabnik v Android aplikaciji klikne "Slikaj in preveri", dobi\'9a datoteko (
+\f4\fs26 File
+\f2\fs24 ). To datoteko pretvori\'9a v 
+\f4\fs26 MultipartBody.Part
+\f2\fs24 in jo po\'9alje\'9a.\
+\pard\pardeftab720\partightenfactor0
+\cf0 Kotlin\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f4\fs26 \cf0 import android.os.Bundle\
+import android.util.Log\
+import android.widget.Button\
+import android.widget.Toast\
+import androidx.appcompat.app.AppCompatActivity\
+import okhttp3.MediaType.Companion.toMediaTypeOrNull\
+import okhttp3.MultipartBody\
+import okhttp3.RequestBody.Companion.asRequestBody\
+import okhttp3.ResponseBody\
+import retrofit2.Call\
+import retrofit2.Callback\
+import retrofit2.Response\
+import retrofit2.Retrofit\
+import retrofit2.converter.gson.GsonConverterFactory\
+import java.io.File\
+\
+class MainActivity : AppCompatActivity() \{\
+\
+    override fun onCreate(savedInstanceState: Bundle?) \{\
+        super.onCreate(savedInstanceState)\
+        setContentView(R.layout.activity_main)\
+\
+        val gumbPreveri = findViewById<Button>(R.id.btn_preveri)\
+        \
+        gumbPreveri.setOnClickListener \{\
+            // Predpostavimo, da ima\'9a pot do shranjene slike iz kamere\
+            val slikaFajl = File(filesDir, "zajet_obraz.jpg") \
+            \
+            if (slikaFajl.exists()) \{\
+                posljiSlikoNaServer(slikaFajl)\
+            \} else \{\
+                Toast.makeText(this, "Slika ne obstaja. Najprej se slikaj!", Toast.LENGTH_SHORT).show()\
+            \}\
+        \}\
+    \}\
+\
+    private fun posljiSlikoNaServer(file: File) \{\
+        // 1. Nastavi Retrofit (10.0.2.2 je localhost za Android emulator)\
+        val retrofit = Retrofit.Builder()\
+            .baseUrl("http://10.0.2.2:8000/") \
+            .addConverterFactory(GsonConverterFactory.create())\
+            .build()\
+\
+        val apiService = retrofit.create(FaceApiService::class.java)\
+\
+        // 2. Pripravi datoteko za Multipart po\'9ailjanje\
+        val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())\
+        val body = MultipartBody.Part.createFormData("file", file.name, requestFile)\
+\
+        // 3. Izvedi asinhroni klic\
+        apiService.preveriObraz(body).enqueue(object : Callback<ResponseBody> \{\
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) \{\
+                if (response.isSuccessful) \{\
+                    val odgovorStreznik = response.body()?.string()\
+                    Log.d("API_USPEH", "Odgovor: $odgovorStreznik")\
+                    \
+                    // Tukaj v odgovoru preveri\'9a \uc0\u269 e je "verified": true\
+                    Toast.makeText(this@MainActivity, "Uspe\'9ano preverjeno!", Toast.LENGTH_LONG).show()\
+                \} else \{\
+                    Toast.makeText(this@MainActivity, "Obraz ni prepoznan.", Toast.LENGTH_LONG).show()\
+                \}\
+            \}\
+\
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) \{\
+                Log.e("API_NAPAKA", t.message ?: "Neznana napaka")\
+                Toast.makeText(this@MainActivity, "Povezava s stre\'9enikom ni uspela.", Toast.LENGTH_SHORT).show()\
+            \}\
+        \})\
+    \}\
+\}\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f1\b\fs28 \cf0 C) Android Nastavitve (Zelo pomembno!)\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f2\b0\fs24 \cf0 Da bo Android sploh lahko komuniciral z internetom in lokalnim stre\'9enikom, mora\'9a v datoteko 
+\f4\fs26 AndroidManifest.xml
+\f2\fs24  dodati naslednje:\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa240\partightenfactor0
+\ls1\ilvl0
+\f1\b \cf0 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	1	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Dovoljenje za internet
+\f2\b0  (nad oznako 
+\f4\fs26 <application>
+\f2\fs24 ):\uc0\u8232 XML\u8232 \u8232 
+\f4\fs26 <uses-permission android:name="android.permission.INTERNET" />\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\partightenfactor0
+\ls1\ilvl0\cf0 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	2	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 \uc0\u8232 
+\f2\fs24 \uc0\u8232 \u8232 \
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa240\partightenfactor0
+\ls1\ilvl0
+\f1\b \cf0 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	3	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Dovoljenje za HTTP (Cleartext)
+\f2\b0 : Ker lokalno testira\'9a na 
+\f4\fs26 http
+\f2\fs24  in ne na 
+\f4\fs26 https
+\f2\fs24 , mora\'9a znotraj oznake 
+\f4\fs26 <application>
+\f2\fs24 dodati:\uc0\u8232 XML\u8232 \u8232 
+\f4\fs26 android:usesCleartextTraffic="true"\uc0\u8232 
+\f2\fs24 \uc0\u8232 \u8232 \
+}
