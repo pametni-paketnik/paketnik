@@ -28,4 +28,7 @@
     <string name="login">LOGIN</string>
     <string name="go_to_register_full">Don\'t have an account? %1$s</string>
     <string name="go_to_register_link">Register here</string>
+    <string name="go_to_login_full">Already have an account? %1$s</string>
+    <string name="go_to_login_link">Login here</string>
+
 </resources>

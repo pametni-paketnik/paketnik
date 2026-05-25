@@ -37,20 +37,24 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun setUpGoToRegisterText(){
-        val fullText = "Nimaš računa? Registriraj se tukaj"
+    private fun setUpGoToRegisterText() {
+        //prevodi iz strings.xml
+        val linkText = getString(R.string.go_to_register_link) // "Registriraj se tukaj" ali "Register here"
+        val fullText = getString(R.string.go_to_register_full, linkText) // Sestavi celoten stavek
+
         val spannable = SpannableString(fullText)
 
-        val targetText = "Registriraj se tukaj"
-        val startIndex = fullText.indexOf(targetText)
-        val endText = startIndex + targetText.length
+        val startIndex = fullText.indexOf(linkText)
+        val endText = startIndex + linkText.length
 
-        if (startIndex != -1){
+        if (startIndex != -1) {
+            //Bold
             spannable.setSpan(
                 StyleSpan(Typeface.BOLD),
                 startIndex, endText,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
+            //Barvno besedilo
             spannable.setSpan(
                 ForegroundColorSpan(getColor(R.color.history_text_primary)),
                 startIndex, endText,

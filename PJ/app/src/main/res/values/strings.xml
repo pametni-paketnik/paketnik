@@ -32,4 +32,7 @@
     <string name="login">LOGIN</string>
     <string name="go_to_register_full">Nimaš računa? %1$s</string>
     <string name="go_to_register_link">Registriraj se tukaj</string>
+    <string name="go_to_login_full">Že imaš račun? %1$s</string>
+    <string name="go_to_login_link">Prijavi se tukaj</string>
+
 </resources>
