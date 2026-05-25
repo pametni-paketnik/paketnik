@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nameHint">Ime</string>
+    <string name="surnameHint">Priimek</string>
+    <string name="app_name">PametniPaketnik</string>
+    <string name="zgodovina_paketnika">ZGODOVINA PAKETNIKA</string>
+    <string name="language_hint">Jezik</string>
+    <string name="put_face_in_frame_text">Postavi obraz v okvir</string>
+    <string name="zajemi_sliko_description">Zajemi sliko</string>
+    <string name="vse">Vse</string>
+    <string name="uspesno">Uspešno</string>
+    <string name="danes">Danes</string>
+    <string name="open_the_box">ODPRI PAKETNIK</string>
+    <string name="stevilka_paketnika">Številka paketnika</string>
+    <string name="settings_title">NASTAVITVE</string>
+    <string name="prijava_z_obrazom">Prijava z obrazom</string>
+    <string name="settings">Nastavitve</string>
+    <string name="select_language_text">"Izbira jezika "</string>
+    <string name="go_to_register_text">Nimaš računa? Registriraj se tukaj</string>
+    <string name="register_title">Registracija</string>
+    <string name="registriraj_se">Registriraj se</string>
+    <string name="login_title">Prijava</string>
+    <string name="prijavi_se">Prijavi se</string>
+    <string name="emailHint">E-pošta</string>
+    <string name="passwordHint">Geslo</string>
+    <string name="neuspesno">Neuspešno</string>
+    <string name="go_to_login_full">Že imaš račun? %1$s</string>
+    <string name="go_to_login_link">Prijavi se tukaj</string>
+    <string name="nazaj">Nazaj</string>
+    <string name="login">PRIJAVA</string>
+    <string name="go_to_register_full">Nimaš računa? %1$s</string>
+    <string name="go_to_register_link">Registriraj se tukaj</string>
+    <string name="go_to_login_text">Že imaš račun? Prijavi se tukaj</string>
+    <string name="domov">Domov</string>
+</resources>

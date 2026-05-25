@@ -22,13 +22,13 @@
     <string name="danes">Danes</string>
     <string name="open_the_box">OPEN THE BOX</string>
     <string name="stevilka_paketnika">Številka paketnika</string>
-    <string name="settings_title">SETTINGS</string>
+    <string name="settings_title">NASTAVITVE</string>
     <string name="select_language_text">Izbira jezika / Select Language</string>
     <string name="language_hint">Jezik / Language</string>
     <string name="put_face_in_frame_text">Postavi obraz v okvir</string>
     <string name="zajemi_sliko_description">Zajemi sliko</string>
     <string name="prijava_z_obrazom">Prijava z obrazom</string>
-    <string name="settings">Settings</string>
+    <string name="settings">Nastavitve</string>
     <string name="login">LOGIN</string>
     <string name="go_to_register_full">Nimaš računa? %1$s</string>
     <string name="go_to_register_link">Registriraj se tukaj</string>
