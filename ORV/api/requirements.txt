@@ -1,0 +1,14 @@
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+python-multipart==0.0.9
+Pillow==10.3.0
+numpy==1.26.4
+
+# Odkomentiraj glede na framework modela:
+
+# --- PyTorch ---
+# torch==2.3.0
+# torchvision==0.18.0
+
+# --- TensorFlow / Keras ---
+# tensorflow==2.16.1

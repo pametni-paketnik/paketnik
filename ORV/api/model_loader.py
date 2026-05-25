@@ -1,75 +1,78 @@
+"""
+model_loader.py — Nalaganje ResNet18 modela za prepoznavo obrazov
+=================================================================
+Pričakuje model shranjen z izvozi_model.py (torch.save slovar z
+model_state_dict in class_names).
+"""
+
 import os
 import torch
-import torch.nn as nn
-from torchvision import models, transforms
+import torchvision.models as models
+import torchvision.transforms as T
+import numpy as np
 from PIL import Image
 
-# 1. Nastavitve - imena oseb (enako kot mape v dataset/surovi_podatki)
-# Član 2 ima v zvezku razrede razvrščene po abecedi. Prilagodi ta seznam vašim imenom!
-IMENA_OSEB = ['iris', 'manja', 'nika'] 
+# ── Konfiguracija ─────────────────────────────────────────────────────────────
+MODEL_PATH     = os.getenv("MODEL_PATH", "model/face_model_export.pt")
+AUTH_THRESHOLD = float(os.getenv("AUTH_THRESHOLD", "0.80"))
+DEVICE         = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# 2. Definicija naprave (CPU ali GPU)
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-def load_model(model_path="model.pth"):
-    """
-    Naloži arhitekturo ResNet in vanjo vpiše naučene uteži (od Člana 2).
-    """
-    # Ustvarimo enako arhitekturo mreže, kot jo je uporabil Član 2 (npr. resnet18)
-    model = models.resnet18(pretrained=False)
-    
-    # Prilagodimo zadnjo plast številu naših članov ekipe
-    num_ftrs = model.fc.in_features
-    model.fc = nn.Linear(num_ftrs, len(IMENA_OSEB))
-    
-    # Naložimo shranjene uteži, če datoteka obstaja
-    if os.path.exists(model_path):
-        model.load_state_dict(torch.load(model_path, map_location=device))
-    else:
-        print(f"OPOZORILO: Datoteka {model_path} ne obstaja! Model bo vrnil naključne rezultate.")
-        
-    model.to(device)
-    model.eval()  # Nastavimo model v način za ocenjevanje
-    return model
-
-# 3. Transformacija slike (Natančne nastavitve, ki sta jih določila Član 1 in 2)
-# Slika se mora zmanjšati na 224x224 in normalizirati z ImageNet vrednostmi
-infer_transforms = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+# Predobdelava — enaka kot pri učenju
+TRANSFORM = T.Compose([
+    T.Resize((224, 224)),
+    T.ToTensor(),
+    T.Normalize(mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225]),
 ])
+# ─────────────────────────────────────────────────────────────────────────────
 
-def predict(model, pil_image):
+
+def load_model() -> dict:
+    if not os.path.exists(MODEL_PATH):
+        raise FileNotFoundError(
+            f"Model ni najden: {MODEL_PATH}\n"
+            f"Prepričaj se, da si skopiral face_model_export.pt v mapo model/"
+        )
+
+    checkpoint = torch.load(MODEL_PATH, map_location=DEVICE)
+
+    class_names = checkpoint["class_names"]
+    num_classes  = len(class_names)
+
+    net = models.resnet18(weights=None)
+    net.fc = torch.nn.Linear(net.fc.in_features, num_classes)
+    net.load_state_dict(checkpoint["model_state_dict"])
+    net.to(DEVICE)
+    net.eval()
+
+    print(f"✓ Model naložen. Razredi: {class_names} | Naprava: {DEVICE}")
+    return {"net": net, "class_names": class_names}
+
+
+def predict(model_dict: dict, image: Image.Image) -> dict:
     """
-    Sprejme naložen model in PIL sliko, izvede predobdelavo in vrne rezultat.
+    Sprejme PIL sliko, vrne:
+      verified, confidence, label, all_scores
     """
-    # Priprava slike za nevronsko mrežo
-    tensor = infer_transforms(pil_image).unsqueeze(0).to(device)
-    
-    # Ocenjevanje brez računanja gradientov (hitreje, manj pomnilnika)
+    net         = model_dict["net"]
+    class_names = model_dict["class_names"]
+
+    tensor = TRANSFORM(image.convert("RGB")).unsqueeze(0).to(DEVICE)
+
     with torch.no_grad():
-        outputs = model(tensor)
-        # Pretvorba izhodov v procente (verjetnosti)
-        probabilities = torch.nn.functional.softmax(outputs, dim=1)
-        
-        # Poiščemo najvišjo verjetnost in pripadajoči indeks razreda
-        confidence, preds = torch.max(probabilities, 0)
-    
-    label_idx = preds.item()
-    prepoznana_oseba = IMENA_OSEB[label_idx]
-    zanesljivost = confidence.item()
-    
-    # Nastavimo prag varnosti: npr. če je model več kot 75% prepričan, odobrimo 2FA vstop
-    PRAG_ZAUPANJA = 0.75
-    verified = True if zanesljivost >= PRAG_ZAUPANJA else False
-    
-    # Pripravimo vse rezultate v obliki slovarja za vse_scores (za /classify endpoint)
-    all_scores = {IMENA_OSEB[i]: float(probabilities[i]) for i in range(len(IMENA_OSEB))}
-    
+        outputs = net(tensor)
+        probs   = torch.softmax(outputs, dim=1).cpu().numpy()[0]
+
+    idx        = int(np.argmax(probs))
+    label      = class_names[idx]
+    confidence = float(probs[idx])
+    verified   = confidence >= AUTH_THRESHOLD
+
+    all_scores = {class_names[i]: float(p) for i, p in enumerate(probs)}
+
     return {
-        "verified": verified,
-        "confidence": zanesljivost,
-        "label": prepoznana_oseba,
-        "all_scores": all_scores
+        "verified":   verified,
+        "confidence": confidence,
+        "label":      label,
+        "all_scores": all_scores,
     }
