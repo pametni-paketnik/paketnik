@@ -1,5 +1,6 @@
 package com.example.pametnipaketnik
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import androidx.activity.enableEdgeToEdge
@@ -51,7 +52,7 @@ class SettingsActivity : AppCompatActivity() {
             changeLanguage(selectedLangCode)
         }
 
-        // Opcijsko: Nastavi trenutni jezik v dropdown ob odprtju
+        // Nastavi trenutni jezik v dropdown ob odprtju
         val currentLang = AppCompatDelegate.getApplicationLocales().toLanguageTags()
         if (currentLang.contains("en")) {
             binding.autoCompleteLanguage.setText(languages[1], false)
@@ -60,6 +61,12 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.btnBack.setOnClickListener {
+            finish()
+        }
+        binding.btnHome.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
             finish()
         }
     }

@@ -35,5 +35,6 @@
     <string name="go_to_login_full">Že imaš račun? %1$s</string>
     <string name="go_to_login_link">Prijavi se tukaj</string>
     <string name="nazaj">Nazaj</string>
+    <string name="domov">Domov</string>
 
 </resources>
