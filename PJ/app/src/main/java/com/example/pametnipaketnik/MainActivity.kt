@@ -52,6 +52,9 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, HistoryActivity::class.java)
             startActivity(intent)
         }
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
 
     }
     private val requestPermissionLauncher = registerForActivityResult(

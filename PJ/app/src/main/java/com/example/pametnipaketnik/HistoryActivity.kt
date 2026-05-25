@@ -53,6 +53,10 @@ class HistoryActivity : AppCompatActivity() {
             adapter.updateItems(filtred)
         }
         updateTabs(binding.tabVse)
+
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
     }
     private fun loadHistory(): List<HistoryItem> {
         val prefs = getSharedPreferences("history", MODE_PRIVATE)

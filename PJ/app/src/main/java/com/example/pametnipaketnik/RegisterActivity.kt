@@ -36,6 +36,10 @@ class RegisterActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
     }
 
     private fun setUpGoToLoginText() {

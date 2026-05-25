@@ -58,6 +58,10 @@ class SettingsActivity : AppCompatActivity() {
         } else {
             binding.autoCompleteLanguage.setText(languages[0], false)
         }
+
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
     }
 
     private fun changeLanguage(langCode: String) {
