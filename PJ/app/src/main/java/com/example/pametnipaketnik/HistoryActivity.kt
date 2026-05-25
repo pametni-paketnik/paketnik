@@ -1,5 +1,6 @@
 package com.example.pametnipaketnik
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -53,6 +54,16 @@ class HistoryActivity : AppCompatActivity() {
             adapter.updateItems(filtred)
         }
         updateTabs(binding.tabVse)
+
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
+        binding.btnHome.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+            finish()
+        }
     }
     private fun loadHistory(): List<HistoryItem> {
         val prefs = getSharedPreferences("history", MODE_PRIVATE)

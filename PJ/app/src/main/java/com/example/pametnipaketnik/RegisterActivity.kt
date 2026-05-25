@@ -36,17 +36,29 @@ class RegisterActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
+        binding.btnHome.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+            finish()
+        }
     }
 
-    private fun setUpGoToLoginText(){
-        val fullText = "Že imaš račun? Prijavi se tukaj"
+    private fun setUpGoToLoginText() {
+
+        val linkText = getString(R.string.go_to_login_link) //
+        val fullText = getString(R.string.go_to_login_full, linkText)
+
         val spannable = SpannableString(fullText)
 
-        val targetText = "Prijavi se tukaj"
-        val startIndex = fullText.indexOf(targetText)
-        val endText = startIndex + targetText.length
+        val startIndex = fullText.indexOf(linkText)
+        val endText = startIndex + linkText.length
 
-        if (startIndex != -1){
+        if (startIndex != -1) {
             spannable.setSpan(
                 StyleSpan(Typeface.BOLD),
                 startIndex, endText,

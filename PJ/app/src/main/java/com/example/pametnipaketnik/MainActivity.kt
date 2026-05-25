@@ -26,6 +26,10 @@ class MainActivity : AppCompatActivity() {
         }
         checkPermissions()
 
+        binding.buttonSettings.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
 
         binding.buttonLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
@@ -47,6 +51,15 @@ class MainActivity : AppCompatActivity() {
         binding.buttonHistory.setOnClickListener {
             val intent = Intent(this, HistoryActivity::class.java)
             startActivity(intent)
+        }
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
+        binding.btnHome.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+            finish()
         }
 
     }

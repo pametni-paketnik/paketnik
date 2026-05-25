@@ -45,14 +45,25 @@ class OpenCameraActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityOpenCameraBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
+        binding.btnHome.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+            finish()
+        }
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val previewView = PreviewView(this)
-        setContentView(previewView)
-        startCamera(previewView)
+
+        startCamera(binding.previewView)
+
+
     }
     override fun onResume() {
         super.onResume()
