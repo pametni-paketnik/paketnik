@@ -82,7 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginTop="12dp"
-            android:text="Prijava z obrazom"
+            android:text="@string/prijava_z_obrazom"
             android:textStyle="bold"
             android:backgroundTint="@color/background"
             android:textColor="@color/history_text_primary"

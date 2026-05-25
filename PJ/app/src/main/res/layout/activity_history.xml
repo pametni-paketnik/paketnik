@@ -15,11 +15,7 @@
         android:background="@color/background"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
-        android:paddingTop="55dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" >
+        android:paddingTop="55dp">
 
         <TextView
             android:text="@string/zgodovina_paketnika"

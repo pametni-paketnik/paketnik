@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="surnameHint">Last Name</string>
+    <string name="app_name">SmartLocker</string>
+    <string name="login_title">Login</string>
+    <string name="prijavi_se">Login</string>
+    <string name="go_to_register_text">Don\'t have an account? Register here</string>
+    <string name="register_title">Registration</string>
+    <string name="registriraj_se">Register</string>
+    <string name="go_to_login_text">Already have an account? Login here</string>
+    <string name="emailHint">Email</string>
+    <string name="passwordHint">Password</string>
+    <string name="nameHint">First Name</string>
+    <string name="zgodovina_paketnika">LOCKER HISTORY</string>
+    <string name="vse">All</string>
+    <string name="uspesno">Successful</string>
+    <string name="neuspesno">Unsuccessful</string>
+    <string name="danes">Today</string>
+    <string name="open_the_box">OPEN THE BOX</string>
+    <string name="stevilka_paketnika">Box number</string>
+    <string name="settings_title">SETTINGS</string>
+    <string name="select_language_text">Select Language</string>
+    <string name="language_hint">Language</string>
+    <string name="put_face_in_frame_text">Place your face in the oval frame</string>
+    <string name="zajemi_sliko_description">Capture image</string>
+    <string name="prijava_z_obrazom">Login with face ID</string>
+    <string name="settings">Settings</string>
+    <string name="login">LOGIN</string>
+    <string name="go_to_register_full">Don\'t have an account? %1$s</string>
+    <string name="go_to_register_link">Register here</string>
+</resources>
