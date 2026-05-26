@@ -55,7 +55,7 @@ class FaceIdActivity : AppCompatActivity() {
             finish()
         }
         binding.btnHome.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, HomeActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)
             finish()
@@ -65,7 +65,6 @@ class FaceIdActivity : AppCompatActivity() {
             takePhotoAndVerify()
         }
     }
-
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
@@ -81,6 +80,7 @@ class FaceIdActivity : AppCompatActivity() {
             // inicializaija ImageCapture objekta
             imageCapture = ImageCapture.Builder()
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                .setTargetRotation(binding.viewFinder.display.rotation)
                 .build()
             //spredna kamera
             val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
@@ -100,7 +100,6 @@ class FaceIdActivity : AppCompatActivity() {
         super.onDestroy()
         cameraExecutor.shutdown()
     }
-
     private fun takePhotoAndVerify() {
         val imageCapture = imageCapture ?: return
 
@@ -125,7 +124,6 @@ class FaceIdActivity : AppCompatActivity() {
             }
         )
     }
-
     private fun sendImageOnServer(fileImage: File){
         val requiresFile = fileImage.asRequestBody("image/jpeg".toMediaTypeOrNull())
         val body = MultipartBody.Part.createFormData("file", fileImage.name, requiresFile)
@@ -134,24 +132,23 @@ class FaceIdActivity : AppCompatActivity() {
             try{
                 val res = ApiClient.apiService.verifyFace(body)
 
-                withContext(Dispatchers.Main){
-                    if(res.isSuccessful && res.body() != null){
+                withContext(Dispatchers.Main) {
+                    if (res.isSuccessful && res.body() != null) {
                         val result = res.body()!!
 
-                        if(result.verified){
-                            Toast.makeText(this@FaceIdActivity, "${result.message} Hello ${result.label}!", Toast.LENGTH_SHORT).show()
+                        if (result.verified) {
+                            Toast.makeText(this@FaceIdActivity, "Prijava uspešna! Živijo ${result.label}", Toast.LENGTH_SHORT).show()
 
-                            if(boxId.isNotEmpty()){
-                                verifyAndOpenBox(boxId, result.label)
-                            } else{
-                                Toast.makeText(this@FaceIdActivity, "Prijava uspešna", Toast.LENGTH_SHORT).show()
-                            }
+                            val intent = Intent(this@FaceIdActivity, MainActivity::class.java)
+                            intent.putExtra("prijavljeni_uporabnik", result.label) // Shranimo ime za kasnejše odpiranje
+                            startActivity(intent)
+                            finish()
 
-                        }else{
+                        } else {
                             Toast.makeText(this@FaceIdActivity, "Obraz ni prepoznan: ${result.message}", Toast.LENGTH_SHORT).show()
                         }
-                    }else{
-                        Toast.makeText(this@FaceIdActivity, "Napak na strežniku: ${res.code()}", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@FaceIdActivity, "Napaka na strežniku: ${res.code()}", Toast.LENGTH_SHORT).show()
                     }
                 }
             }catch (e: Exception){
@@ -161,39 +158,6 @@ class FaceIdActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-    private fun verifyAndOpenBox(boxId: String, userId: String){
-     lifecycleScope.launch(Dispatchers.IO) {
-         try{
-             val reqData = OpenBoxRequest(boxId = boxId, userId = userId)
-             val res = ApiClient.apiService.openBox(reqData)
-
-             withContext(Dispatchers.Main){
-                 if(res.isSuccessful && res.body() != null){
-                     val openBoxResponse = res.body()!!
-
-                     if (openBoxResponse.success){
-                         Toast.makeText(this@FaceIdActivity, openBoxResponse.message, Toast.LENGTH_SHORT).show()
-
-                         val returnIntent = Intent()
-                         returnIntent.putExtra("boxId", boxId)
-                         setResult(RESULT_OK, returnIntent)
-                         finish()
-                     } else{
-                         Toast.makeText(this@FaceIdActivity, "Zavrnjeno: ${openBoxResponse.message}", Toast.LENGTH_LONG).show()
-                         finish()
-                     }
-                 }else{
-                     Toast.makeText(this@FaceIdActivity, "Napaka API-ja za paketnik: ${res.code()}",
-                         Toast.LENGTH_SHORT).show()
-                 }
-             }
-         } catch (e: Exception) {
-             Log.e("FaceID", "Napaka pri komunikaciji: ${e.message}", e)
-             withContext(Dispatchers.Main) {
-                 Toast.makeText(this@FaceIdActivity, "Komunikacija za paketnik ni uspela", Toast.LENGTH_SHORT).show()
-             }
-         } }
     }
 }
 

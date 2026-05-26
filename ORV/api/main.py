@@ -90,37 +90,4 @@ async def classify(file: UploadFile = File(...)):
     if model is None:
         raise HTTPException(503, "Model ni naložen.")
 
-<<<<<<< Updated upstream
     return predict(model, image)
-=======
-    result = predict(model, image)
-
-    return {
-        "label": result["label"],
-        "confidence": round(result["confidence"], 4),
-        "all_scores": result.get("all_scores", {})
-    }
-
-class OpenBoxRequest(BaseModel): 
-    box_id: str
-    user_id: str
-
-@app.post("/open-box")
-def open_box(request: OpenBoxRequest):
-    """
-    Endpoint, ki prejme uporabnika in številko paketnika ter vrne true/false.
-    Uporablja se po uspešni FaceID prepoznavi.
-    """
-    logger.info(f"Prejet zahtevek za odpiranje: Paketnik {request.box_id} s strani uporabnika {request.user_id}")
-    
-    if request.user_id and request.user_id.lower() != "unknown":
-        return {
-            "success": True,
-            "message": f"Paketnik {request.box_id} uspešno odprt za uporabnika {request.user_id}!"
-        }
-    else:
-        return {
-            "success": False,
-            "message": "Dostop zavrnjen. Uporabnik ni prepoznan."
-        }
->>>>>>> Stashed changes
