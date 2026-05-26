@@ -14,6 +14,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private val faceIdLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if(result.resultCode == RESULT_OK){
+            val boxId = result.data?.getStringExtra("boxId") ?: ""
+            showOpenedDialog(boxId)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -42,10 +49,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         val openCameraLauncher =
-            registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()) { result ->
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if(result.resultCode == RESULT_OK) {
-                    val boxId = result.data?.getStringExtra("boxId") ?: " "
-                    showOpenedDialog(boxId)
+                    val boxId = result.data?.getStringExtra("boxId") ?: ""
+
+                    if(boxId.trim().isNotEmpty()){
+                        val intent = Intent(this, FaceIdActivity::class.java)
+                        intent.putExtra("boxId", boxId)
+                        startActivity(intent)
+                    }else{
+                        Toast.makeText(this, "Številka paketnika ni bila najdena", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 

@@ -16,7 +16,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.pametnipaketnik.databinding.ActivityFaceIdBinding
-import com.google.android.gms.common.api.GoogleApiClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,8 +30,8 @@ class FaceIdActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityFaceIdBinding
     private lateinit var cameraExecutor: ExecutorService
-
     private var imageCapture: ImageCapture ?= null
+    private var boxId: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,14 +39,16 @@ class FaceIdActivity : AppCompatActivity() {
         binding = ActivityFaceIdBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
+
         cameraExecutor = Executors.newSingleThreadExecutor()
+        // prejmemo boxId ki nam ga je poslal MainActivity
+        boxId = intent.getStringExtra("boxId") ?: ""
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
         startCamera()
 
         binding.btnBack.setOnClickListener {
@@ -81,7 +82,6 @@ class FaceIdActivity : AppCompatActivity() {
             imageCapture = ImageCapture.Builder()
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .build()
-
             //spredna kamera
             val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
@@ -140,6 +140,13 @@ class FaceIdActivity : AppCompatActivity() {
 
                         if(result.verified){
                             Toast.makeText(this@FaceIdActivity, "${result.message} Hello ${result.label}!", Toast.LENGTH_SHORT).show()
+
+                            if(boxId.isNotEmpty()){
+                                verifyAndOpenBox(boxId, result.label)
+                            } else{
+                                Toast.makeText(this@FaceIdActivity, "Prijava uspešna", Toast.LENGTH_SHORT).show()
+                            }
+
                         }else{
                             Toast.makeText(this@FaceIdActivity, "Obraz ni prepoznan: ${result.message}", Toast.LENGTH_SHORT).show()
                         }
@@ -154,6 +161,39 @@ class FaceIdActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+    private fun verifyAndOpenBox(boxId: String, userId: String){
+     lifecycleScope.launch(Dispatchers.IO) {
+         try{
+             val reqData = OpenBoxRequest(boxId = boxId, userId = userId)
+             val res = ApiClient.apiService.openBox(reqData)
+
+             withContext(Dispatchers.Main){
+                 if(res.isSuccessful && res.body() != null){
+                     val openBoxResponse = res.body()!!
+
+                     if (openBoxResponse.success){
+                         Toast.makeText(this@FaceIdActivity, openBoxResponse.message, Toast.LENGTH_SHORT).show()
+
+                         val returnIntent = Intent()
+                         returnIntent.putExtra("boxId", boxId)
+                         setResult(RESULT_OK, returnIntent)
+                         finish()
+                     } else{
+                         Toast.makeText(this@FaceIdActivity, "Zavrnjeno: ${openBoxResponse.message}", Toast.LENGTH_LONG).show()
+                         finish()
+                     }
+                 }else{
+                     Toast.makeText(this@FaceIdActivity, "Napaka API-ja za paketnik: ${res.code()}",
+                         Toast.LENGTH_SHORT).show()
+                 }
+             }
+         } catch (e: Exception) {
+             Log.e("FaceID", "Napaka pri komunikaciji: ${e.message}", e)
+             withContext(Dispatchers.Main) {
+                 Toast.makeText(this@FaceIdActivity, "Komunikacija za paketnik ni uspela", Toast.LENGTH_SHORT).show()
+             }
+         } }
     }
 }
 
