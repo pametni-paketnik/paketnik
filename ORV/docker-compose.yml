@@ -10,7 +10,7 @@ services:
     volumes:
       - ./model:/app/model:ro
     environment:
-      - MODEL_PATH=model.pt
+      - MODEL_PATH=model/resnet18_prepoznava_obrazov.pth
       - AUTH_THRESHOLD=0.80
     restart: unless-stopped
     healthcheck:

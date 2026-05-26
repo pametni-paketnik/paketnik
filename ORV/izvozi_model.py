@@ -16,8 +16,8 @@ import os
 
 # ═══════════════════════════════════════════════════════════
 #  NASTAVI TUKAJ:
-CLASS_NAMES = ["iris", "manja", "nika"]   # ← zamenjaj z dejanskimi imeni map!
-MODEL_CHECKPOINT = "model_best.pth"        # ← pot do tvojega checkpoint fajla
+CLASS_NAMES = ["iris", "manja", "nika"]
+MODEL_CHECKPOINT = "model_best.pth"
 OUTPUT_PATH = "model/face_model_export.pt"
 # ═══════════════════════════════════════════════════════════
 
