@@ -21,12 +21,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var currentUser: String = "Gost"
 
-    private val faceIdLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if(result.resultCode == RESULT_OK){
-            val boxId = result.data?.getStringExtra("boxId") ?: ""
-            showOpenedDialog(boxId)
-        }
-    }
     val openCameraLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if(result.resultCode == RESULT_OK) {
@@ -47,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         currentUser = intent.getStringExtra("prijavljen_uporabnik") ?: "Gost"
-        Toast.makeText(this, "Hello $currentUser", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Hello $currentUser!", Toast.LENGTH_SHORT).show()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -71,10 +65,7 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
         binding.btnHome.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            startActivity(intent)
-            finish()
+            Toast.makeText(this, "Ste že na domači strani :)", Toast.LENGTH_SHORT).show()
         }
     }
     private fun openBoxThroughApi(boxId: String, userId: String){
@@ -89,7 +80,6 @@ class MainActivity : AppCompatActivity() {
                     if (res.isSuccessful && res.body() != null) {
                         val openBoxResponse = res.body()!!
 
-                        // Glede na prejet odgovor (true/false) paketnik odprete ali ne
                         if (openBoxResponse.success) {
                             Toast.makeText(this@MainActivity, "Uspeh: ${openBoxResponse.message}", Toast.LENGTH_SHORT).show()
                             showOpenedDialog(boxId)
