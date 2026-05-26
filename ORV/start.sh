@@ -18,19 +18,19 @@ echo -e "${GREEN}╚════════════════════
 echo ""
 
 # Preveri model
-if [ ! -f "./model/face_model_export.pt" ]; then
-    echo -e "${RED}✗ Model ni najden: ./model/face_model_export.pt${NC}"
+if [ ! -f "./model/resnet18_prepoznava_obrazov.pth.pt" ]; then
+    echo -e "${RED}✗ Model ni najden: ./model/resnet18_prepoznava_obrazov.pth.pt${NC}"
     echo ""
     echo "  Naredi naslednje:"
     echo "  1. Pošlji sošolcu (Član 2) fajl: izvozi_model.py"
     echo "  2. Sošolec požene: python izvozi_model.py"
-    echo "  3. Sošolec ti pošlje: face_model_export.pt"
-    echo "  4. Kopiraj ga sem: ./model/face_model_export.pt"
+    echo "  3. Sošolec ti pošlje: resnet18_prepoznava_obrazov.pth.pt"
+    echo "  4. Kopiraj ga sem: ./model/resnet18_prepoznava_obrazov.pth.pt"
     echo ""
     read -p "  Nadaljujem brez modela? (y/N): " -n 1 -r; echo
     [[ ! $REPLY =~ ^[Yy]$ ]] && exit 1
 else
-    echo -e "${GREEN}✓ Model najden: ./model/face_model_export.pt${NC}"
+    echo -e "${GREEN}✓ Model najden: ./model/resnet18_prepoznava_obrazov.pth.pt${NC}"
 fi
 
 if [ "$MODE" = "--dev" ]; then

@@ -1,8 +1,8 @@
 """
-model_loader.py — Nalaganje ResNet18 modela za prepoznavo obrazov
-=================================================================
-Pričakuje model shranjen z izvozi_model.py (torch.save slovar z
-model_state_dict in class_names).
+model_loader.py — Nalaganje ResNet18 modela (state_dict format)
+===============================================================
+Model: resnet18_prepoznava_obrazov.pth
+Razredi (po abecedi, kot jih naredi predobdelava.py): iris, manja, nika
 """
 
 import os
@@ -13,11 +13,11 @@ import numpy as np
 from PIL import Image
 
 # ── Konfiguracija ─────────────────────────────────────────────────────────────
-MODEL_PATH     = os.getenv("MODEL_PATH", "model/face_model_export.pt")
+MODEL_PATH     = os.getenv("MODEL_PATH", "model/resnet18_prepoznava_obrazov.pth")
 AUTH_THRESHOLD = float(os.getenv("AUTH_THRESHOLD", "0.80"))
+CLASS_NAMES    = ["iris", "manja", "nika"]   # abecedni vrstni red map!
 DEVICE         = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Predobdelava — enaka kot pri učenju
 TRANSFORM = T.Compose([
     T.Resize((224, 224)),
     T.ToTensor(),
@@ -29,31 +29,28 @@ TRANSFORM = T.Compose([
 
 def load_model() -> dict:
     if not os.path.exists(MODEL_PATH):
-        raise FileNotFoundError(
-            f"Model ni najden: {MODEL_PATH}\n"
-            f"Prepričaj se, da si skopiral face_model_export.pt v mapo model/"
-        )
+        raise FileNotFoundError(f"Model ni najden: {MODEL_PATH}")
 
-    checkpoint = torch.load(MODEL_PATH, map_location=DEVICE)
-
-    class_names = checkpoint["class_names"]
-    num_classes  = len(class_names)
-
+    # Zgradi ResNet18 z 3 izhodi (iris, manja, nika)
     net = models.resnet18(weights=None)
-    net.fc = torch.nn.Linear(net.fc.in_features, num_classes)
-    net.load_state_dict(checkpoint["model_state_dict"])
+    net.fc = torch.nn.Linear(net.fc.in_features, len(CLASS_NAMES))
+
+    # Naloži uteži
+    state_dict = torch.load(MODEL_PATH, map_location=DEVICE)
+
+    # Podpri oba formata: čist state_dict ali wrapped {model_state_dict: ...}
+    if isinstance(state_dict, dict) and "model_state_dict" in state_dict:
+        state_dict = state_dict["model_state_dict"]
+
+    net.load_state_dict(state_dict)
     net.to(DEVICE)
     net.eval()
 
-    print(f"✓ Model naložen. Razredi: {class_names} | Naprava: {DEVICE}")
-    return {"net": net, "class_names": class_names}
+    print(f"✓ Model naložen | Razredi: {CLASS_NAMES} | Naprava: {DEVICE}")
+    return {"net": net, "class_names": CLASS_NAMES}
 
 
 def predict(model_dict: dict, image: Image.Image) -> dict:
-    """
-    Sprejme PIL sliko, vrne:
-      verified, confidence, label, all_scores
-    """
     net         = model_dict["net"]
     class_names = model_dict["class_names"]
 
@@ -68,11 +65,11 @@ def predict(model_dict: dict, image: Image.Image) -> dict:
     confidence = float(probs[idx])
     verified   = confidence >= AUTH_THRESHOLD
 
-    all_scores = {class_names[i]: float(p) for i, p in enumerate(probs)}
+    all_scores = {class_names[i]: round(float(p), 4) for i, p in enumerate(probs)}
 
     return {
         "verified":   verified,
-        "confidence": confidence,
+        "confidence": round(confidence, 4),
         "label":      label,
         "all_scores": all_scores,
     }
