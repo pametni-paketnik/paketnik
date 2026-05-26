@@ -20,8 +20,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/history_text_primary"
-        android:layout_marginEnd="24dp"
-        android:layout_marginTop="24dp" />
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="20dp" />
 
     <Button
         android:id="@+id/buttonOpenBox"

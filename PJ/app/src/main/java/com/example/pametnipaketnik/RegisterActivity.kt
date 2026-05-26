@@ -3,8 +3,10 @@ package com.example.pametnipaketnik
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Editable
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.widget.Toast
@@ -19,6 +21,20 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val textWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                checkInputForButton()
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        }
+
+        binding.inputName.addTextChangedListener(textWatcher)
+        binding.inputSurname.addTextChangedListener(textWatcher)
+        binding.inputEmail.addTextChangedListener(textWatcher)
+        binding.inputPassword.addTextChangedListener(textWatcher)
+
         setUpGoToLoginText()
 
         binding.btnRegister.setOnClickListener {
@@ -26,23 +42,48 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         binding.btnFaceIdSetup.setOnClickListener {
+            val name = binding.inputName.text.toString().trim()
+            val surname = binding.inputSurname.text.toString().trim()
+            val email = binding.inputEmail.text.toString().trim()
+            val password = binding.inputPassword.text.toString().trim()
+
+            if(name.isEmpty() || surname.isEmpty() || email.isEmpty() || password.isEmpty()){
+                Toast.makeText(this, "Prosim vnesite podatke, preden nastavite Face ID", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                binding.emailTitle.error = "Neveljaven e-poštni naslov"
+                return@setOnClickListener
+            }
+
             val intent = Intent(this, FaceIdActivity::class.java)
             intent.putExtra("MODE", "REGISTER")
+            intent.putExtra("NAME", name)
+            intent.putExtra("SURNAME", surname)
+            intent.putExtra("EMAIL", email)
+            intent.putExtra("PASSWORD", password)
             startActivity(intent)
         }
-
         binding.goToLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }
+        checkInputForButton()
+    }
+
+    private fun checkInputForButton() {
+        val name = binding.inputName.text.toString().trim()
+        val surname = binding.inputSurname.text.toString().trim()
+        val email = binding.inputEmail.text.toString().trim()
+        val password = binding.inputPassword.text.toString().trim()
+
+        binding.btnRegister.isEnabled = name.isNotEmpty() && surname.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()
     }
 
     private fun setUpGoToLoginText() {
-
         val linkText = getString(R.string.go_to_login_link) //
         val fullText = getString(R.string.go_to_login_full, linkText)
-
         val spannable = SpannableString(fullText)
 
         val startIndex = fullText.indexOf(linkText)
@@ -79,9 +120,7 @@ class RegisterActivity : AppCompatActivity() {
             return
         }
 
-        // Tukaj pride klic na API za registracijo
         Toast.makeText(this, "Registracija uspešna!", Toast.LENGTH_SHORT).show()
-
         startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }
