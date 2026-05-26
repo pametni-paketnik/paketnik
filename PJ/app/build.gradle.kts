@@ -89,4 +89,7 @@ dependencies {
     implementation("org.json:json:20240303")
     implementation("androidx.activity:activity-compose:1.9.0")
     implementation("androidx.cardview:cardview:1.0.0")
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 }

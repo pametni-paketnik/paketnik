@@ -13,7 +13,7 @@ import numpy as np
 from PIL import Image
 
 # ── Konfiguracija ─────────────────────────────────────────────────────────────
-MODEL_PATH     = os.getenv("MODEL_PATH", "model/face_model_export.pt")
+MODEL_PATH     = os.getenv("MODEL_PATH", "../resnet18_prepoznava_obrazov.pth")
 AUTH_THRESHOLD = float(os.getenv("AUTH_THRESHOLD", "0.80"))
 DEVICE         = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -36,12 +36,17 @@ def load_model() -> dict:
 
     checkpoint = torch.load(MODEL_PATH, map_location=DEVICE)
 
-    class_names = checkpoint["class_names"]
+    class_names = ["iris", "manja", "nika"]
     num_classes  = len(class_names)
 
     net = models.resnet18(weights=None)
     net.fc = torch.nn.Linear(net.fc.in_features, num_classes)
-    net.load_state_dict(checkpoint["model_state_dict"])
+    
+    if isinstance(checkpoint, dict) and "model_state_dict" in checkpoint:
+        net.load_state_dict(checkpoint["model_state_dict"])
+    else:
+        net.load_state_dict(checkpoint)
+        
     net.to(DEVICE)
     net.eval()
 
