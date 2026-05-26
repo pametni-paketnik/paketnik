@@ -12,20 +12,38 @@ def odstrani_sum(img):
 def pripravi_sliko_za_api(img):
     """
     To funkcijo uporabi Član 3 v API-ju.
-    Vzame surovo sliko (OpenCV format) in vrne normaliziran tenzor.
-    """
-    target_size = (224, 224)
+    Vzame surovo sliko iz telefona, najde obraz, ga izreže in pripravi za model.    """
     
+    # naloži detektor (isti kot v zajem_podatkov.py)
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+
+    if len(faces) > 0:
+        # Vzame prvi zaznan obraz
+        (x, y, w, h) = faces[0]
+        
+        # Doda isti padding (30%) da je slika enaka ko pri učenju
+        offset = int(w * 0.3)
+        y1, y2 = max(0, y-offset), min(frame.shape[0], y+h+offset)
+        x1, x2 = max(0, x-offset), min(frame.shape[1], x+w+offset)
+        
+        img = frame[y1:y2, x1:x2]
+    else:
+        # Če obraza ne najde vrne original (ali pa API lahk javi napako)
+        img = frame
+
+    # OSNOVNA PREDOBDELAVA
+    target_size = (224, 224)
     # 1. Resizing
     img = cv2.resize(img, target_size)
-    
-    # 2. Denoising (isti filter kot pri učenju!)
+    # 2. Denoising (isti filter kot pri učenju)
     img = odstrani_sum(img)
-    
     # 3. Normalizacija na [0,1]
-    img_norm = img.astype('float32') / 255.0
+    img_tensor = img.astype('float32') / 255.0
     
-    return img_norm
+    return img_tensor
 
 def dodaj_sum(img):
     """Simulira grainy (zrnat) efekt."""
