@@ -8,6 +8,24 @@ def odstrani_sum(img):
     """Odstranjevanje šuma (Denoising)."""
     return cv2.GaussianBlur(img, (3, 3), 0)
 
+# --- NOVA FUNKCIJA ZA ČLANA 3 (API) ---
+def pripravi_sliko_za_api(img):
+    """
+    To funkcijo uporabi Član 3 v API-ju.
+    Vzame surovo sliko (OpenCV format) in vrne normaliziran tenzor.
+    """
+    target_size = (224, 224)
+    
+    # 1. Resizing
+    img = cv2.resize(img, target_size)
+    
+    # 2. Denoising (isti filter kot pri učenju!)
+    img = odstrani_sum(img)
+    
+    # 3. Normalizacija na [0,1]
+    img_norm = img.astype('float32') / 255.0
+    
+    return img_norm
 
 def dodaj_sum(img):
     """Simulira grainy (zrnat) efekt."""
