@@ -9,8 +9,8 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 
 data class OpenBoxRequest(
-    @SerializedName("box_id") val boxId: String,
-    @SerializedName("user_id") val userId: String
+    @SerializedName("boxId") val boxId: String,
+    @SerializedName("userId") val userId: String
 )
 data class OpenBoxResponse(
     val success: Boolean,

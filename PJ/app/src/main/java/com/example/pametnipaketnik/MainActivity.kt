@@ -9,17 +9,36 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.pametnipaketnik.databinding.ActivityMainBinding
 import android.Manifest
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private var currentUser: String = "Gost"
+
     private val faceIdLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if(result.resultCode == RESULT_OK){
             val boxId = result.data?.getStringExtra("boxId") ?: ""
             showOpenedDialog(boxId)
         }
     }
+    val openCameraLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if(result.resultCode == RESULT_OK) {
+                val boxId = result.data?.getStringExtra("boxId") ?: ""
+
+                if(boxId.trim().isNotEmpty()){
+                    openBoxThroughApi(boxId, currentUser)
+                }else{
+                    Toast.makeText(this, "Številka paketnika ni bila najdena", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,42 +46,19 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val secureApiUrl = getString(R.string.api_base_url)
-        ApiClient.initializer(secureApiUrl)
-
+        currentUser = intent.getStringExtra("prijavljen_uporabnik") ?: "Gost"
+        Toast.makeText(this, "Hello $currentUser", Toast.LENGTH_SHORT).show()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        checkPermissions()
 
         binding.buttonSettings.setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         }
-
-        binding.buttonLogin.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-        }
-
-        val openCameraLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if(result.resultCode == RESULT_OK) {
-                    val boxId = result.data?.getStringExtra("boxId") ?: ""
-
-                    if(boxId.trim().isNotEmpty()){
-                        val intent = Intent(this, FaceIdActivity::class.java)
-                        intent.putExtra("boxId", boxId)
-                        startActivity(intent)
-                    }else{
-                        Toast.makeText(this, "Številka paketnika ni bila najdena", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-
         binding.buttonOpenBox.setOnClickListener {
             val intent = Intent(this, OpenCameraActivity::class.java)
             openCameraLauncher.launch(intent)
@@ -80,31 +76,36 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-
     }
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
-        val notifyGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissions[Manifest.permission.POST_NOTIFICATIONS] ?: false
-        } else {
-            true
-        }
+    private fun openBoxThroughApi(boxId: String, userId: String){
+        Toast.makeText(this, "Preverjanje pravic za paketnik...", Toast.LENGTH_SHORT).show()
 
-        if (cameraGranted && notifyGranted) {
-        } else {
-            Toast.makeText(this, "Aplikacija potrebuje dovoljenja za polno delovanje!", Toast.LENGTH_LONG).show()
-        }
-    }
-    private fun checkPermissions() {
-        val permissionsToRequest = mutableListOf(Manifest.permission.CAMERA)
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val reqData = OpenBoxRequest(boxId = boxId, userId = userId)
+                val res = ApiClient.apiService.openBox(reqData)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
-        }
+                withContext(Dispatchers.Main) {
+                    if (res.isSuccessful && res.body() != null) {
+                        val openBoxResponse = res.body()!!
 
-        requestPermissionLauncher.launch(permissionsToRequest.toTypedArray())
+                        // Glede na prejet odgovor (true/false) paketnik odprete ali ne
+                        if (openBoxResponse.success) {
+                            Toast.makeText(this@MainActivity, "Uspeh: ${openBoxResponse.message}", Toast.LENGTH_SHORT).show()
+                            showOpenedDialog(boxId)
+                        } else {
+                            Toast.makeText(this@MainActivity, "Dostop zavrnjen: ${openBoxResponse.message}", Toast.LENGTH_LONG).show()
+                        }
+                    } else {
+                        Toast.makeText(this@MainActivity, "Napaka API-ja: ${res.code()}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@MainActivity, "Komunikacija z API-jem ni uspela", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
     private fun showOpenedDialog(boxId: String) {
         androidx.appcompat.app.AlertDialog.Builder(this)
