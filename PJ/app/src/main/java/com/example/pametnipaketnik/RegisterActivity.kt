@@ -11,7 +11,9 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.pametnipaketnik.databinding.ActivityRegisterBinding
+import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
@@ -52,7 +54,7 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                binding.emailTitle.error = "Neveljaven e-poštni naslov"
+                binding.inputEmail.error = "Neveljaven e-poštni naslov"
                 return@setOnClickListener
             }
 
@@ -120,9 +122,30 @@ class RegisterActivity : AppCompatActivity() {
             return
         }
 
-        Toast.makeText(this, "Registracija uspešna!", Toast.LENGTH_SHORT).show()
-        startActivity(Intent(this, LoginActivity::class.java))
-        finish()
+        lifecycleScope.launch {
+            try {
+                val req = RegisterRequest(name, surname, email, password)
+                val res = ApiClient.apiService.registerUser(req)
+
+                if(res.isSuccessful && res.body() != null){
+                    val registerRes = res.body()
+
+                    if(registerRes?.success == true){
+                        Toast.makeText(this@RegisterActivity, "Registracija uspešna!", Toast.LENGTH_SHORT).show()
+
+                        val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else{
+                        Toast.makeText(this@RegisterActivity, registerRes?.message, Toast.LENGTH_SHORT).show()
+                    }
+                } else{
+                    Toast.makeText(this@RegisterActivity, "Napak na strežniku", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception){
+                Toast.makeText(this@RegisterActivity, "Povezava ni uspela: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
 

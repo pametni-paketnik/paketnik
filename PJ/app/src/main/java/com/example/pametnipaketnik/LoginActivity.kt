@@ -9,7 +9,12 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.TopAppBar
+import androidx.compose.ui.platform.InterceptPlatformTextInput
+import androidx.lifecycle.lifecycleScope
 import com.example.pametnipaketnik.databinding.ActivityLoginBinding
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -27,7 +32,7 @@ class LoginActivity : AppCompatActivity() {
 
         binding.btnFaceIdLogin.setOnClickListener {
             val intent = Intent(this, FaceIdActivity::class.java)
-            intent.putExtra("MODE", "LOGIN") // prijava
+            intent.putExtra("MODE", "LOGIN")
             startActivity(intent)
         }
 
@@ -38,9 +43,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setUpGoToRegisterText() {
-        //prevodi iz strings.xml
-        val linkText = getString(R.string.go_to_register_link) // "Registriraj se tukaj" ali "Register here"
-        val fullText = getString(R.string.go_to_register_full, linkText) // Sestavi celoten stavek
+        val linkText = getString(R.string.go_to_register_link)
+        val fullText = getString(R.string.go_to_register_full, linkText)
 
         val spannable = SpannableString(fullText)
 
@@ -77,14 +81,42 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        if(email == "admin@um.si" && password == "admin123"){
-            Toast.makeText(this, "Prijava uspesna", Toast.LENGTH_LONG).show()
+        // klic na API v ozadju
+        lifecycleScope.launch {
+            try {
+                val req = LoginRequest(email, password)
+                val res = ApiClient.apiService.loginUser(req)
 
-            val intent = Intent(this, HistoryActivity::class.java)
-            startActivity(intent)
-            finish()
-        }else{
-            Toast.makeText(this, "Napačen e-naslov ali geslo", Toast.LENGTH_SHORT).show()
+                if(res.isSuccessful && res.body() != null){
+                    val logingRes = res.body()
+
+                    if(logingRes?.success == true){
+                        Toast.makeText(this@LoginActivity, "Prijava uspešna!", Toast.LENGTH_SHORT).show()
+
+                        // shranjevanje seje v preferences
+                        val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+                        sharedPreferences.edit().apply {
+                            putString("LOGGED_IN_USER_ID", logingRes.userId)
+                            putString("USER_ROLE", logingRes.role)
+                        }.apply()
+
+                        if(logingRes?.role == "admin"){
+                            val intent = Intent(this@LoginActivity, HistoryActivity::class.java)
+                            startActivity(intent)
+                        } else {
+                            val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                            startActivity(intent)
+                        }
+                        finish() // zapremo LoginActivity da se uporabnik ob kliku na back btn ne vrne nazaj na prijavo
+                    } else {
+                        Toast.makeText(this@LoginActivity, logingRes?.message, Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this@LoginActivity, "Napaka na strežniku", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception){
+                Toast.makeText(this@LoginActivity, "Povezava ni uspela: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
