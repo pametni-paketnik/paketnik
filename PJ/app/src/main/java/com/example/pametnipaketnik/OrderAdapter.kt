@@ -54,21 +54,21 @@ class OrderAdapter(
             holder.binding.itemOpenBox.alpha = 1.0f
 
             if (currentOrder.status.equals("oddano", ignoreCase = true)) {
-                holder.binding.orderAddress.text = "Status: ${currentOrder.status}"
+                holder.binding.orderAddress.text = "Status: ${currentOrder.status}".toUpperCase()
                 holder.binding.orderAddress.setTextColor(android.graphics.Color.parseColor("#4CAF50"))
 
                 holder.binding.orderCardView.alpha = 0.5f
                 holder.binding.itemOpenBox.alpha = 0.25f
                 holder.binding.orderCardView.setOnClickListener(null)
             } else if (daysAgo > 3 && !currentOrder.status.equals("Prevzeto", ignoreCase = true)) {
-                holder.binding.orderAddress.text = "Status: Potekel rok za prevzem"
+                holder.binding.orderAddress.text = "Status: Potekel rok za prevzem".toUpperCase()
                 holder.binding.orderAddress.setTextColor(android.graphics.Color.parseColor("#F44336"))
 
                 holder.binding.orderCardView.alpha = 0.75f
                 holder.binding.itemOpenBox.alpha = 0.4f
                 holder.binding.orderCardView.setOnClickListener(null)
             } else {
-                holder.binding.orderAddress.text = "Status: ${currentOrder.status}"
+                holder.binding.orderAddress.text = "Status: ${currentOrder.status}".toUpperCase()
                 holder.binding.orderAddress.setTextColor(android.graphics.Color.parseColor("#4CAF50"))
 
                 holder.binding.orderCardView.setOnClickListener {
