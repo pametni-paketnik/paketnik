@@ -1,2 +1,5 @@
 podatki_za_model/
 dataset/
+.env
+__pycache__/
+.venv/
