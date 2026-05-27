@@ -19,16 +19,18 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private var currentUser: String = "Gost"
+    private var currentUserName: String = "Gost"
+    private var currentUserId: String = ""
+    private var selectedOrder: Order? = null
 
     val openCameraLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if(result.resultCode == RESULT_OK) {
-                val boxId = result.data?.getStringExtra("boxId") ?: ""
+                val scannedBox = result.data?.getStringExtra("boxId") ?: ""
 
-                if(boxId.trim().isNotEmpty()){
-                    openBoxThroughApi(boxId, currentUser)
-                }else{
+                if (scannedBox.trim().isNotEmpty()){
+                    openBoxThroughApi(scannedBox, currentUserId)
+                } else {
                     Toast.makeText(this, "Številka paketnika ni bila najdena", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -40,8 +42,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        currentUser = intent.getStringExtra("prijavljen_uporabnik") ?: "Gost"
-        Toast.makeText(this, "Hello $currentUser!", Toast.LENGTH_SHORT).show()
+        currentUserName = intent.getStringExtra("prijavljen_uporabnik") ?: "Gost"
+        Toast.makeText(this, "Hello $currentUserName!", Toast.LENGTH_SHORT).show()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -49,16 +51,14 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        currentUser = intent.getStringExtra("USER_ID") ?: ""
+        currentUserId = intent.getStringExtra("USER_ID") ?: ""
 
-        if (currentUser.isEmpty()) {
+        if (currentUserId.isEmpty()) {
             val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-            currentUser = sharedPreferences.getString("LOGGED_IN_USER_ID", "") ?: ""
+            currentUserId = sharedPreferences.getString("LOGGED_IN_USER_ID", "") ?: ""
         }
 
-        Log.d("PREVERJANJE_ID", "Uporabljen USER ID za iskanje naročil: '$currentUser'")
-
-        if (currentUser.isNotEmpty()) {
+        if (currentUserId.isNotEmpty()) {
             loadOrders()
         } else {
             Toast.makeText(this, "Napaka: ID uporabnika ni zaznan!", Toast.LENGTH_LONG).show()
@@ -68,10 +68,10 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         }
-        binding.buttonOpenBox.setOnClickListener {
+        /*binding.buttonOpenBox.setOnClickListener {
             val intent = Intent(this, OpenCameraActivity::class.java)
             openCameraLauncher.launch(intent)
-        }
+        }*/
         binding.buttonHistory.setOnClickListener {
             val intent = Intent(this, HistoryActivity::class.java)
             startActivity(intent)
@@ -79,20 +79,20 @@ class MainActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener {
             finish()
         }
-        /*binding.btnHome.setOnClickListener {
+        binding.btnHome.setOnClickListener {
             Toast.makeText(this, "Ste že na domači strani :)", Toast.LENGTH_SHORT).show()
-        }*/
+        }
     }
 
     private fun loadOrders(){
-        if(currentUser.isEmpty()) {
+        if(currentUserId.isEmpty()) {
             Toast.makeText(this, "Napaka: ID uporabnika ni najden", Toast.LENGTH_SHORT).show()
             return
         }
-        lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.Main) {
             try {
                 val res = withContext(Dispatchers.IO){
-                    ApiClient.apiService.getOrders(currentUser)
+                    ApiClient.apiService.getOrders(currentUserId)
                 }
                 if(res.isSuccessful && res.body() != null){
                     val order_list = res.body()!!
@@ -100,7 +100,61 @@ class MainActivity : AppCompatActivity() {
                     if(order_list.isEmpty()){
                         Toast.makeText(this@MainActivity, "Nimate aktivnih naročil", Toast.LENGTH_SHORT).show()
                     }
-                    val adapter = OrderAdapter(order_list)
+                    val timelineItems = mutableListOf<TimelineItem>()
+
+                    val format = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+                    val today = java.util.Date()
+
+                    val groupToday = mutableListOf<Order>()
+                    val groupYesterday = mutableListOf<Order>()
+                    val groupExpired = mutableListOf<Order>()
+                    val groupEarlier = mutableListOf<Order>()
+
+                    for (order in order_list) {
+                        try {
+                            val orderDate = format.parse(order.date) ?: today
+                            val diffInMillies = today.time - orderDate.time
+                            val diffInDays = java.util.concurrent.TimeUnit.MILLISECONDS.toDays(diffInMillies)
+
+                            if (order.status.equals("Prevzeto", ignoreCase = true)) {
+                                groupEarlier.add(order)
+                            } else if (diffInDays == 0L) {
+                                groupToday.add(order)
+                            } else if (diffInDays == 1L) {
+                                groupYesterday.add(order)
+                            } else if (diffInDays > 3L) {
+                                groupExpired.add(order)
+                            } else {
+                                groupEarlier.add(order)
+                            }
+                        } catch (e: Exception) {
+                            groupEarlier.add(order)
+                        }
+                    }
+
+                    if (groupToday.isNotEmpty()) {
+                        timelineItems.add(HeaderItem("Danes"))
+                        timelineItems.addAll(groupToday)
+                    }
+                    if (groupYesterday.isNotEmpty()) {
+                        timelineItems.add(HeaderItem("Včeraj"))
+                        timelineItems.addAll(groupYesterday)
+                    }
+                    if (groupExpired.isNotEmpty()) {
+                        timelineItems.add(HeaderItem("Potekel rok za prevzem"))
+                        timelineItems.addAll(groupExpired)
+                    }
+                    if (groupEarlier.isNotEmpty()) {
+                        timelineItems.add(HeaderItem("Starejša in prevzeta naročila"))
+                        timelineItems.addAll(groupEarlier)
+                    }
+
+                    val adapter = OrderAdapter(timelineItems) { clickedOrder ->
+                        selectedOrder = clickedOrder
+
+                        val intent = Intent(this@MainActivity, OpenCameraActivity::class.java)
+                        openCameraLauncher.launch(intent)
+                    }
                     binding.recyclerViewOrders.adapter = adapter
                 } else {
                     Toast.makeText(this@MainActivity, "Napaka pri prenosu naročil: ${res.code()}",
@@ -113,7 +167,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
     private fun openBoxThroughApi(boxId: String, userId: String){
         Toast.makeText(this, "Preverjanje pravic za paketnik...", Toast.LENGTH_SHORT).show()
 
