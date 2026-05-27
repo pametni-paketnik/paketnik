@@ -1,6 +1,5 @@
 package com.example.pametnipaketnik
 
-import androidx.compose.ui.semantics.Role
 import com.google.gson.annotations.SerializedName
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -43,9 +42,12 @@ data class OpenBoxResponse(
     val message: String
 )
 
-data class OrderResponse(
-    val success: Boolean,
-    val orders: List<Order>
+data class Order(
+    @SerializedName("id") val id: String,
+    @SerializedName("boxId") val boxId: String,
+    @SerializedName("status") val status: String,
+    @SerializedName("date") val date: String,
+    @SerializedName("description") val description: String
 )
 
 interface ApiService {
