@@ -28,6 +28,8 @@ function Profile() {
 
   const [orders, setOrders] = useState([]);
 
+  const isFlowerShop = user && user.vloga === 'cvetlicarna';
+
   useEffect(() => {
     api.get('/uporabnik/profile')
       .then(res => {
@@ -218,6 +220,84 @@ function Profile() {
 
   if (!user) {
     return <Navigate to="/login" />;
+  }
+
+  if(isFlowerShop) {
+    return (
+          <div className="profile-card">
+            <div className="register-form-section profile-form-section">
+              <div className="form-header profile-header-row">
+                <div className="profile-header-text">
+                  <h1 className="uppercase-text">Profile</h1>
+                  <p>Change your first name, last name, and profile picture.</p>
+                </div>
+                <div className="profile-header-image-wrapper">
+                  <img
+                    src={profilnaSlika || defaultImage}
+                    alt="Profile image"
+                    className="profile-header-image"
+                  />
+                </div>
+              </div>
+
+              <form onSubmit={shraniProfil} className="register-form">
+                <div className="input-group-row">
+                  <div className="input-group-modern">
+                    <label>Name: </label>
+                    <input
+                      type="text"
+                      placeholder="NAME"
+                      required
+                      className="input-group-modern"
+                      value={ime}
+                      onChange={(e) => setIme(e.target.value)}
+                    />
+                  </div>
+                  <div className="input-group-modern">
+                    <label>Surname: </label>
+                    <input
+                      type="text"
+                      placeholder="SURNAME"
+                      required
+                      className="input-group-modern"
+                      value={priimek}
+                      onChange={(e) => setPriimek(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="input-group-modern">
+                    <label>Phone number: </label>
+                    <input
+                      type="text"
+                      placeholder="PHONE NUMBER"
+                      className="input-group-modern"
+                      value={telefonskaStevilka}
+                      maxLength={11}
+                      onChange={handleTelefonskaStevilkaChange}
+                    />
+                  </div>
+
+                  <div className="file-upload-wrapper">
+                    <label className="file-upload-label uppercase-text">Choose a profile image</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="input-group-modern"
+                      ref={fileInputRef}
+                    />
+                  </div>
+                </div>
+
+                <button type="submit" className="submit-btn uppercase-text">
+                  Save changes
+                </button>
+              </form>
+
+              {sporocilo && <div className="profile-message">{sporocilo}</div>}
+            </div>
+          </div>
+    );
   }
 
   return (

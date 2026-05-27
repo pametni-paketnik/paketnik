@@ -41,7 +41,6 @@ exports.dodajNarocilo = async (req, res) => {
             placilo: placilo,
             skupna_cena: skupna_cena || 0,
             koda_za_odpiranje: koda,
-            datum_dostave: new Date(),
             status: 'oddano'
         });
 

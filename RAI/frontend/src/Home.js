@@ -154,7 +154,8 @@ function Home({ orderFilter = "oddano" }) {
     const handleDeliveredOrder = async (orderId) => {
         try {
             await api.put(`/narocilo/${orderId}/status`, {
-                status: 'dostavljeno'
+                status: 'dostavljeno',
+                datum_dostave: new Date()
             });
 
             setOrders((prevOrders) =>
@@ -359,19 +360,29 @@ function Home({ orderFilter = "oddano" }) {
                                                 <span className="flower-order-label">Total price</span>
                                                 <span className="flower-order-price">{order.skupna_cena} €</span>
                                             </div>
+
+                                            {order.status == 'dostavljeno' && (
+                                                <div className="flower-order-info-row">
+                                                    <span className="flower-order-label">Date of delivery</span>
+                                                    <span className="flower-order-price">{new Date(order.datum_dostave).toLocaleDateString('sl-SI')}</span>
+                                                </div>
+                                            )} 
                                         </div>
 
-                                        <button className="flower-order-accept-btn"
-                                            onClick={() =>
-                                                order.status === 'v_dostavi'
-                                                    ? handleDeliveredOrder(order._id)
-                                                    : handleAcceptOrder(order._id)
-                                            }
-                                        >
-                                            {order.status === 'v_dostavi'
-                                                ? 'Delivered'
-                                                : 'Accept order'}
-                                        </button>
+                                        {order.status !== 'dostavljeno' && (
+                                            <button
+                                                className="flower-order-accept-btn"
+                                                onClick={() =>
+                                                    order.status === 'v_dostavi'
+                                                        ? handleDeliveredOrder(order._id)
+                                                        : handleAcceptOrder(order._id)
+                                                }
+                                            >
+                                                {order.status === 'v_dostavi'
+                                                    ? 'Delivered'
+                                                    : 'Accept order'}
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             ))}
