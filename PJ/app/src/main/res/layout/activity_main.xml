@@ -23,7 +23,33 @@
         android:layout_marginEnd="20dp"
         android:layout_marginTop="20dp" />
 
-    <Button
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewOrders"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:scrollbars="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/order_items"
+        app:layout_constraintTop_toBottomOf="@id/buttonSettings"
+        app:layout_constraintBottom_toTopOf="@id/buttonOpenBox"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/buttonOpenBox"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/qrcode"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="24dp" />
+
+    <!--<Button
         android:id="@+id/buttonOpenBox"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
@@ -43,7 +69,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />-->
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/buttonHistory"
@@ -58,7 +84,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:fabSize="normal" />
 
-    <ImageButton
+    <!--<ImageButton
         android:id="@+id/btnHome"
         android:layout_width="56dp"
         android:layout_height="56dp"
@@ -71,16 +97,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/history_text_primary" />
+        app:tint="@color/history_text_primary" />-->
     <ImageButton
         android:id="@+id/btnBack"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="24dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/nazaj"
-        android:padding="12dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_back_black"
         app:layout_constraintBottom_toBottomOf="parent"

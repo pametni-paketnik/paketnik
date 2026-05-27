@@ -49,6 +49,18 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        // Testni podatki
+        val testOrders = listOf(
+            Order("Naročilo #5521", "Slovenska cesta 10, Ljubljana", "Danes, 12:00"),
+            Order("Naročilo #5522", "Glaven trg 4, Maribor", "Včeraj, 15:30"),
+            Order("Naročilo #5523", "Prešernova ulica 1, Celje", "25. 5. 2026")
+        )
+
+        // Do RecyclerView-ja dostopamo direktno preko bindinga brez findViewById
+        val adapter = OrderAdapter(testOrders)
+        binding.recyclerViewOrders.adapter = adapter
+        
+
         binding.buttonSettings.setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
@@ -64,9 +76,9 @@ class MainActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener {
             finish()
         }
-        binding.btnHome.setOnClickListener {
+        /*binding.btnHome.setOnClickListener {
             Toast.makeText(this, "Ste že na domači strani :)", Toast.LENGTH_SHORT).show()
-        }
+        }*/
     }
     private fun openBoxThroughApi(boxId: String, userId: String){
         Toast.makeText(this, "Preverjanje pravic za paketnik...", Toast.LENGTH_SHORT).show()
