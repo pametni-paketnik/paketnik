@@ -13,7 +13,7 @@ import numpy as np
 from PIL import Image
 
 # ── Konfiguracija ─────────────────────────────────────────────────────────────
-MODEL_PATH     = os.getenv("MODEL_PATH", "../model/resnet18_prepoznava_obrazov.pth")
+MODEL_PATH     = os.getenv("MODEL_PATH", "model/resnet18_prepoznava_obrazov.pth")
 AUTH_THRESHOLD = float(os.getenv("AUTH_THRESHOLD", "0.80"))
 CLASS_NAMES    = ["iris", "manja", "nika"]   # abecedni vrstni red map!
 DEVICE         = torch.device("cuda" if torch.cuda.is_available() else "cpu")

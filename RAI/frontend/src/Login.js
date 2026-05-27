@@ -133,7 +133,6 @@ function Login() {
         }
     };
 
-    // ── Render ────────────────────────────────────────────────────────────────
     return (
         <div className="register-container">
             <div className="register-card">
@@ -146,8 +145,8 @@ function Login() {
                         <div className="visual-divider"></div>
                         <p className="visual-text">
                             {korak === 'login'
-                                ? 'Log in to your account and continue z upravljanjem sistema InPlant.'
-                                : 'Korak 2 od 2: Potrdi svojo identiteto s prepoznavo obraza.'}
+                                ? 'Step 1 of 2: Log in to your account and continue z upravljanjem sistema InPlant.'
+                                : 'Step 2 of 2: Verify your identity with facial recognition.'}
                         </p>
                         <div style={{ display: 'flex', gap: '8px', marginTop: '1.5rem' }}>
                             <div style={{
@@ -223,16 +222,14 @@ function Login() {
                         <>
                             <div className="form-header">
                                 <div className="icon-box"><Camera size={24} /></div>
-                                <h1 className="uppercase-text">Preveri identiteto</h1>
-                                <p>Zajemi sliko svojega obraza ali naloži fotografijo.</p>
+                                <h1 className="uppercase-text">Verify identity</h1>
+                                <p>Take a picture of your face or upload a photo.</p>
                             </div>
 
                             {cameraOn && (
                                 <div style={{ marginBottom: '1rem', borderRadius: 10, overflow: 'hidden', border: '1px solid #e0e0e0' }}>
                                     <video ref={videoRef} autoPlay playsInline style={{ width: '100%', display: 'block' }} />
-                                    <button className="submit-btn" onClick={zajemiSliko} style={{ borderRadius: 0 }}>
-                                        📸 Zajemi sliko
-                                    </button>
+                                    <button className="submit-btn" onClick={zajemiSliko} style={{ borderRadius: 0 }}>Capture image</button>
                                 </div>
                             )}
 
@@ -245,7 +242,7 @@ function Login() {
                             {faceStatus === 'loading' && (
                                 <div style={{ textAlign: 'center', padding: '1rem', color: '#666' }}>
                                     <Loader size={20} style={{ animation: 'spin 1s linear infinite', marginRight: 8 }} />
-                                    Preverjam obraz...
+                                    I'm checking my face...
                                 </div>
                             )}
                             {faceStatus === 'ok' && (
@@ -262,30 +259,30 @@ function Login() {
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                                 {!cameraOn ? (
                                     <button className="submit-btn" onClick={zageniKamero}>
-                                        <Camera size={18} style={{ marginRight: 8 }} /> Odpri kamero
+                                        <Camera size={18} style={{ marginRight: 8 }} /> Open camera
                                     </button>
                                 ) : (
                                     <button className="submit-btn" onClick={zapriKamero} style={{ background: '#666' }}>
-                                        ✕ Zapri kamero
+                                        Close camera
                                     </button>
                                 )}
 
                                 <button className="submit-btn" style={{ background: '#3a3a38' }}
                                     onClick={() => fileInputRef.current.click()}>
-                                    <Upload size={18} style={{ marginRight: 8 }} /> Naloži sliko
+                                    <Upload size={18} style={{ marginRight: 8 }} /> Upload image
                                 </button>
                                 <input ref={fileInputRef} type="file" accept="image/*"
                                     style={{ display: 'none' }} onChange={handleFileChange} />
 
                                 {selectedFile && faceStatus !== 'loading' && faceStatus !== 'ok' && (
                                     <button className="submit-btn uppercase-text" onClick={preveriObraz}>
-                                        Potrdi identiteto <ArrowRight size={18} style={{ marginLeft: 10 }} />
+                                        Confirm identity <ArrowRight size={18} style={{ marginLeft: 10 }} />
                                     </button>
                                 )}
 
                                 <button onClick={() => { zapriKamero(); setKorak('login'); setPreview(null); setSelectedFile(null); setFaceStatus(null); }}
                                     style={{ background: 'none', border: 'none', color: '#999', cursor: 'pointer', fontSize: '0.8rem', marginTop: '0.5rem' }}>
-                                    ← Nazaj na prijavo
+                                    ← Back to login
                                 </button>
                             </div>
                         </>
