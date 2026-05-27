@@ -90,33 +90,28 @@ class LoginActivity : AppCompatActivity() {
                     if (logingRes?.success == true) {
                         Toast.makeText(this@LoginActivity, "Prijava uspešna!", Toast.LENGTH_SHORT).show()
 
-                        // Varno izvlečemo podatke iz odgovora strežnika
                         val prejetUserId = logingRes.userId ?: ""
                         val prejetaVloga = logingRes.role ?: ""
                         val prejetoIme = logingRes.name ?: "Uporabnik"
 
-                        // 1. KORAK: Shranjevanje seje v SharedPreferences pod ključem "UserPrefs"
                         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
                         sharedPreferences.edit().apply {
                             putString("LOGGED_IN_USER_ID", prejetUserId)
                             putString("USER_ROLE", prejetaVloga)
-                        }.apply() // .apply() bo poskrbel za takojšen vpis v ozadju
+                        }.apply()
 
-                        // 2. KORAK: Preusmeritev in prenos podatkov na glavni zaslon
                         if (prejetaVloga == "admin") {
                             val intent = Intent(this@LoginActivity, HistoryActivity::class.java)
                             startActivity(intent)
                         } else {
                             val intent = Intent(this@LoginActivity, MainActivity::class.java)
 
-                            // Podatke pošljemo tudi direktno v Intentu za takojšnjo uporabo
                             intent.putExtra("prijavljen_uporabnik", prejetoIme)
                             intent.putExtra("USER_ID", prejetUserId)
 
                             startActivity(intent)
                         }
-                        finish() // Zapremo LoginActivity, da se uporabnik s klikom "Nazaj" ne vrne na prijavo
-
+                        finish()
 
                         if(logingRes?.role == "admin"){
                             val intent = Intent(this@LoginActivity, HistoryActivity::class.java)

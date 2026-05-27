@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
 import io
 import os
@@ -8,10 +8,13 @@ import logging
 from pymongo import MongoClient
 import bcrypt
 from bson import ObjectId
+from pathlib import Path
 
 from model_loader import load_model, predict
 from dotenv import load_dotenv
 load_dotenv()
+
+FINAL_SPLIT_BASE_PATH = str(Path(__file__).resolve().parent.parent / "dataset" / "final_split")
 
 mongo_uri = os.getenv("MONGO_URI", "PORT")
 client = MongoClient(mongo_uri)
@@ -88,6 +91,43 @@ async def verify(file: UploadFile = File(...)):
     )
     return result
 
+@app.post("/api/face/save-fail")
+async def save_fail_image(file: UploadFile = File(...), label: str = Form(...)):    
+    if file.content_type not in ["image/jpeg", "image/png", "image/jpg"]:
+        raise HTTPException(400, "Dovoljeni formati: JPG, PNG.")
+    
+    clean_label = label.strip().lower()
+
+    veljavne_osebe = ["iris", "manja", "nika"]
+    if clean_label not in veljavne_osebe: 
+        raise HTTPException(400, f"Neznana oseba. Veljavne možnosti so: {veljavne_osebe}")
+    
+    try: 
+        data = await file.read()
+        image = Image.open(io.BytesIO(data)).convert("RGB")
+
+        image = image.resize((224, 224))
+    except Exception: 
+        raise HTTPException(400, "Napaka pri obdelavi slike.")
+    
+    target_dir = os.path.join(FINAL_SPLIT_BASE_PATH, "train", clean_label)
+
+    if not os.path.exists(target_dir):
+        raise HTTPException(
+            404, 
+            f"Mapa ne obstaja na disku strežnika! Preverite pot: {target_dir}"
+        )
+
+    import time
+    timestamp = int(time.time())
+    filename = f"fail_{timestamp}.jpg" 
+    final_file_path = os.path.join(target_dir, filename)
+
+    try:
+        image.save(final_file_path, "JPEG")
+        return {"success": True, "message": f"Slika uspešno shranjena v {clean_label}/train/"}
+    except Exception as e:
+        raise HTTPException(500, f"Slike ni bilo mogoče shraniti: {str(e)}")
 
 @app.post("/classify")
 async def classify(file: UploadFile = File(...)):
