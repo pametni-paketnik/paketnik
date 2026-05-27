@@ -37,7 +37,7 @@ const NarociloSchema = new mongoose.Schema({
     },
     skupna_cena: { type: Number, required: true },
     koda_za_odpiranje: { type: String, required: true },
-    datum_dostave: { type: Date, required: true },
+    datum_dostave: { type: Date, default: null },
     status: { type: String, enum: ['oddano', 'v_dostavi', 'dostavljeno', 'prevzeto', 'preklicano'], default: 'oddano' },
     prevzeto: { type: Boolean, default: false },
     datum_prevzema: { type: Date, default: null },
