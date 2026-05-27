@@ -5,12 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pametnipaketnik.databinding.OrderItemsBinding
 
-data class Order(
-    val title: String,
-    val address: String,
-    val date: String
-)
-
 class OrderAdapter(private val orderList: List<Order>) : RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {
 
     class OrderViewHolder(val binding: OrderItemsBinding) : RecyclerView.ViewHolder(binding.root)
@@ -23,8 +17,8 @@ class OrderAdapter(private val orderList: List<Order>) : RecyclerView.Adapter<Or
     override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
         val currentOrder = orderList[position]
 
-        holder.binding.orderTitle.text = currentOrder.title
-        holder.binding.orderAddress.text = currentOrder.address
+        holder.binding.orderTitle.text = "Paketnik: ${currentOrder.boxId}"
+        holder.binding.orderAddress.text = "Status: ${currentOrder.status}"
         holder.binding.orderDate.text = currentOrder.date
     }
     override fun getItemCount(): Int = orderList.size

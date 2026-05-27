@@ -9,12 +9,9 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material3.TopAppBar
-import androidx.compose.ui.platform.InterceptPlatformTextInput
 import androidx.lifecycle.lifecycleScope
 import com.example.pametnipaketnik.databinding.ActivityLoginBinding
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -90,15 +87,36 @@ class LoginActivity : AppCompatActivity() {
                 if(res.isSuccessful && res.body() != null){
                     val logingRes = res.body()
 
-                    if(logingRes?.success == true){
+                    if (logingRes?.success == true) {
                         Toast.makeText(this@LoginActivity, "Prijava uspešna!", Toast.LENGTH_SHORT).show()
 
-                        // shranjevanje seje v preferences
+                        // Varno izvlečemo podatke iz odgovora strežnika
+                        val prejetUserId = logingRes.userId ?: ""
+                        val prejetaVloga = logingRes.role ?: ""
+                        val prejetoIme = logingRes.name ?: "Uporabnik"
+
+                        // 1. KORAK: Shranjevanje seje v SharedPreferences pod ključem "UserPrefs"
                         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
                         sharedPreferences.edit().apply {
-                            putString("LOGGED_IN_USER_ID", logingRes.userId)
-                            putString("USER_ROLE", logingRes.role)
-                        }.apply()
+                            putString("LOGGED_IN_USER_ID", prejetUserId)
+                            putString("USER_ROLE", prejetaVloga)
+                        }.apply() // .apply() bo poskrbel za takojšen vpis v ozadju
+
+                        // 2. KORAK: Preusmeritev in prenos podatkov na glavni zaslon
+                        if (prejetaVloga == "admin") {
+                            val intent = Intent(this@LoginActivity, HistoryActivity::class.java)
+                            startActivity(intent)
+                        } else {
+                            val intent = Intent(this@LoginActivity, MainActivity::class.java)
+
+                            // Podatke pošljemo tudi direktno v Intentu za takojšnjo uporabo
+                            intent.putExtra("prijavljen_uporabnik", prejetoIme)
+                            intent.putExtra("USER_ID", prejetUserId)
+
+                            startActivity(intent)
+                        }
+                        finish() // Zapremo LoginActivity, da se uporabnik s klikom "Nazaj" ne vrne na prijavo
+
 
                         if(logingRes?.role == "admin"){
                             val intent = Intent(this@LoginActivity, HistoryActivity::class.java)

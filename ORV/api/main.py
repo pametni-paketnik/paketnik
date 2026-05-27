@@ -7,6 +7,7 @@ from PIL import Image
 import logging
 from pymongo import MongoClient
 import bcrypt
+from bson import ObjectId
 
 from model_loader import load_model, predict
 from dotenv import load_dotenv
@@ -17,6 +18,7 @@ client = MongoClient(mongo_uri)
 db = client["pametni_paketnik"]
 
 uporabniki_collection = db["uporabniki"]
+narocila_collection = db["narocila"]
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -163,7 +165,7 @@ def login(request: LoginRequest):
             "userId": "", "name": "", "role": ""
         }
         
-    ime = user.get("ime") if "ime" in user else user.get("ime ", "Uporabnik")
+    ime = user.get("ime") if "ime" in user else user.get("ime ", "uporabnik")
     vloga = user.get("vloga") if "vloga" in user else user.get("vloga ", "user")
     
     return {
@@ -207,3 +209,36 @@ def register(request: RegisterRequest):
         "success": True,
         "message": "Registracija uspešna! Sedaj se lahko prijavite."
     }
+
+class OrderResponseModel(BaseModel):
+    id: str
+    boxId: str
+    status: str
+    date: str
+    description: str
+
+@app.get("/orders/{userId}")
+def get__user_orders(userId: str): 
+    query_conditions = [{"uporabnik_id": userId}]
+    try:
+        query_conditions.append({"uporabnik_id": ObjectId(userId)})
+    except Exception:
+        pass
+
+    orders_cursor = narocila_collection.find({"$or": query_conditions})
+
+    order_list = []
+    for doc in orders_cursor: 
+        box_id = doc.get("koda_za_odpiranje") if "koda_za_odpiranje" in doc else doc.get("koda_za_odpiranje ", "Neznan Paketnik")
+        status = doc.get("status") if "status" in doc else doc.get("status ", "neznano")
+        date = doc.get("datum_dostave") if "datum_dostave" in doc else doc.get("datum_dostave ", "")
+        
+        order_list.append({
+            "id": str(doc["_id"]),
+            "boxId": str(box_id).strip(),
+            "status": str(status).strip(),
+            "date": str(date).strip(),
+            "description": "Naročilo cvetja"  
+        })
+
+    return order_list

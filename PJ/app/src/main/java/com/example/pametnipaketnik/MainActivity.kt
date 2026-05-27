@@ -49,17 +49,20 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // Testni podatki
-        val testOrders = listOf(
-            Order("Naročilo #5521", "Slovenska cesta 10, Ljubljana", "Danes, 12:00"),
-            Order("Naročilo #5522", "Glaven trg 4, Maribor", "Včeraj, 15:30"),
-            Order("Naročilo #5523", "Prešernova ulica 1, Celje", "25. 5. 2026")
-        )
+        currentUser = intent.getStringExtra("USER_ID") ?: ""
 
-        // Do RecyclerView-ja dostopamo direktno preko bindinga brez findViewById
-        val adapter = OrderAdapter(testOrders)
-        binding.recyclerViewOrders.adapter = adapter
-        
+        if (currentUser.isEmpty()) {
+            val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+            currentUser = sharedPreferences.getString("LOGGED_IN_USER_ID", "") ?: ""
+        }
+
+        Log.d("PREVERJANJE_ID", "Uporabljen USER ID za iskanje naročil: '$currentUser'")
+
+        if (currentUser.isNotEmpty()) {
+            loadOrders()
+        } else {
+            Toast.makeText(this, "Napaka: ID uporabnika ni zaznan!", Toast.LENGTH_LONG).show()
+        }
 
         binding.buttonSettings.setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
@@ -80,6 +83,37 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Ste že na domači strani :)", Toast.LENGTH_SHORT).show()
         }*/
     }
+
+    private fun loadOrders(){
+        if(currentUser.isEmpty()) {
+            Toast.makeText(this, "Napaka: ID uporabnika ni najden", Toast.LENGTH_SHORT).show()
+            return
+        }
+        lifecycleScope.launch {
+            try {
+                val res = withContext(Dispatchers.IO){
+                    ApiClient.apiService.getOrders(currentUser)
+                }
+                if(res.isSuccessful && res.body() != null){
+                    val order_list = res.body()!!
+
+                    if(order_list.isEmpty()){
+                        Toast.makeText(this@MainActivity, "Nimate aktivnih naročil", Toast.LENGTH_SHORT).show()
+                    }
+                    val adapter = OrderAdapter(order_list)
+                    binding.recyclerViewOrders.adapter = adapter
+                } else {
+                    Toast.makeText(this@MainActivity, "Napaka pri prenosu naročil: ${res.code()}",
+                        Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@MainActivity, "Ni povezave do strežnika za naročila", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     private fun openBoxThroughApi(boxId: String, userId: String){
         Toast.makeText(this, "Preverjanje pravic za paketnik...", Toast.LENGTH_SHORT).show()
 
