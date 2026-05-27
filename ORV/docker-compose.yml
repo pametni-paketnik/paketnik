@@ -1,6 +1,17 @@
 version: "3.9"
 
 services:
+  predobdelava:
+    build:
+      context: .
+      dockerfile: Dockerfile.predobdelava
+    container_name: face2fa-predobdelava
+    volumes:
+      - ./:/app
+    command: ["python", "predobdelava.py"]
+    profiles: ["tools"]
+    restart: "no"
+
   api:
     build:
       context: ./api

@@ -51,6 +51,16 @@ Ko so v mapi `surovi_podatki` zbrani zajemi vseh treh članic (vsaj 3 mape, vsak
 
 *Opomba: Mapi `obdelani_podatki` in `final_split` sta v `.gitignore` in se ne pošiljata na GitHub zaradi velikosti.*
 
+### Zagon v Dockerju
+
+Če želite predobdelavo pognati v vsebniku, iz mape `ORV` zaženite:
+
+```bash
+docker compose --profile tools run --rm predobdelava
+```
+
+Ta način uporablja `predobdelava.py` in v lokalni repozitorij zapiše rezultat v `dataset/obdelani_podatki/` in `dataset/final_split/`.
+
 ---
 
 ## 📋 Zahteve za delovanje skript

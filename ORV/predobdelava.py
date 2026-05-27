@@ -12,7 +12,9 @@ def odstrani_sum(img):
 def pripravi_sliko_za_api(img):
     """
     To funkcijo uporabi Član 3 v API-ju.
-    Vzame surovo sliko iz telefona, najde obraz, ga izreže in pripravi za model.    """
+    Vzame surovo sliko iz telefona, najde obraz, ga izreže in pripravi za model.
+    Normalizacijo na tensor opravi model_loader.predict().
+    """
     
     # naloži detektor (isti kot v zajem_podatkov.py)
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
@@ -36,14 +38,12 @@ def pripravi_sliko_za_api(img):
 
     # OSNOVNA PREDOBDELAVA
     target_size = (224, 224)
-    # 1. Resizing
-    img_obdelana  = cv2.resize(img, target_size)
+    # 1. Resizing po cropu
+    img_obdelana  = cv2.resize(img_obdelana, target_size)
     # 2. Denoising (isti filter kot pri učenju)
-    img_obdelana  = odstrani_sum(img)
-    # 3. Normalizacija na [0,1]
-    img_tensor = img_obdelana .astype('float32') / 255.0
+    img_obdelana  = odstrani_sum(img_obdelana)
     
-    return img_tensor
+    return img_obdelana
 
 def dodaj_sum(img):
     """Simulira grainy (zrnat) efekt."""
