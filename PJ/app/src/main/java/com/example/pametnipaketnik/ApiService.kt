@@ -42,13 +42,14 @@ data class OpenBoxResponse(
     val message: String
 )
 
+interface TimelineItem
 data class Order(
     @SerializedName("id") val id: String,
     @SerializedName("boxId") val boxId: String,
     @SerializedName("status") val status: String,
     @SerializedName("date") val date: String,
     @SerializedName("description") val description: String
-)
+): TimelineItem
 
 interface ApiService {
     @Multipart
