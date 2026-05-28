@@ -101,7 +101,7 @@ async def verify(file: UploadFile = File(...)):
     koncna_slika_za_model = cv2_to_pil(cv_obdelana)
 
     result = predict(model, koncna_slika_za_model)
-    CONFIDENCE_THRESHOLD = 0.40
+    CONFIDENCE_THRESHOLD = 0.50
 
     surovo_zaupanje = result.get("confidence", 0.0)
     surovo_verified = result.get("verified", False)

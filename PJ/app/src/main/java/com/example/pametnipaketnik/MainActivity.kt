@@ -8,6 +8,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.pametnipaketnik.databinding.ActivityMainBinding
 import android.Manifest
+import android.R
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
@@ -16,6 +17,11 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.sql.Date
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -96,63 +102,75 @@ class MainActivity : AppCompatActivity() {
                     ApiClient.apiService.getOrders(currentUserId)
                 }
                 if(res.isSuccessful && res.body() != null){
-                    val order_list = res.body()!!
+                    val rawOrderList = res.body()!!
 
-                    if(order_list.isEmpty()){
+                    if(rawOrderList.isEmpty()){
                         Toast.makeText(this@MainActivity, "Nimate aktivnih naročil", Toast.LENGTH_SHORT).show()
                     }
-                    val timelineItems = mutableListOf<TimelineItem>()
+                    val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-                    val format = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
-                    val today = java.util.Date()
-
-                    val groupToday = mutableListOf<Order>()
-                    val groupYesterday = mutableListOf<Order>()
-                    val groupExpired = mutableListOf<Order>()
-                    val groupEarlier = mutableListOf<Order>()
-
-                    for (order in order_list) {
+                    val sortedOrders = rawOrderList.sortedByDescending { order ->
                         try {
-                            val orderDate = format.parse(order.date) ?: today
-                            val diffInMillies = today.time - orderDate.time
-                            val diffInDays = java.util.concurrent.TimeUnit.MILLISECONDS.toDays(diffInMillies)
-
-                            if (order.status.equals("Prevzeto", ignoreCase = true)) {
-                                groupEarlier.add(order)
-                            } else if (diffInDays == 0L) {
-                                groupToday.add(order)
-                            } else if (diffInDays == 1L) {
-                                groupYesterday.add(order)
-                            } else if (diffInDays > 3L) {
-                                groupExpired.add(order)
-                            } else {
-                                groupEarlier.add(order)
-                            }
+                            format.parse(order.date) ?: Date(0)
                         } catch (e: Exception) {
-                            groupEarlier.add(order)
+                            Date(0)
                         }
                     }
 
-                    if (groupToday.isNotEmpty()) {
-                        timelineItems.add(HeaderItem("Danes"))
-                        timelineItems.addAll(groupToday)
+                    val today = Calendar.getInstance().apply {
+                        set(Calendar.HOUR_OF_DAY, 0)
+                        set(Calendar.MINUTE, 0)
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
                     }
-                    if (groupYesterday.isNotEmpty()) {
-                        timelineItems.add(HeaderItem("Včeraj"))
-                        timelineItems.addAll(groupYesterday)
+
+                    val groupActive = mutableListOf<Order>()
+                    val groupExpired = mutableListOf<Order>()
+                    val groupReceived = mutableListOf<Order>()
+
+                    for (order in sortedOrders) {
+                        try {
+                            val orderDate = format.parse(order.date) ?: java.util.Date()
+                            val dbCal = Calendar.getInstance().apply {
+                                time = orderDate
+                                set(Calendar.HOUR_OF_DAY, 0)
+                                set(Calendar.MINUTE, 0)
+                                set(Calendar.SECOND, 0)
+                                set(Calendar.MILLISECOND, 0)
+                            }
+
+                            val diffInMillies = today.timeInMillis - dbCal.timeInMillis
+                            val diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMillies)
+                            val statusLower = order.status.lowercase(Locale.getDefault())
+
+                            if (statusLower == "prevzeto") {
+                                groupReceived.add(order)
+                            } else if (diffInDays > 3) {
+                                groupExpired.add(order)
+                            } else {
+                                groupActive.add(order)
+                            }
+                        } catch (e: Exception) {
+                            groupReceived.add(order)
+                        }
+                    }
+                    val timelineItems = mutableListOf<TimelineItem>()
+
+                    if (groupActive.isNotEmpty()) {
+                        timelineItems.add(HeaderItem("ČAKA NA PREVZEM"))
+                        timelineItems.addAll(groupActive)
                     }
                     if (groupExpired.isNotEmpty()) {
-                        timelineItems.add(HeaderItem("Potekel rok za prevzem"))
+                        timelineItems.add(HeaderItem("ZAPADEL ROK PREVZEMA"))
                         timelineItems.addAll(groupExpired)
                     }
-                    if (groupEarlier.isNotEmpty()) {
-                        timelineItems.add(HeaderItem("Starejša in prevzeta naročila"))
-                        timelineItems.addAll(groupEarlier)
+                    if (groupReceived.isNotEmpty()) {
+                        timelineItems.add(HeaderItem("PREVZETA NAROČILA"))
+                        timelineItems.addAll(groupReceived)
                     }
 
                     val adapter = OrderAdapter(timelineItems) { clickedOrder ->
                         selectedOrder = clickedOrder
-
                         val intent = Intent(this@MainActivity, OpenCameraActivity::class.java)
                         openCameraLauncher.launch(intent)
                     }
