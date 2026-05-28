@@ -99,18 +99,38 @@ class FaceIdActivity : AppCompatActivity() {
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .setTargetRotation(binding.viewFinder.display.rotation)
                 .build()
-            //spredna kamera
-            val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
             try {
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
-
+                bindPreferredCamera(cameraProvider, preview, imageCapture)
             } catch (exc: Exception) {
                 Log.e("FaceID", "Zagon kamere ni uspel", exc)
             }
 
         }, ContextCompat.getMainExecutor(this))
+    }
+
+    private fun bindPreferredCamera(
+        cameraProvider: ProcessCameraProvider,
+        preview: Preview,
+        imageCapture: ImageCapture
+    ) {
+        val cameraSelectors = listOf(
+            CameraSelector.DEFAULT_FRONT_CAMERA,
+            CameraSelector.DEFAULT_BACK_CAMERA
+        )
+
+        for (selector in cameraSelectors) {
+            try {
+                cameraProvider.unbindAll()
+                cameraProvider.bindToLifecycle(this, selector, preview, imageCapture)
+                Log.d("FaceID", "Kamera uspešno povezana: $selector")
+                return
+            } catch (exc: Exception) {
+                Log.w("FaceID", "Kamera ni na voljo za izbran selector: $selector", exc)
+            }
+        }
+
+        throw IllegalStateException("Nobena kamera ni na voljo za FaceIdActivity")
     }
 
     override fun onDestroy() {
