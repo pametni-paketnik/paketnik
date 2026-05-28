@@ -145,6 +145,62 @@ async def classify(file: UploadFile = File(...)):
     return predict(model, koncna_slika)
 
 
+@app.post("/register-face")
+async def register_face(
+    file: UploadFile = File(...),
+    name: str = Form(...),
+    surname: str = Form(...),
+    email: str = Form(...),
+    password: str = Form(...),
+):
+    """Registracija novega uporabnika skupaj z obrazno sliko (multipart/form).
+
+    Shrani sliko v `dataset/surovi_podatki/<safe_email>/` in ustvari uporabnika v MongoDB.
+    """
+    # preveri format
+    if file.content_type not in ["image/jpeg", "image/png", "image/jpg"]:
+        raise HTTPException(400, "Dovoljeni formati slike: JPG, PNG.")
+
+    # preveri ali uporabnik že obstaja
+    existing_user = uporabniki_collection.find_one({"email": email})
+    if not existing_user:
+        existing_user = uporabniki_collection.find_one({"email ": email})
+    if existing_user:
+        return {"success": False, "message": "Uporabnik s tem e-naslovom že obstaja."}
+
+    # shrink/clean email za mapo
+    safe_email = email.replace("@", "_at_").replace(".", "_")
+    save_dir = os.path.join("dataset", "surovi_podatki", safe_email)
+    os.makedirs(save_dir, exist_ok=True)
+
+    try:
+        data = await file.read()
+        filename = f"{int(time.time())}_{file.filename}"
+        path = os.path.join(save_dir, filename)
+        with open(path, "wb") as f:
+            f.write(data)
+    except Exception as e:
+        logger.exception("Napaka pri shranjevanju slike med registracijo")
+        raise HTTPException(500, "Napaka pri shranjevanju slike.")
+
+    # bcrypt hash gesla
+    sol = bcrypt.gensalt()
+    sifrirano_geslo = bcrypt.hashpw(password.strip().encode('utf-8'), sol).decode('utf-8')
+
+    new_user_doc = {
+        "ime": name.strip(),
+        "priimek": surname.strip(),
+        "email": email.strip(),
+        "geslo": sifrirano_geslo,
+        "vloga": "user",
+        "face_image_path": path,
+    }
+
+    uporabniki_collection.insert_one(new_user_doc)
+
+    return {"success": True, "message": "Registracija uspešna (slika shranjena)."}
+
+
 class LoginRequest(BaseModel): 
     email: str
     password: str
