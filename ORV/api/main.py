@@ -198,7 +198,7 @@ async def register_face(
         if raw_image is None:
             raise HTTPException(400, "Napaka pri branju shranjene slike.")
 
-        processed_image = pripravi_sliko_za_api(raw_image)
+        processed_image, obraz_najden = pripravi_sliko_za_api(raw_image)
         processed_filename = f"{Path(filename).stem}_processed.jpg"
         processed_path = os.path.join(proc_dir, processed_filename)
         cv2.imwrite(processed_path, processed_image)

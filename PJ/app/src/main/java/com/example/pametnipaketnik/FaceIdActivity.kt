@@ -45,8 +45,8 @@ class FaceIdActivity : AppCompatActivity() {
         binding = ActivityFaceIdBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
-        val secureApiUrl = getString(R.string.api_base_url)
-        ApiClient.initializer(secureApiUrl)
+        val faceApiUrl = getString(R.string.face_api_base_url)
+        ApiClient.initFace(faceApiUrl)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
@@ -174,7 +174,7 @@ class FaceIdActivity : AppCompatActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             try{
-                val res = ApiClient.apiService.verifyFace(body)
+                val res = ApiClient.faceApiService.verifyFace(body)
 
                 withContext(Dispatchers.Main) {
                     if (res.isSuccessful && res.body() != null) {
@@ -214,7 +214,7 @@ class FaceIdActivity : AppCompatActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val res = ApiClient.apiService.registerFaceWithData(filePart, nameBody, surnameBody, emailBody, passwordBody)
+                val res = ApiClient.faceApiService.registerFaceWithData(filePart, nameBody, surnameBody, emailBody, passwordBody)
 
                 withContext(Dispatchers.Main){
                     if(res.isSuccessful && res.body() != null){

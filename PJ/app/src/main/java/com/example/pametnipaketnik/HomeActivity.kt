@@ -30,8 +30,8 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val secureApiUrl = getString(R.string.api_base_url)
-        ApiClient.initializer(secureApiUrl)
+        val faceApiUrl = getString(R.string.face_api_base_url)
+        ApiClient.initFace(faceApiUrl)
         checkBackendHealth()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -100,7 +100,7 @@ class HomeActivity : AppCompatActivity() {
     private fun checkBackendHealth() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val res = ApiClient.apiService.health()
+                val res = ApiClient.faceApiService.health()
                 withContext(Dispatchers.Main) {
                     if (res.isSuccessful && res.body() != null) {
                         val health = res.body()!!
