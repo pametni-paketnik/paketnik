@@ -32,9 +32,11 @@ def pripravi_sliko_za_api(img):
         x1, x2 = max(0, x-offset), min(img.shape[1], x+w+offset)
         
         img_obdelana  = img[y1:y2, x1:x2]
+        obraz_najden = True
     else:
         # Če obraza ne najde vrne original (ali pa API lahk javi napako)
         img_obdelana = img
+        obraz_najden = False
 
     # OSNOVNA PREDOBDELAVA
     target_size = (224, 224)
@@ -43,7 +45,7 @@ def pripravi_sliko_za_api(img):
     # 2. Denoising (isti filter kot pri učenju)
     img_obdelana  = odstrani_sum(img_obdelana)
     
-    return img_obdelana
+    return img_obdelana, obraz_najden
 
 def dodaj_sum(img):
     """Simulira grainy (zrnat) efekt."""

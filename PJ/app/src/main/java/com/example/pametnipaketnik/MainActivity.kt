@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity() {
             val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
             currentUserId = sharedPreferences.getString("LOGGED_IN_USER_ID", "") ?: ""
         }
+        Log.d("MainActivity_Debug", "Naložen uporabnik: $currentUserName z ID: $currentUserId")
 
         if (currentUserId.isNotEmpty()) {
             loadOrders()

@@ -112,15 +112,6 @@ class LoginActivity : AppCompatActivity() {
                             startActivity(intent)
                         }
                         finish()
-
-                        if(logingRes?.role == "admin"){
-                            val intent = Intent(this@LoginActivity, HistoryActivity::class.java)
-                            startActivity(intent)
-                        } else {
-                            val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                            startActivity(intent)
-                        }
-                        finish() // zapremo LoginActivity da se uporabnik ob kliku na back btn ne vrne nazaj na prijavo
                     } else {
                         Toast.makeText(this@LoginActivity, logingRes?.message, Toast.LENGTH_SHORT).show()
                     }
