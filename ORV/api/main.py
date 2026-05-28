@@ -1,20 +1,24 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, Form
-from fastapi.middleware.cors import CORSMiddleware
 import io
 import os
-from pydantic import BaseModel
-from PIL import Image
 import logging
-from pymongo import MongoClient
-import bcrypt
-from bson import ObjectId
+import time
 from pathlib import Path
 
-from model_loader import load_model, predict
+import cv2
+import numpy as np
+import bcrypt
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from PIL import Image
+from pymongo import MongoClient
+from bson import ObjectId
 from dotenv import load_dotenv
-load_dotenv()
 
-FINAL_SPLIT_BASE_PATH = str(Path(__file__).resolve().parent.parent / "dataset" / "final_split")
+from predobdelava import pripravi_sliko_za_api
+from model_loader import load_model, predict
+
+load_dotenv()
 
 mongo_uri = os.getenv("MONGO_URI", "PORT")
 client = MongoClient(mongo_uri)
@@ -59,6 +63,15 @@ def health():
     return {"status": "healthy", "model_loaded": model is not None}
 
 
+def pil_to_cv2(pil_image): 
+    """Pretvori PIL sliko v OpenCV format (RGB -> BGR)."""
+    return cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
+
+def cv2_to_pil(cv2_image): 
+    """Pretvori OpenCV sliko nazaj v PIL format (BGR -> RGB)."""
+    return Image.fromarray(cv2.cvtColor(cv2_image, cv2.COLOR_BGR2RGB))
+
+
 @app.post("/verify")
 async def verify(file: UploadFile = File(...)):
     """
@@ -82,52 +95,33 @@ async def verify(file: UploadFile = File(...)):
 
     if model is None:
         raise HTTPException(503, "Model ni naložen.")
+    
+    cv_image = pil_to_cv2(image)
+    cv_obdelana, obraz_najden = pripravi_sliko_za_api(cv_image)
+    koncna_slika_za_model = cv2_to_pil(cv_obdelana)
 
-    result = predict(model, image)
+    result = predict(model, koncna_slika_za_model)
+    CONFIDENCE_THRESHOLD = 0.40
+
+    surovo_zaupanje = result.get("confidence", 0.0)
+    surovo_verified = result.get("verified", False)
+    surova_oznaka = result.get("label", "Neznan obraz")
+
+    if surovo_zaupanje < CONFIDENCE_THRESHOLD:
+        logger.warning(f"Prijava zavrnjena: Zaupanje ({surovo_zaupanje:.4f}) je pod pragom ({CONFIDENCE_THRESHOLD})")
+        result["verified"] = False
+        result["label"] = "Neznan obraz"
+    else:
+        result["verified"] = surovo_verified
+
+    result["face_detected"] = obraz_najden
     result["message"] = (
-        f"Oseba '{result['label']}' prepoznana."
-        if result["verified"]
-        else "Avtentikacija zavrnjena — oseba ni prepoznana."
+        f"Oseba '{result['label']}' uspešno prepoznana."
+        if result["verified"] and obraz_najden
+        else "Avtentikacija zavrnjena — stopnja zaupanja je prenizka ali oseba ni prepoznana."
     )
+    
     return result
-
-@app.post("/api/face/save-fail")
-async def save_fail_image(file: UploadFile = File(...), label: str = Form(...)):    
-    if file.content_type not in ["image/jpeg", "image/png", "image/jpg"]:
-        raise HTTPException(400, "Dovoljeni formati: JPG, PNG.")
-    
-    clean_label = label.strip().lower()
-
-    veljavne_osebe = ["iris", "manja", "nika"]
-    if clean_label not in veljavne_osebe: 
-        raise HTTPException(400, f"Neznana oseba. Veljavne možnosti so: {veljavne_osebe}")
-    
-    try: 
-        data = await file.read()
-        image = Image.open(io.BytesIO(data)).convert("RGB")
-
-        image = image.resize((224, 224))
-    except Exception: 
-        raise HTTPException(400, "Napaka pri obdelavi slike.")
-    
-    target_dir = os.path.join(FINAL_SPLIT_BASE_PATH, "train", clean_label)
-
-    if not os.path.exists(target_dir):
-        raise HTTPException(
-            404, 
-            f"Mapa ne obstaja na disku strežnika! Preverite pot: {target_dir}"
-        )
-
-    import time
-    timestamp = int(time.time())
-    filename = f"fail_{timestamp}.jpg" 
-    final_file_path = os.path.join(target_dir, filename)
-
-    try:
-        image.save(final_file_path, "JPEG")
-        return {"success": True, "message": f"Slika uspešno shranjena v {clean_label}/train/"}
-    except Exception as e:
-        raise HTTPException(500, f"Slike ni bilo mogoče shraniti: {str(e)}")
 
 @app.post("/classify")
 async def classify(file: UploadFile = File(...)):
@@ -143,8 +137,12 @@ async def classify(file: UploadFile = File(...)):
 
     if model is None:
         raise HTTPException(503, "Model ni naložen.")
+    
+    cv_img = pil_to_cv2(image)
+    cv_obdelana, _ = pripravi_sliko_za_api(cv_img)
+    koncna_slika = cv2_to_pil(cv_obdelana)
 
-    return predict(model, image)
+    return predict(model, koncna_slika)
 
 
 class LoginRequest(BaseModel): 

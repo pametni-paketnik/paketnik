@@ -3,7 +3,6 @@ package com.example.pametnipaketnik
 import com.google.gson.annotations.SerializedName
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -34,6 +33,14 @@ data class LoginResponse(
     val name: String?,
     val role: String?
 )
+data class FaceVerifyResponse(
+    val verified: Boolean,
+    val confidence: Double,
+    val label: String,
+    val face_detected: Boolean,
+    val message: String
+)
+
 data class OpenBoxRequest(
     @SerializedName("boxId") val boxId: String,
     @SerializedName("userId") val userId: String
@@ -88,11 +95,4 @@ interface ApiService {
     suspend fun getOrders(
         @Path("userId") userId: String
     ): Response<List<Order>>
-
-    @Multipart
-    @POST("api/face/save-fail")
-    suspend fun saveFailImage(
-        @Part file: MultipartBody.Part,
-        @Part("label") label: RequestBody
-    ): Response<ResponseBody>
 }

@@ -134,7 +134,7 @@ class FaceIdActivity : AppCompatActivity() {
                 }
 
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    if(mode == "REGISTRE"){
+                    if(mode == "REGISTER"){
                         sendRegisterFaceOnServer(photoFile)
                     }else{
                         sendImageOnServer(photoFile)
@@ -154,13 +154,17 @@ class FaceIdActivity : AppCompatActivity() {
                 withContext(Dispatchers.Main) {
                     if (res.isSuccessful && res.body() != null) {
                         val result = res.body()!!
+                        Log.d("FaceID_Debug", "Prejeto s strežnika -> verified: ${result.verified}, label: ${result.label}, msg: ${result.message}")
 
                         if (result.verified) {
-                            showCorrectDialog(fileImage, result.label)
+                            Toast.makeText(this@FaceIdActivity, "Prijava uspešna! Zaznana oseba ${result.label}", Toast.LENGTH_SHORT).show()
 
+                            val intent = Intent(this@FaceIdActivity, MainActivity::class.java)
+                            intent.putExtra("prijavljen_uporabnik", result.label)
+                            startActivity(intent)
+                            finish()
                         } else {
                             Toast.makeText(this@FaceIdActivity, "Obraz ni prepoznan: ${result.message}", Toast.LENGTH_SHORT).show()
-                            showCorrectDialog(fileImage, "Neznan obrez")
                         }
                     } else {
                         Toast.makeText(this@FaceIdActivity, "Napaka na strežniku: ${res.code()}", Toast.LENGTH_SHORT).show()
@@ -171,61 +175,6 @@ class FaceIdActivity : AppCompatActivity() {
                 withContext(Dispatchers.Main){
                     Toast.makeText(this@FaceIdActivity, "Povezava s strežnikom ni uspela", Toast.LENGTH_SHORT).show()
                 }
-            }
-        }
-    }
-    private fun showCorrectDialog(fileImage: File, detectedName: String){
-        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
-        builder.setTitle("Preverjanje Face ID (Interno učenje)")
-        builder.setMessage("Model je zaznal: $detectedName.\nAli je to pravilno?")
-
-        builder.setPositiveButton("Da, to sem jaz") {dialog,_ ->
-            dialog.dismiss()
-
-            if (detectedName != "Neznan obraz") {
-                Toast.makeText(this, "Prijava uspešna!", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this@FaceIdActivity, MainActivity::class.java)
-                intent.putExtra("prijavljeni_uporabnik", detectedName)
-                startActivity(intent)
-                finish()
-            }
-        }
-        builder.setNegativeButton("Ne, to nisem jaz") {dialog,_ ->
-            dialog.dismiss()
-            val oseba = arrayOf("Iris", "Manja", "Nika")
-            val listBuilder = androidx.appcompat.app.AlertDialog.Builder(this)
-            listBuilder.setTitle("Kdo je v resnici na sliki?")
-            listBuilder.setItems(oseba) { _, index ->
-                val izbranaOseba = oseba[index]
-                Toast.makeText(this, "Pošiljam popravek: $izbranaOseba", Toast.LENGTH_SHORT).show()
-                sendFailToFinalSplit(fileImage, izbranaOseba)
-            }
-            listBuilder.setCancelable(false)
-            listBuilder.show()
-        }
-        builder.setCancelable(false)
-        builder.show()
-    }
-    private fun sendFailToFinalSplit(fileImage: File, pravoIme: String){
-        val requiresFile = fileImage.asRequestBody("image/jpeg".toMediaTypeOrNull())
-        val filePart = MultipartBody.Part.createFormData("file", fileImage.name, requiresFile)
-        val labelBody = pravoIme.toRequestBody("text/plain".toMediaTypeOrNull())
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val res = ApiClient.apiService.saveFailImage(filePart, labelBody)
-
-                withContext(Dispatchers.Main) {
-                    if (res.isSuccessful) {
-                        Toast.makeText(this@FaceIdActivity, "Slika uspešno shranjena za ponovno učenje.", Toast.LENGTH_LONG).show()
-                    } else {
-                        Toast.makeText(this@FaceIdActivity, "Napaka pri shranjevanju na strežnik.", Toast.LENGTH_SHORT).show()
-                    }
-                    // Ne glede na izid, zapremo activity ali ponovimo poskus
-                    finish()
-                }
-            } catch (e: Exception) {
-                Log.e("FaceID", "Napaka pri pošiljanju popravka: ${e.message}", e)
             }
         }
     }
@@ -264,15 +213,3 @@ class FaceIdActivity : AppCompatActivity() {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
