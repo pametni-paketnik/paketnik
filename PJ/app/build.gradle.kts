@@ -78,7 +78,7 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
-    implementation("androidx.navigation:navigation-compose:2.8.5")
+    implementation(libs.androidx.navigation.compose)
     implementation("androidx.compose.material3:material3:1.3.1")
 
     implementation("androidx.camera:camera-camera2:1.3.4")
@@ -87,7 +87,7 @@ dependencies {
     implementation("com.google.mlkit:barcode-scanning:17.2.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.json:json:20240303")
-    implementation("androidx.activity:activity-compose:1.9.0")
+    implementation(libs.androidx.activity.compose)
     implementation("androidx.cardview:cardview:1.0.0")
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

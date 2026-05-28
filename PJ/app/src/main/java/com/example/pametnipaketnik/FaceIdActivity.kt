@@ -99,11 +99,14 @@ class FaceIdActivity : AppCompatActivity() {
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .setTargetRotation(binding.viewFinder.display.rotation)
                 .build()
+            val currentImageCapture = imageCapture
 
-            try {
-                bindPreferredCamera(cameraProvider, preview, imageCapture)
-            } catch (exc: Exception) {
-                Log.e("FaceID", "Zagon kamere ni uspel", exc)
+            if (currentImageCapture != null) {
+                try {
+                    bindPreferredCamera(cameraProvider, preview, currentImageCapture)
+                } catch (exc: Exception) {
+                    Log.e("FaceID", "Zagon kamere ni uspel", exc)
+                }
             }
 
         }, ContextCompat.getMainExecutor(this))
