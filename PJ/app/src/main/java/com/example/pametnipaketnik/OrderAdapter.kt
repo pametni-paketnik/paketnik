@@ -4,13 +4,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.ui.graphics.Color
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pametnipaketnik.databinding.OrderItemsBinding
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 data class HeaderItem(val title: String): TimelineItem
 class OrderAdapter(
-    private val orderList: List<TimelineItem>,
+    private var orderList: List<TimelineItem>,
     private val onOrderClick: (Order) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -44,31 +47,35 @@ class OrderAdapter(
         }
         else if (holder is OrderViewHolder){
             val currentOrder = orderList[position] as Order
-
             val daysAgo = getDaysAgoCount(currentOrder.date)
-            val timeAgoText = getDaysAgoText(daysAgo, currentOrder.date)
-            holder.binding.orderDate.text = "$timeAgoText"
+
+            holder.binding.orderDate.text = currentOrder.date
             holder.binding.orderTitle.text = "Paketnik: ${currentOrder.boxId}"
 
             holder.binding.orderCardView.alpha = 1.0f
             holder.binding.itemOpenBox.alpha = 1.0f
+            holder.binding.orderCardView.setOnClickListener(null)
 
-            if (currentOrder.status.equals("oddano", ignoreCase = true)) {
-                holder.binding.orderAddress.text = "Status: ${currentOrder.status}".toUpperCase()
+            val statusLower = currentOrder.status.lowercase(Locale.getDefault())
+
+            if (statusLower == "prevzeto") {
+                holder.binding.orderAddress.text = "Status: PREVZETO"
                 holder.binding.orderAddress.setTextColor(android.graphics.Color.parseColor("#4CAF50"))
 
                 holder.binding.orderCardView.alpha = 0.5f
                 holder.binding.itemOpenBox.alpha = 0.25f
                 holder.binding.orderCardView.setOnClickListener(null)
-            } else if (daysAgo > 3 && !currentOrder.status.equals("Prevzeto", ignoreCase = true)) {
-                holder.binding.orderAddress.text = "Status: Potekel rok za prevzem".toUpperCase()
+
+            } else if (daysAgo > 3 && statusLower != "prevzeto") {
+                holder.binding.orderAddress.text = "Status: ZAPADEL ROK PREVZEMA"
                 holder.binding.orderAddress.setTextColor(android.graphics.Color.parseColor("#F44336"))
 
                 holder.binding.orderCardView.alpha = 0.75f
                 holder.binding.itemOpenBox.alpha = 0.4f
                 holder.binding.orderCardView.setOnClickListener(null)
+
             } else {
-                holder.binding.orderAddress.text = "Status: ${currentOrder.status}".toUpperCase()
+                holder.binding.orderAddress.text = "Status: ODDANO V PAKETNIK"
                 holder.binding.orderAddress.setTextColor(android.graphics.Color.parseColor("#4CAF50"))
 
                 holder.binding.orderCardView.setOnClickListener {
@@ -79,25 +86,38 @@ class OrderAdapter(
     }
 
     override fun getItemCount(): Int = orderList.size
+
+    fun updateDate(newList: List<TimelineItem>) {
+        this.orderList = newList
+        notifyDataSetChanged()
+    }
     private fun getDaysAgoCount(dateString: String): Long {
         if(dateString.isEmpty()) return 0L
         return try{
             val format = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
             val dateFromDb = format.parse(dateString) ?: return 0L
-            val today = java.util.Date()
-            val diffInMillies = today.time - dateFromDb.time
-            java.util.concurrent.TimeUnit.MILLISECONDS.toDays(diffInMillies)
+
+            val calendar = Calendar.getInstance()
+
+            val today = calendar.apply {
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.time
+
+            val dbDateClean = Calendar.getInstance().apply {
+                time = dateFromDb
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.time
+
+            val diffInMillies = today.time - dbDateClean.time
+            TimeUnit.MILLISECONDS.toDays(diffInMillies)
         } catch (e: Exception){
             0L
-        }
-    }
-    private fun getDaysAgoText(diffInDays: Long, originalDate: String): String {
-        return when {
-            diffInDays == 0L -> "Danes ($originalDate)"
-            diffInDays == 1L -> "Včeraj ($originalDate)"
-            diffInDays in 2L..3L -> "Pred $diffInDays dnevi ($originalDate)"
-            diffInDays > 3L -> "Poteklo pred ${diffInDays - 3} dnevi ($originalDate)"
-            else -> originalDate
         }
     }
 }

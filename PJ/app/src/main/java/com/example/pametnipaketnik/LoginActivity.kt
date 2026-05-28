@@ -8,7 +8,9 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.lifecycleScope
 import com.example.pametnipaketnik.databinding.ActivityLoginBinding
 import kotlinx.coroutines.launch
@@ -78,7 +80,7 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        // klic na API v ozadju
+        // Klic na API v ozadju
         lifecycleScope.launch {
             try {
                 val req = LoginRequest(email, password)
@@ -105,10 +107,8 @@ class LoginActivity : AppCompatActivity() {
                             startActivity(intent)
                         } else {
                             val intent = Intent(this@LoginActivity, MainActivity::class.java)
-
                             intent.putExtra("prijavljen_uporabnik", prejetoIme)
                             intent.putExtra("USER_ID", prejetUserId)
-
                             startActivity(intent)
                         }
                         finish()

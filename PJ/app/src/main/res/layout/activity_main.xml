@@ -23,6 +23,22 @@
         android:layout_marginEnd="20dp"
         android:layout_marginTop="20dp" />
 
+    <TextView
+        android:id="@+id/orderTitleHeading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="moja naročila"
+        android:textAllCaps="true"
+        android:textColor="@color/history_text_primary"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewOrders"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewOrders"
         android:layout_width="0dp"
