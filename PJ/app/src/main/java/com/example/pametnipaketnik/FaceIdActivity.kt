@@ -45,6 +45,8 @@ class FaceIdActivity : AppCompatActivity() {
         binding = ActivityFaceIdBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
+        val secureApiUrl = getString(R.string.api_base_url)
+        ApiClient.initializer(secureApiUrl)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
