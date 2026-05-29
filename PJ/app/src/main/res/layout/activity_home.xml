@@ -12,10 +12,10 @@
         android:id="@+id/backgroundImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/peace_lily"
         android:scaleType="centerCrop"
         android:scaleX="1.0"
         android:scaleY="1.1"
+        android:src="@drawable/ozadje"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="80dp">
+        android:layout_marginBottom="60dp">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnLogin"
