@@ -8,9 +8,7 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.lifecycleScope
 import com.example.pametnipaketnik.databinding.ActivityLoginBinding
 import kotlinx.coroutines.launch
@@ -20,6 +18,8 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.statusBarColor = androidx.core.content.ContextCompat.getColor(this, R.color.home_page_background)
+        androidx.core.view.WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

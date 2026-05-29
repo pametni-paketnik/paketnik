@@ -12,6 +12,7 @@ import android.text.style.StyleSpan
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.pametnipaketnik.databinding.ActivityLoginBinding
 import com.example.pametnipaketnik.databinding.ActivityRegisterBinding
 import kotlinx.coroutines.launch
 
@@ -20,6 +21,9 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        window.statusBarColor = androidx.core.content.ContextCompat.getColor(this, R.color.home_page_background)
+        androidx.core.view.WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
