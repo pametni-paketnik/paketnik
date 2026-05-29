@@ -3,6 +3,7 @@ import os
 import logging
 import time
 from pathlib import Path
+from PIL import Image, ImageOps
 
 import cv2
 import numpy as np
@@ -89,7 +90,9 @@ async def verify(file: UploadFile = File(...)):
 
     try:
         data  = await file.read()
-        image = Image.open(io.BytesIO(data)).convert("RGB")
+        surova_slika = Image.open(io.BytesIO(data)).convert("RGB")
+        
+        image = ImageOps.exif_transpose(surova_slika)
     except Exception:
         raise HTTPException(400, "Napaka pri branju slike.")
 
@@ -131,7 +134,9 @@ async def classify(file: UploadFile = File(...)):
 
     try:
         data  = await file.read()
-        image = Image.open(io.BytesIO(data)).convert("RGB")
+        surova_slika = Image.open(io.BytesIO(data)).convert("RGB")
+
+        image = ImageOps.exif_transpose(surova_slika)
     except Exception:
         raise HTTPException(400, "Napaka pri branju slike.")
 
@@ -254,8 +259,9 @@ class OrderResponseModel(BaseModel):
     status: str
     date: str
     description: str
+    address: str
 
-@app.get("/orders/{userId}")
+@app.get("/orders/{userId}", response_model=list[OrderResponseModel])
 def get__user_orders(userId: str): 
     query_conditions = [{"uporabnik_id": userId}]
     try:
@@ -264,19 +270,34 @@ def get__user_orders(userId: str):
         pass
 
     orders_cursor = narocila_collection.find({"$or": query_conditions})
-
     order_list = []
+    
     for doc in orders_cursor: 
         box_id = doc.get("koda_za_odpiranje") if "koda_za_odpiranje" in doc else doc.get("koda_za_odpiranje ", "Neznan Paketnik")
         status = doc.get("status") if "status" in doc else doc.get("status ", "neznano")
         date = doc.get("datum_dostave") if "datum_dostave" in doc else doc.get("datum_dostave ", "")
         
+        ime_izdelka = "Neznan izdelek"
+        naslov_paketnika = "Neznana lokacija"
+
+    izdelki = doc.get("izdelki", [])
+    if isinstance(izdelki, list) and len(izdelki) > 0: 
+        prvi_izdelek = izdelki[0]
+
+        if isinstance(prvi_izdelek, dict): 
+            ime_izdelka = prvi_izdelek.get("ime_izdelka", "Neznan izdelek")
+            paketnik = prvi_izdelek.get("paketnik", {})
+
+            if isinstance(paketnik, dict): 
+                naslov_paketnika = paketnik.get("naslov", "")
+
         order_list.append({
             "id": str(doc["_id"]),
             "boxId": str(box_id).strip(),
             "status": str(status).strip(),
             "date": str(date).strip(),
-            "description": "Naročilo cvetja"  
+            "description": str(ime_izdelka).strip(),  
+            "address": str(naslov_paketnika).strip() 
         })
 
     return order_list

@@ -14,6 +14,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -22,12 +23,10 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.concurrent.TimeUnit
-
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var currentUserName: String = "Gost"
     private var currentUserId: String = ""
-    private var selectedOrder: Order? = null
 
     val openCameraLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -65,6 +64,8 @@ class MainActivity : AppCompatActivity() {
         }
         Log.d("MainActivity_Debug", "Naložen uporabnik: $currentUserName z ID: $currentUserId")
 
+        binding.recyclerViewOrders.layoutManager = LinearLayoutManager(this)
+
         if (currentUserId.isNotEmpty()) {
             loadOrders()
         } else {
@@ -75,19 +76,16 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         }
-        /*binding.buttonOpenBox.setOnClickListener {
+        binding.buttonOpenBox.setOnClickListener {
             val intent = Intent(this, OpenCameraActivity::class.java)
             openCameraLauncher.launch(intent)
-        }*/
+        }
         binding.buttonHistory.setOnClickListener {
             val intent = Intent(this, HistoryActivity::class.java)
             startActivity(intent)
         }
         binding.btnBack.setOnClickListener {
             finish()
-        }
-        binding.btnHome.setOnClickListener {
-            Toast.makeText(this, "Ste že na domači strani :)", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -117,18 +115,20 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
 
-                    val today = Calendar.getInstance().apply {
+                    val groupToday = mutableListOf<Order>()
+                    val groupYesterday = mutableListOf<Order>()
+                    val groupOlder = mutableListOf<Order>()
+
+                    val todayCal = Calendar.getInstance().apply {
                         set(Calendar.HOUR_OF_DAY, 0)
                         set(Calendar.MINUTE, 0)
                         set(Calendar.SECOND, 0)
                         set(Calendar.MILLISECOND, 0)
                     }
 
-                    val groupActive = mutableListOf<Order>()
-                    val groupExpired = mutableListOf<Order>()
-                    val groupReceived = mutableListOf<Order>()
 
                     for (order in sortedOrders) {
+                        Log.d("MainActivity_Debug", "Naročilo ID: ${order.id} | Naslov s strežnika: '${order.address}'")
                         try {
                             val orderDate = format.parse(order.date) ?: java.util.Date()
                             val dbCal = Calendar.getInstance().apply {
@@ -139,41 +139,34 @@ class MainActivity : AppCompatActivity() {
                                 set(Calendar.MILLISECOND, 0)
                             }
 
-                            val diffInMillies = today.timeInMillis - dbCal.timeInMillis
+                            val diffInMillies = todayCal.timeInMillis - dbCal.timeInMillis
                             val diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMillies)
-                            val statusLower = order.status.lowercase(Locale.getDefault())
 
-                            if (statusLower == "prevzeto") {
-                                groupReceived.add(order)
-                            } else if (diffInDays > 3) {
-                                groupExpired.add(order)
-                            } else {
-                                groupActive.add(order)
+                            when (diffInDays) {
+                                0L -> groupToday.add(order)
+                                1L -> groupYesterday.add(order)
+                                else -> groupOlder.add(order)
                             }
                         } catch (e: Exception) {
-                            groupReceived.add(order)
+                            groupOlder.add(order)
                         }
                     }
                     val timelineItems = mutableListOf<TimelineItem>()
 
-                    if (groupActive.isNotEmpty()) {
-                        timelineItems.add(HeaderItem("ČAKA NA PREVZEM"))
-                        timelineItems.addAll(groupActive)
+                    if (groupToday.isNotEmpty()) {
+                        timelineItems.add(HeaderItem("TODAY"))
+                        timelineItems.addAll(groupToday)
                     }
-                    if (groupExpired.isNotEmpty()) {
-                        timelineItems.add(HeaderItem("ZAPADEL ROK PREVZEMA"))
-                        timelineItems.addAll(groupExpired)
+                    if (groupYesterday.isNotEmpty()) {
+                        timelineItems.add(HeaderItem("YESTERDAY"))
+                        timelineItems.addAll(groupYesterday)
                     }
-                    if (groupReceived.isNotEmpty()) {
-                        timelineItems.add(HeaderItem("PREVZETA NAROČILA"))
-                        timelineItems.addAll(groupReceived)
+                    if (groupOlder.isNotEmpty()) {
+                        timelineItems.add(HeaderItem("OLDER ORDERS"))
+                        timelineItems.addAll(groupOlder)
                     }
 
-                    val adapter = OrderAdapter(timelineItems) { clickedOrder ->
-                        selectedOrder = clickedOrder
-                        val intent = Intent(this@MainActivity, OpenCameraActivity::class.java)
-                        openCameraLauncher.launch(intent)
-                    }
+                    val adapter = OrderAdapter(timelineItems)
                     binding.recyclerViewOrders.adapter = adapter
                 } else {
                     Toast.makeText(this@MainActivity, "Napaka pri prenosu naročil: ${res.code()}",

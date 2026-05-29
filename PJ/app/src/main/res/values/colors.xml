@@ -16,4 +16,5 @@
     <color name="history_accent">#4A4A4A</color>
     <color name="history_error">#C95C5C</color>
     <color name="history_accept">#87AE73</color>
+    <color name="home_page_background">#EEEEEE</color>
 </resources>
