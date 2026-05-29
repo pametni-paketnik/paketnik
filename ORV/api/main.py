@@ -60,19 +60,7 @@ def root():
 
 @app.get("/health")
 def health():
-    db_connected = False
-    try:
-        client.admin.command("ping")
-        db_connected = True
-    except Exception:
-        db_connected = False
-
-    return {
-        "status": "healthy",
-        "model_loaded": model is not None,
-        "db_connected": db_connected,
-        "database": "pametni_paketnik",
-    }
+    return {"status": "healthy", "model_loaded": model is not None}
 
 
 def pil_to_cv2(pil_image): 
@@ -155,76 +143,6 @@ async def classify(file: UploadFile = File(...)):
     koncna_slika = cv2_to_pil(cv_obdelana)
 
     return predict(model, koncna_slika)
-
-
-@app.post("/register-face")
-async def register_face(
-    file: UploadFile = File(...),
-    name: str = Form(...),
-    surname: str = Form(...),
-    email: str = Form(...),
-    password: str = Form(...),
-):
-    """Registracija novega uporabnika skupaj z obrazno sliko (multipart/form).
-    Shrani surovo sliko v dataset/surovi_podatki/<safe_email>/, obdelano kopijo pa v
-    dataset/obdelani_podatki/<safe_email>/ + ustvari uporabnika v MongoDB.
-    """
-    # preveri format
-    if file.content_type not in ["image/jpeg", "image/png", "image/jpg"]:
-        raise HTTPException(400, "Dovoljeni formati slike: JPG, PNG.")
-
-    # preveri ali uporabnik že obstaja
-    existing_user = uporabniki_collection.find_one({"email": email})
-    if not existing_user:
-        existing_user = uporabniki_collection.find_one({"email ": email})
-    if existing_user:
-        return {"success": False, "message": "Uporabnik s tem e-naslovom že obstaja."}
-
-    # shrink/clean email za mapo
-    safe_email = email.replace("@", "_at_").replace(".", "_")
-    raw_dir = os.path.join("dataset", "surovi_podatki", safe_email)
-    proc_dir = os.path.join("dataset", "obdelani_podatki", safe_email)
-    os.makedirs(raw_dir, exist_ok=True)
-    os.makedirs(proc_dir, exist_ok=True)
-
-    try:
-        data = await file.read()
-        filename = f"{int(time.time())}_{file.filename}"
-        path = os.path.join(raw_dir, filename)
-        with open(path, "wb") as f:
-            f.write(data)
-
-        raw_image = cv2.imread(path)
-        if raw_image is None:
-            raise HTTPException(400, "Napaka pri branju shranjene slike.")
-
-        processed_image, obraz_najden = pripravi_sliko_za_api(raw_image)
-        processed_filename = f"{Path(filename).stem}_processed.jpg"
-        processed_path = os.path.join(proc_dir, processed_filename)
-        cv2.imwrite(processed_path, processed_image)
-    except HTTPException:
-        raise
-    except Exception:
-        logger.exception("Napaka pri shranjevanju slike med registracijo")
-        raise HTTPException(500, "Napaka pri shranjevanju slike.")
-
-    # bcrypt hash gesla
-    sol = bcrypt.gensalt()
-    sifrirano_geslo = bcrypt.hashpw(password.strip().encode('utf-8'), sol).decode('utf-8')
-
-    new_user_doc = {
-        "ime": name.strip(),
-        "priimek": surname.strip(),
-        "email": email.strip(),
-        "geslo": sifrirano_geslo,
-        "vloga": "user",
-        "face_image_path": path,
-        "face_processed_path": processed_path,
-    }
-
-    uporabniki_collection.insert_one(new_user_doc)
-
-    return {"success": True, "message": "Registracija uspešna (slika shranjena)."}
 
 
 class LoginRequest(BaseModel): 

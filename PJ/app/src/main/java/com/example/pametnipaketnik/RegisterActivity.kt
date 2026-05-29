@@ -23,8 +23,6 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ApiClient.initBackend(getString(R.string.backend_api_base_url))
-
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -127,7 +125,7 @@ class RegisterActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val req = RegisterRequest(name, surname, email, password)
-                val res = ApiClient.backendApiService.registerUser(req)
+                val res = ApiClient.apiService.registerUser(req)
 
                 if(res.isSuccessful && res.body() != null){
                     val registerRes = res.body()

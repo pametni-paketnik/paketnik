@@ -15,11 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
 import com.example.pametnipaketnik.databinding.ActivityHomeBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
@@ -30,9 +26,8 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val faceApiUrl = getString(R.string.face_api_base_url)
-        ApiClient.initFace(faceApiUrl)
-        checkBackendHealth()
+        val secureApiUrl = getString(R.string.api_base_url)
+        ApiClient.initializer(secureApiUrl)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -95,28 +90,5 @@ class HomeActivity : AppCompatActivity() {
             permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
         }
         requestPermissionLauncher.launch(permissionsToRequest.toTypedArray())
-    }
-
-    private fun checkBackendHealth() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val res = ApiClient.faceApiService.health()
-                withContext(Dispatchers.Main) {
-                    if (res.isSuccessful && res.body() != null) {
-                        val health = res.body()!!
-                        val message = if (health.db_connected) {
-                            "Povezava z API in bazo deluje"
-                        } else {
-                            "API deluje, baza ni dosegljiva"
-                        }
-                        Toast.makeText(this@HomeActivity, message, Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(this@HomeActivity, "API ni dosegljiv", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
     }
 }

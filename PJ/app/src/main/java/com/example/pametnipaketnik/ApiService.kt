@@ -50,13 +50,6 @@ data class OpenBoxResponse(
     val message: String
 )
 
-data class HealthResponse(
-    val status: String,
-    val model_loaded: Boolean,
-    val db_connected: Boolean,
-    val database: String
-)
-
 interface TimelineItem
 data class Order(
     @SerializedName("id") val id: String,
@@ -67,9 +60,6 @@ data class Order(
 ): TimelineItem
 
 interface ApiService {
-    @GET("health")
-    suspend fun health(): Response<HealthResponse>
-
     @Multipart
     @POST("verify")
     suspend fun verifyFace(

@@ -48,8 +48,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ApiClient.initBackend(getString(R.string.backend_api_base_url))
-
         currentUserName = intent.getStringExtra("prijavljen_uporabnik") ?: "Gost"
         Toast.makeText(this, "Hello $currentUserName!", Toast.LENGTH_SHORT).show()
 
@@ -101,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.Main) {
             try {
                 val res = withContext(Dispatchers.IO){
-                    ApiClient.backendApiService.getOrders(currentUserId)
+                    ApiClient.apiService.getOrders(currentUserId)
                 }
                 if(res.isSuccessful && res.body() != null){
                     val rawOrderList = res.body()!!
@@ -194,7 +192,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val reqData = OpenBoxRequest(boxId = boxId, userId = userId)
-                val res = ApiClient.backendApiService.openBox(reqData)
+                val res = ApiClient.apiService.openBox(reqData)
 
                 withContext(Dispatchers.Main) {
                     if (res.isSuccessful && res.body() != null) {

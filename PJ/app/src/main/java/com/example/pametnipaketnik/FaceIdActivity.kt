@@ -45,8 +45,6 @@ class FaceIdActivity : AppCompatActivity() {
         binding = ActivityFaceIdBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
-        val faceApiUrl = getString(R.string.face_api_base_url)
-        ApiClient.initFace(faceApiUrl)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
@@ -99,41 +97,18 @@ class FaceIdActivity : AppCompatActivity() {
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .setTargetRotation(binding.viewFinder.display.rotation)
                 .build()
-            val currentImageCapture = imageCapture
+            //spredna kamera
+            val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
-            if (currentImageCapture != null) {
-                try {
-                    bindPreferredCamera(cameraProvider, preview, currentImageCapture)
-                } catch (exc: Exception) {
-                    Log.e("FaceID", "Zagon kamere ni uspel", exc)
-                }
+            try {
+                cameraProvider.unbindAll()
+                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
+
+            } catch (exc: Exception) {
+                Log.e("FaceID", "Zagon kamere ni uspel", exc)
             }
 
         }, ContextCompat.getMainExecutor(this))
-    }
-
-    private fun bindPreferredCamera(
-        cameraProvider: ProcessCameraProvider,
-        preview: Preview,
-        imageCapture: ImageCapture
-    ) {
-        val cameraSelectors = listOf(
-            CameraSelector.DEFAULT_FRONT_CAMERA,
-            CameraSelector.DEFAULT_BACK_CAMERA
-        )
-
-        for (selector in cameraSelectors) {
-            try {
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(this, selector, preview, imageCapture)
-                Log.d("FaceID", "Kamera uspešno povezana: $selector")
-                return
-            } catch (exc: Exception) {
-                Log.w("FaceID", "Kamera ni na voljo za izbran selector: $selector", exc)
-            }
-        }
-
-        throw IllegalStateException("Nobena kamera ni na voljo za FaceIdActivity")
     }
 
     override fun onDestroy() {
@@ -174,7 +149,7 @@ class FaceIdActivity : AppCompatActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             try{
-                val res = ApiClient.faceApiService.verifyFace(body)
+                val res = ApiClient.apiService.verifyFace(body)
 
                 withContext(Dispatchers.Main) {
                     if (res.isSuccessful && res.body() != null) {
@@ -214,7 +189,7 @@ class FaceIdActivity : AppCompatActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val res = ApiClient.faceApiService.registerFaceWithData(filePart, nameBody, surnameBody, emailBody, passwordBody)
+                val res = ApiClient.apiService.registerFaceWithData(filePart, nameBody, surnameBody, emailBody, passwordBody)
 
                 withContext(Dispatchers.Main){
                     if(res.isSuccessful && res.body() != null){

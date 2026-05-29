@@ -23,8 +23,6 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ApiClient.initBackend(getString(R.string.backend_api_base_url))
-
         setUpGoToRegisterText()
 
         binding.btnLogin.setOnClickListener {
@@ -86,7 +84,7 @@ class LoginActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val req = LoginRequest(email, password)
-                val res = ApiClient.backendApiService.loginUser(req)
+                val res = ApiClient.apiService.loginUser(req)
 
                 if(res.isSuccessful && res.body() != null){
                     val logingRes = res.body()
