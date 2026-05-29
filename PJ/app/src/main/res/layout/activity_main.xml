@@ -14,11 +14,12 @@
         android:layout_height="wrap_content"
         android:text="moja naročila"
         android:textAllCaps="true"
+        android:letterSpacing="0.2"
         android:textColor="@color/history_text_primary"
-        android:textSize="26sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="35dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -55,9 +56,10 @@
 
     <ImageView
         android:id="@+id/buttonOpenBox"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:src="@drawable/qrcode"
+        android:tint="@color/history_accept"
         android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
