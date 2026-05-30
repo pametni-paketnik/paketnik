@@ -53,6 +53,15 @@ data class OpenBoxResponse(
     val message: String
 )
 
+data class FCMTokenRequest(
+    @SerializedName("userId") val userId: String,
+    @SerializedName("fcmToken") val fcmToken: String
+)
+data class FCMTokenResponse(
+    val success: Boolean,
+    val message: String
+)
+
 sealed interface TimelineItem
 data class HeaderItem(val title: String) : TimelineItem
 
@@ -101,4 +110,9 @@ interface ApiService {
     suspend fun getOrders(
         @Path("userId") userId: String
     ): Response<List<Order>>
+
+    @POST("update-fcm-token")
+    suspend fun updateFcmToken(
+        @Body request: FCMTokenRequest
+    ): Response<FCMTokenResponse>
 }

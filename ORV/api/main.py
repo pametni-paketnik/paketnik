@@ -3,6 +3,7 @@ import os
 import logging
 import time
 import re
+import json
 from pathlib import Path
 from PIL import Image, ImageOps
 
@@ -11,6 +12,8 @@ import numpy as np
 import bcrypt
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
+import firebase_admin  
+from firebase_admin import credentials, messaging
 from pydantic import BaseModel
 from PIL import Image
 from pymongo import MongoClient
@@ -41,7 +44,7 @@ def poslju_push_notification(fcm_token: str, naslov: str, vsebina: str):
         return False
     try: 
         message = messaging.Message(
-            notification=message.Notification(
+            notification=messaging.Notification(
                 title=naslov, 
                 body=vsebina
             ), 
@@ -367,7 +370,44 @@ def open_box(request: OpenBoxRequest):
 
     logger.info(f"Zahteva ta odpiranje paketnika '{input_box_id}' s strani uporabnika '{input_user_id}'")
 
+    try:
+            user = uporabniki_collection.find_one({"_id": ObjectId(input_user_id)})
+            if user and "fcm_token" in user:
+                poslju_push_notification(
+                    fcm_token=user["fcm_token"],
+                    naslov="Paketnik odprt!",
+                    vsebina=f"Paketnik #{input_box_id} je bil uspešno odprt."
+                )
+            else:
+                logger.warning(f"Uporabnik {input_user_id} nima fcm_tokena v bazi. Obvestilo preskočeno.")
+    except Exception as e:
+        logger.error(f"Napaka pri preverjanju fcm_tokena: {e}")
+            
     return{
         "success": True, 
         "message": f"Paketnik {input_box_id} odprt"
     }
+
+class FCMTokenRequest(BaseModel):
+    userId: str
+    fcmToken: str
+
+@app.post("/update-fcm-token")
+def update_fcm_token(request: FCMTokenRequest): 
+    try:
+        user_id = ObjectId(request.userId.strip())
+        token = request.fcmToken.strip() 
+
+        result = uporabniki_collection.update_one(
+            {"_id": user_id},
+            {"$set": {"fcm_token": token}}
+        )
+
+        if result.modified_count > 0 or result.matched_count > 0:
+            logger.info(f"FCM Token uspešno posodobljen za uporabnika {request.userId}")
+            return {"success": True, "message": "Žeton uspešno shranjen."}
+        else:
+            raise HTTPException(404, "Uporabnik ni bil najden.")
+    
+    except Exception as e:
+        raise HTTPException(500, f"Napaka pri shranjevanju žetona: {e}")

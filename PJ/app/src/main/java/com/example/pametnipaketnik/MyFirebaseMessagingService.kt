@@ -10,6 +10,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.launch
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
@@ -24,6 +25,22 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Log.d("FCM_Token", "Ustvarjen je nov žeton naprave: $token")
+
+        val sharedPreferences = getSharedPreferences("USerPrefs", Context.MODE_PRIVATE)
+        val savedUserId = sharedPreferences.getString("LOGGED_IN_USER_ID", "") ?: ""
+
+        if(savedUserId.isNotEmpty()){
+            val scope = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO)
+            scope.launch {
+                try {
+                    val requestModel = FCMTokenRequest(userId = savedUserId, fcmToken = token)
+                    ApiClient.apiService.updateFcmToken(requestModel)
+                    Log.d("FCM_Token", "Nov žeton uspešno osvežen na API strežniku.")
+                } catch (e: Exception) {
+                    Log.e("FCM_Token", "Napaka pri pošiljanju osveženega žetona", e)
+                }
+            }
+        }
     }
 
     private fun showLOcalNotification(title: String, content: String) {
