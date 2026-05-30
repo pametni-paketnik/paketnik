@@ -22,7 +22,7 @@ const OrderForm = () =>{
 
     useEffect(() => {
         const storedCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
-        setCart(storedCart.slice(0, 2)); 
+        setCart(storedCart.slice(0, 1)); 
     }, []); 
 
     const currentProduct = cart[currentIndex]; 
@@ -42,7 +42,7 @@ const OrderForm = () =>{
         const updatedProcessed = [...processedOrders, newOrderEntry];
         setProcessedOrders(updatedProcessed);
 
-        if (currentIndex < cart.length -1) {
+        if (currentIndex < cart.length - 2) {
             setCurrentIndex(prev => prev + 1); 
             setSelectedLocker(null); 
         } else { 
@@ -147,7 +147,7 @@ return (
                             onClick={handleNextProduct}
                         >
                             <span>
-                                {currentIndex < cart.length - 1 ? "NEXT PLANT" : "VIEW ORDER"}
+                                {currentIndex < cart.length - 2 ? "NEXT PLANT" : "VIEW ORDER"}
                             </span>
                             <ShoppingCart size={24} />
                         </button>

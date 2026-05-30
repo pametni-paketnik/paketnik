@@ -118,24 +118,52 @@ exports.pridobiNarocilaUporabnika = async (req, res) => {
 // Posodobi Status Narocila
 exports.posodobiStatusNarocila = async (req, res) => {
     try {
-        const posodobitve = { status: req.body.status };
-        if (req.body.cvetlicarna_id) {
-            posodobitve.cvetlicarna_id = req.body.cvetlicarna_id;
+        const { id } = req.params;
+        const { status, cvetlicarna_id } = req.body;
+
+        console.log("STATUS UPDATE BODY:", req.body);
+
+        const setData = {
+            status: status
+        };
+
+        if (status === 'dostavljeno') {
+            setData.datum_dostave = new Date();
         }
 
+        if (status === 'v_dostavi' && cvetlicarna_id) {
+            setData.cvetlicarna_id = cvetlicarna_id;
+        }
+
+        console.log("SET DATA:", setData);
+
         const narocilo = await Narocilo.findByIdAndUpdate(
-            req.params.id,
-            posodobitve,
-            { new: true, runValidators: true }
+            id,
+            {
+                $set: setData
+            },
+            {
+                new: true,
+                runValidators: true
+            }
         );
 
-        if (!narocilo) return res.status(404).json({ sporocilo: "Naročilo ni bilo najdeno", napaka });
+        if (!narocilo) {
+            return res.status(404).json({
+                sporocilo: 'Naročilo ni najdeno.'
+            });
+        }
 
         res.status(200).json(narocilo);
-    } catch (napaka) {
-        res.status(500).json({ sporocilo: "Napaka na strežniku", napaka });
+
+    } catch (error) {
+        console.error('Napaka pri posodabljanju statusa naročila:', error);
+        res.status(500).json({
+            sporocilo: 'Napaka pri posodabljanju statusa naročila.',
+            napaka: error.message
+        });
     }
-}
+};
 
 // Posodobi Prevzem
 exports.posodobiPrevzem = async (req, res) => {

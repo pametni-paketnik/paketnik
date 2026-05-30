@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { CheckCircle } from 'lucide-react';
 import api from './api';
 import './index.css';
+import jsPDF from "jspdf";
 
 const ReviewForm = () => {
     const navigate = useNavigate(); 
@@ -111,23 +112,91 @@ const ReviewForm = () => {
             };
 
             const response = await api.post('/narocilo', podatkiZaBackend); 
-            const data = response.data; 
-        const uspesnoNarociloStanje = {
-            ...finalOrder, 
-            backendOrderId: data._id || data.id
-        };
+            const data = response.data;
 
-        localStorage.removeItem('cart'); 
-        localStorage.removeItem('final_orders'); 
-        
-        alert('Naročilo je bilo uspešno oddano!');
-        navigate('/');
+            const orderId = data._id || data.id;
+            generateOrderPdf(podatkiZaBackend, orderId);
 
+            localStorage.removeItem('cart'); 
+            localStorage.removeItem('final_orders'); 
+
+            alert('Naročilo je bilo uspešno oddano!');
+            navigate('/');
         } catch(error) {
             console.error("Napaka: ", error); 
             alert("Prišlo je do napake pri oddaji naročila.");
         }
     }; 
+
+    const generateOrderPdf = (narocilo, orderId) => {
+        const doc = new jsPDF();
+
+        const stranka = narocilo.stranka || {};
+        const izdelki = narocilo.izdelki || [];
+        const placilo = narocilo.placilo || {};
+
+        let y = 20;
+
+        doc.setFontSize(18);
+        doc.text("Potrdilo o narocilu", 14, y);
+
+        y += 12;
+        doc.setFontSize(11);
+        doc.text(`Stevilka narocila: ${orderId || "-"}`, 14, y);
+
+        y += 8;
+        doc.text(`Datum: ${new Date().toLocaleDateString("sl-SI")}`, 14, y);
+
+        y += 14;
+        doc.setFontSize(14);
+        doc.text("Podatki stranke", 14, y);
+
+        y += 8;
+        doc.setFontSize(11);
+        doc.text(`Ime: ${stranka.ime || ""}`, 14, y);
+        y += 7;
+        doc.text(`Priimek: ${stranka.priimek || ""}`, 14, y);
+        y += 7;
+        doc.text(`E-mail: ${stranka.email || ""}`, 14, y);
+        y += 7;
+        doc.text(`Telefon: ${stranka.telefon || ""}`, 14, y);
+
+        y += 14;
+        doc.setFontSize(14);
+        doc.text("Izdelki", 14, y);
+
+        y += 8;
+        doc.setFontSize(11);
+
+        izdelki.forEach((item, index) => {
+            doc.text(`${index + 1}. ${item.ime_izdelka || "Izdelek"}`, 14, y);
+            y += 7;
+            doc.text(`Kolicina: ${item.kolicina || 1}`, 20, y);
+            y += 7;
+            doc.text(`Paketnik: ${item.paketnik?.ime || "Glavni Paketnik"}`, 20, y);
+            y += 7;
+            doc.text(`Naslov paketnika: ${item.paketnik?.naslov || "Naslov ni izbran"}`, 20, y);
+            y += 10;
+        });
+
+        y += 4;
+        doc.setFontSize(14);
+        doc.text("Placilo", 14, y);
+
+        y += 8;
+        doc.setFontSize(11);
+        doc.text(`Imetnik kartice: ${placilo.imetnik || ""}`, 14, y);
+        y += 7;
+        doc.text(`Kartica: ${placilo.kartica_maskirana || ""}`, 14, y);
+        y += 7;
+        doc.text(`Potek: ${placilo.potek || ""}`, 14, y);
+
+        y += 14;
+        doc.setFontSize(14);
+        doc.text(`Skupna cena: ${(Number(narocilo.skupna_cena) || 0).toFixed(2)} EUR`, 14, y);
+
+        doc.save(`narocilo-${orderId || Date.now()}.pdf`);
+    };
 
     if (loading || !finalOrder) {
         return <div className="empty-cart">Nalagam podatke o naročilu...</div>;

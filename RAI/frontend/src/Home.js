@@ -115,7 +115,7 @@ function Home({ orderFilter = "oddano" }) {
     const handleAddToCart = () => {
         const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-        if (currentCart.length >= 2) {
+        if (currentCart.length >= 1) {
             alert("Naročilo je omejeno na največ 2 roži naenkrat. Prosim dokončajte svoje naročilo");
             return;
         }
@@ -151,12 +151,14 @@ function Home({ orderFilter = "oddano" }) {
             alert('Prišlo je do napake pri posodabljanju statusa.');
         }
     };
+    
     const handleDeliveredOrder = async (orderId) => {
         try {
-            await api.put(`/narocilo/${orderId}/status`, {
-                status: 'dostavljeno',
-                datum_dostave: new Date()
+            const response = await api.put(`/narocilo/${orderId}/status`, {
+                status: 'dostavljeno'
             });
+
+            console.log("Posodobljeno naročilo:", response.data);
 
             setOrders((prevOrders) =>
                 prevOrders.filter((order) => order._id !== orderId)
@@ -167,6 +169,20 @@ function Home({ orderFilter = "oddano" }) {
             console.error('Napaka pri označevanju dostave:', err);
             alert('Prišlo je do napake pri posodabljanju statusa.');
         }
+    };
+
+    const formatDeliveryDate = (value) => {
+        if (!value) {
+            return "Ni podatka";
+        }
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime()) || date.getTime() === 0) {
+            return "Ni podatka";
+        }
+
+        return date.toLocaleDateString('sl-SI');
     };
 
     const [outOfStock, setOutOfStock] = useState([]); 
@@ -364,7 +380,7 @@ function Home({ orderFilter = "oddano" }) {
                                             {order.status == 'dostavljeno' && (
                                                 <div className="flower-order-info-row">
                                                     <span className="flower-order-label">Date of delivery</span>
-                                                    <span className="flower-order-price">{new Date(order.datum_dostave).toLocaleDateString('sl-SI')}</span>
+                                                    <span className="flower-order-price">{formatDeliveryDate(order.datum_dostave)}</span>
                                                 </div>
                                             )} 
                                         </div>
@@ -441,22 +457,22 @@ function Home({ orderFilter = "oddano" }) {
                                     </div>
 
                                     <div className="input-group-modern">
-                                        <label>Price</label>
+                                        <label>Description</label>
                                         <textarea
                                             value={editDescription}
                                             onChange={(e) => setEditDescription(e.target.value)}
                                             className="edit-plant-textarea"
-                                            placeholder="Opis"
+                                            placeholder="Description"
                                         />
                                     </div>
 
                                     <div className="input-group-modern">
-                                        <label>Price</label>
+                                        <label>Care</label>
                                         <textarea
                                             value={editCare}
                                             onChange={(e) => setEditCare(e.target.value)}
                                             className="edit-plant-textarea"
-                                            placeholder="Nega"
+                                            placeholder="Care"
                                         />
                                     </div>
 
@@ -582,15 +598,15 @@ function Home({ orderFilter = "oddano" }) {
                                         <button 
                                             className="main-add-btn full-width" 
                                             onClick={handleAddToCart}
-                                            disabled={cartCount >= 2}
-                                            style={cartCount >= 2 ? { 
+                                            disabled={cartCount >= 1}
+                                            style={cartCount >= 1 ? { 
                                                 backgroundColor: '#b3b3b3', 
                                                 cursor: 'not-allowed', 
                                                 color: '#ffffff',
                                                 opacity: 0.8
                                             } : {}}
                                         >
-                                            {cartCount >= 2 ? (
+                                            {cartCount >= 1 ? (
                                                 <>Cart is full <ShoppingCart size={24} /></>
                                             ) : (
                                                 <>Add to cart <ShoppingCart size={24} strokeWidth={3} /></>
