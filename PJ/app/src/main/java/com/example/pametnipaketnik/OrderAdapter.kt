@@ -1,13 +1,16 @@
 package com.example.pametnipaketnik
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pametnipaketnik.databinding.ItemTimelineHeaderBinding
 import com.example.pametnipaketnik.databinding.OrderItemsBinding
 
 class OrderAdapter(
-    private val orderList: List<TimelineItem>
+    private val orderList: List<TimelineItem>,
+    private val baseUrl: String
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val TYPE_HEADER = 0
@@ -41,6 +44,24 @@ class OrderAdapter(
                 orderHolder.binding.textOrderId.text = "Naročilo: #${item.boxId}"
                 orderHolder.binding.textLocation.text = "Lokacija: ${item.address}"
                 orderHolder.binding.textStatus.text = "Status: ${item.status}"
+
+                val firstProduct = item.products.firstOrNull()
+                if (firstProduct != null && firstProduct.path.isNotEmpty()) {
+
+                    val cleanBaseUrl = if (baseUrl.endsWith("/")) baseUrl else "$baseUrl/"
+                    val cleanPath = if (firstProduct.path.startsWith("/")) firstProduct.path.substring(1) else firstProduct.path
+
+                    val fullImageUrl = cleanBaseUrl + cleanPath
+                    Log.d("MainActivity_Debug", "Sestavljen končni URL za Glide: $fullImageUrl")
+
+                    Glide.with(orderHolder.itemView.context)
+                        .load(fullImageUrl)
+                        .placeholder(android.R.drawable.ic_menu_gallery)
+                        .error(android.R.drawable.stat_notify_error)
+                        .into(orderHolder.binding.imageProduct)
+                } else {
+                    orderHolder.binding.imageProduct.setImageResource(android.R.drawable.ic_menu_gallery)
+                }
             }
         }
     }

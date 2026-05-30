@@ -8,6 +8,7 @@ from pathlib import Path
 from PIL import Image, ImageOps
 from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
+from fastapi.staticfiles import StaticFiles
 
 import cv2
 import numpy as np
@@ -96,6 +97,9 @@ app.add_middleware(
 
 model = None
 
+# Ta ukaz pove FastAPI-ju: Vse kar pride na /images, poišči v mapi "images" na disku
+app.mount("/images", StaticFiles(directory="images"), name="images")
+
 scheduler = BackgroundScheduler()
 
 def pretvori_v_datetime(datum_iz_baze): 
@@ -178,12 +182,12 @@ def preveri_in_poslji_casovni_opomnik():
                 )
                 time.sleep(1.5)
 
-        if not doc.get("opomnik_3_dan_poslan", False): 
-            logger.info(f"[Scheduler] TESTNO pošiljam opomnik za naročilo {doc['_id']}")
+        if preteklo_dni >= 3 and not doc.get("opomnik_3_dan_poslan", False): 
+            logger.info(f"[Scheduler] Rok potekel. Pošiljam opomnik za naročilo {doc['_id']}")
             uspeh = poslji_push_notification(
                 fcm_token=fcm_token,
-                naslov=f"TEST: Potekel rok! #{box_id} 📦",
-                vsebina=f"Uporabnik ima aktivno naročilo v paketniku #{box_id}."
+                naslov=f"Potekel rok! #{box_id} 📦",
+                vsebina=f"Rok za prevzem naročila v paketniku #{box_id} je potekel."
             )
             if uspeh: 
                 narocila_collection.update_one(
@@ -429,6 +433,11 @@ def register(request: RegisterRequest):
         "message": "Registracija uspešna! Sedaj se lahko prijavite."
     }
 
+class OrderProductModel(BaseModel): 
+    productId: str
+    name: str
+    path: str
+
 class OrderResponseModel(BaseModel):
     id: str
     boxId: str
@@ -436,9 +445,13 @@ class OrderResponseModel(BaseModel):
     date: str
     description: str
     address: str
+    products: list[OrderProductModel]
 
 @app.get("/orders/{userId}", response_model=list[OrderResponseModel])
 def get__user_orders(userId: str): 
+    
+    izdelki_collection = db["plants"]
+
     query_conditions = [{"uporabnik_id": userId}]
     try:
         query_conditions.append({"uporabnik_id": ObjectId(userId)})
@@ -455,6 +468,7 @@ def get__user_orders(userId: str):
         
         ime_izdelka = "Neznan izdelek"
         naslov_paketnika = "Neznana lokacija"
+        products = []
 
         izdelki = doc.get("izdelki", [])
         if isinstance(izdelki, list) and len(izdelki) > 0: 
@@ -467,13 +481,53 @@ def get__user_orders(userId: str):
                 if isinstance(paketnik, dict): 
                     naslov_paketnika = paketnik.get("naslov", "")
 
+        for izdelek in izdelki:
+            if isinstance(izdelek, dict):
+                prod_id = str(izdelek.get("izdelek_id", izdelek.get("_id", "0")))
+                prod_name = izdelek.get("ime_izdelka", "Neznan izdelek")
+                prod_path = ""
+
+                try:
+                    if prod_id != "0":
+                        prava_rastlina = izdelki_collection.find_one({"_id": ObjectId(prod_id)})
+                        if not prava_rastlina:  # <-- TUKAJ JE BILA NAPAKA (bilo je: if not ...)
+                            prava_rastlina = izdelki_collection.find_one({"_id": prod_id})
+                        
+                        if prava_rastlina:
+                            ime_roze_v_bazi = prava_rastlina.get("ime_izdelka", prava_rastlina.get("ime", prod_name))
+                            ime_cista_slika = str(ime_roze_v_bazi).strip().lower()
+                            
+                            if os.path.exists(f"images/{ime_cista_slika}.png"):
+                                prod_path = f"images/{ime_cista_slika}.png"
+                            elif os.path.exists(f"images/{ime_cista_slika}.jpg"):
+                                prod_path = f"images/{ime_cista_slika}.jpg"
+                            elif os.path.exists(f"images/{ime_cista_slika}.jpeg"):
+                                prod_path = f"images/{ime_cista_slika}.jpeg"
+                            else:
+                                prod_path = prava_rastlina.get("path", prava_rastlina.get("slika_path", ""))
+                except Exception as e:
+                    logger.error(f"Napaka pri iskanju lokalne slike za {prod_id}: {e}")
+
+                if not prod_path:
+                    prod_path = izdelek.get("slika_path", izdelek.get("path", ""))
+
+                if prod_path and not prod_path.startswith("images/"):
+                    prod_path = f"images/{prod_path}"
+
+                products.append({
+                    "productId": prod_id,
+                    "name": prod_name,
+                    "path": str(prod_path).strip()
+                })
+
         order_list.append({
             "id": str(doc["_id"]),
             "boxId": str(box_id).strip(),
             "status": str(status).strip(),
             "date": str(date).strip(),
             "description": str(ime_izdelka).strip(),  
-            "address": str(naslov_paketnika).strip() 
+            "address": str(naslov_paketnika).strip(), 
+            "products": products
         })
 
     return order_list
@@ -528,3 +582,5 @@ def update_fcm_token(request: FCMTokenRequest):
         
     logging.info(f"[Firebase] Uspešno posodobljen FCM žeton za uporabnika {user_id_raw}")
     return {"success": True, "message": "FCM žeton uspešno shranjen."}
+
+
