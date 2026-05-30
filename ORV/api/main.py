@@ -22,6 +22,39 @@ from model_loader import load_model, predict
 
 load_dotenv()
 
+firebase_raw_env = os.getenv("FIREBASE_CREDENTIALS")
+if firebase_raw_env:
+    try:
+        cred_dict = json.loads(firebase_raw_env)
+        cred = credentials.Certificate(cred_dict)
+        firebase_admin.initialize_app(cred)
+        logging.info("[Firebase] Uspešno inicializiran preko okoljskih spremenljivk!")
+    except Exception as e:
+        logging.error(f"[Firebase] Napaka pri parsiranju ključa: {e}")
+else:
+    logging.warning("[Firebase] Opozorilo: FIREBASE_CREDENTIALS ni nastavljen v .env!")
+
+def poslju_push_notification(fcm_token: str, naslov: str, vsebina: str): 
+    """Pomožna funkcija za pošiljanje push obvestila na specifično napravo."""
+    if not firebase_raw_env: 
+        logger.info("Push obvestilo ni bilo poslano, ker Firebase ni inicializiran.")
+        return False
+    try: 
+        message = messaging.Message(
+            notification=message.Notification(
+                title=naslov, 
+                body=vsebina
+            ), 
+            token=fcm_token, 
+        )
+        response = messaging.send(message)
+        logging.info(f"[Firebase] Obvestilo uspešno poslano! ID: {response}")
+        return True
+    except Exception as e:
+        logging.error(f"[Firebase] Napaka pri pošiljanju obvestila: {e}")
+        return False
+
+
 mongo_uri = os.getenv("MONGO_URI", "PORT")
 client = MongoClient(mongo_uri)
 db = client["pametni_paketnik"]

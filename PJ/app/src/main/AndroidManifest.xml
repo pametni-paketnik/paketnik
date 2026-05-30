@@ -10,7 +10,7 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" /> <!-- Dovoljenje za obvestila -->
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- vibriranje ob obvestilih -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
@@ -60,6 +60,15 @@
             android:name=".MainActivity"
             android:exported="false">
         </activity>
+
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

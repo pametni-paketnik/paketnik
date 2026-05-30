@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 
     id("com.google.devtools.ksp")
+    id("com.google.gms.google-services")
+
 }
 
 android {
@@ -92,4 +94,6 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    implementation("com.google.firebase:firebase-messaging-ktx:24.0.0")
 }
