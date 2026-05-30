@@ -6,6 +6,8 @@ import re
 import json
 from pathlib import Path
 from PIL import Image, ImageOps
+from datetime import datetime, timedelta
+from apscheduler.schedulers.background import BackgroundScheduler
 
 import cv2
 import numpy as np
@@ -83,12 +85,94 @@ app.add_middleware(
 
 model = None
 
+scheduler = BackgroundScheduler()
+
+def pretvori_v_datetime(datum_iz_baze): 
+    if isinstance(datum_iz_baze, datetime): 
+        return datum_iz_baze
+    
+    try: 
+        datum_str = str(datum_iz_baze).strip()
+
+        le_datum = datum_str.split("T")[0].split(" ")[0]
+        try: 
+            return datetime.strptime(le_datum, "%Y-%d-%m")
+        except ValueError: 
+            pass
+        
+        if " " in datum_str: 
+            return datetime.strptime(str(datum_iz_baze).strip(), "%Y-%m-%d %H:%M:%S")
+        raise ValueError("Noben znan format datuma ne ustreza.")
+    
+    except Exception as e: 
+        logging.error(f"[Scheduler] Napaka pri pretvorbi datuma '{datum_iz_baze}': {e}")
+        return None
+    
+def preveri_in_poslji_casovni_opomnik():
+    """Funkcija ki teče v ozadju ijn preverja pogoje za 2 in 3 dni - časovna omejitev naročila v paketniku"""
+    logging.info("[Scheduler] Preverjam časovna obvestila za naročila...")
+    trenutni_cas = datetime.now()
+
+    aktivna_narocila = narocila_collection.find({"status": "za prevzem" })
+
+    for doc in aktivna_narocila: 
+        datum_dostave_raw = doc.get("datum_dostave") if "datum_dostave" in doc else doc.get("datum_dostave")
+        if not datum_dostave_raw: 
+            continue
+
+        datum_dostave = pretvori_v_datetime(datum_dostave_raw)
+        if not datum_dostave: 
+            continue
+
+        razlika = trenutni_cas - datum_dostave
+        preteklo_dni = razlika.days
+
+        user_id = doc.get("uporabnik_id")
+        user = uporabniki_collection.find_one({"_id": ObjectId(user_id)})
+
+        if not user or "fcm_token" not in user: 
+            continue
+
+        fcm_token = user["fcm_token"]
+        box_id = doc.get("Koda_za_odpiranje", "Neznan")
+
+        # po 2 dneh brez prevzema naročila 
+        if preteklo_dni == 2 and not doc.get("opomnik_2_dan_poslan", False):
+            uspeh = poslju_push_notification(
+                fcm_token=fcm_token,
+                naslov="Opomnik za prevzem!",
+                vsebina=f"Vaše naročilo v paketniku #{box_id} vas čaka že 2 dni. Na voljo imate še 1 dan za prevzem."
+            )
+            if uspeh: 
+                narocila_collection.update_one(
+                    {"_id": doc["_id"]}, 
+                    {"$set": {"opomnik_2_dan_poslan": True}}
+                    )
+
+        elif preteklo_dni >= 3 and not doc.get("opomnik_3_dan_poslan", False): 
+            uspeh = poslju_push_notification(
+                fcm_token=fcm_token,
+                naslov="Čas za prevzem je potekel!",
+                vsebina=f"Zamudili ste 3-dnevni rok za prevzem naročila iz paketnika. Prosimo, kontaktirajte cvetličarno."
+            )
+            if uspeh: 
+                narocila_collection.update_one(
+                    {"_id": doc["_id"]}, 
+                    {"$set": {"opomnik_3_dni_poslan": True, "status": "poteklo"}}
+                )
+        
+        
+scheduler.add_job(preveri_in_poslji_casovni_opomnik, 'interval', seconds=30)
+
 @app.on_event("startup")
 async def startup():
     global model
     logger.info("Nalagam model...")
     model = load_model()
     logger.info("Model naložen.")
+
+    scheduler.start()
+    logging.info("[Scheduler] Avtomatsko preverjanje opomnikov je zagnano v ozadju.")
 
 
 @app.get("/")
