@@ -80,10 +80,6 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
-<<<<<<< Updated upstream
-=======
-    //implementation(libs.androidx.navigation.compose)
->>>>>>> Stashed changes
     implementation("androidx.compose.material3:material3:1.3.1")
 
     implementation("androidx.camera:camera-camera2:1.3.4")
