@@ -39,7 +39,7 @@ if firebase_raw_env:
 else:
     logging.warning("[Firebase] Opozorilo: FIREBASE_CREDENTIALS ni nastavljen v .env!")
 
-def poslju_push_notification(fcm_token: str, naslov: str, vsebina: str): 
+def poslji_push_notification(fcm_token: str, naslov: str, vsebina: str): 
     """Pomožna funkcija za pošiljanje push obvestila na specifično napravo."""
     if not firebase_raw_env: 
         logger.info("Push obvestilo ni bilo poslano, ker Firebase ni inicializiran.")
@@ -47,10 +47,21 @@ def poslju_push_notification(fcm_token: str, naslov: str, vsebina: str):
     try: 
         message = messaging.Message(
             notification=messaging.Notification(
-                title=naslov, 
-                body=vsebina
-            ), 
-            token=fcm_token, 
+                title=str(naslov),
+                body=str(vsebina),
+            ),
+            data={
+                "title": str(naslov),
+                "body": str(vsebina)
+            },
+            android=messaging.AndroidConfig(
+                priority="high",
+                notification=messaging.AndroidNotification(
+                    sound="default",
+                    channel_id="paketnik_notification_channel" # Mora se ujemati z Android kodo!
+                )
+            ),
+            token=str(fcm_token), 
         )
         response = messaging.send(message)
         logging.info(f"[Firebase] Obvestilo uspešno poslano! ID: {response}")
@@ -96,7 +107,7 @@ def pretvori_v_datetime(datum_iz_baze):
 
         le_datum = datum_str.split("T")[0].split(" ")[0]
         try: 
-            return datetime.strptime(le_datum, "%Y-%d-%m")
+            return datetime.strptime(le_datum, "%Y-%m-%d")
         except ValueError: 
             pass
         
@@ -108,15 +119,24 @@ def pretvori_v_datetime(datum_iz_baze):
         logging.error(f"[Scheduler] Napaka pri pretvorbi datuma '{datum_iz_baze}': {e}")
         return None
     
+
 def preveri_in_poslji_casovni_opomnik():
     """Funkcija ki teče v ozadju ijn preverja pogoje za 2 in 3 dni - časovna omejitev naročila v paketniku"""
     logging.info("[Scheduler] Preverjam časovna obvestila za naročila...")
     trenutni_cas = datetime.now()
 
-    aktivna_narocila = narocila_collection.find({"status": "za prevzem" })
+    try:
+        aktivna_narocila = list(narocila_collection.find({"status": "za prevzem"}))
+    except Exception as e:
+        logger.error(f"[Scheduler] Napaka pri branju iz MongoDB: {e}")
+        return
+
+    if not aktivna_narocila: 
+        logger.info("[Scheduler] Ni aktivnih naročil za prehod.")
+        return
 
     for doc in aktivna_narocila: 
-        datum_dostave_raw = doc.get("datum_dostave") if "datum_dostave" in doc else doc.get("datum_dostave")
+        datum_dostave_raw = doc.get("datum_dostave")
         if not datum_dostave_raw: 
             continue
 
@@ -127,39 +147,50 @@ def preveri_in_poslji_casovni_opomnik():
         razlika = trenutni_cas - datum_dostave
         preteklo_dni = razlika.days
 
-        user_id = doc.get("uporabnik_id")
-        user = uporabniki_collection.find_one({"_id": ObjectId(user_id)})
+        raw_user_id = doc.get("uporabnik_id")
+        if not raw_user_id:
+            continue
+
+        try: 
+            final_user_id = raw_user_id if isinstance(raw_user_id, ObjectId) else ObjectId(str(raw_user_id).strip())
+            user = uporabniki_collection.find_one({"_id": final_user_id})
+        except Exception as e: 
+            logger.error(f"[Scheduler] Napaka pri iskanju uporabnika {raw_user_id}: {e}")
+            continue
 
         if not user or "fcm_token" not in user: 
             continue
 
         fcm_token = user["fcm_token"]
-        box_id = doc.get("Koda_za_odpiranje", "Neznan")
+        box_id = doc.get("Koda_za_odpiranje", doc.get("koda_za_odpiranje", "Neznan"))
 
         # po 2 dneh brez prevzema naročila 
         if preteklo_dni == 2 and not doc.get("opomnik_2_dan_poslan", False):
-            uspeh = poslju_push_notification(
+            uspeh = poslji_push_notification(
                 fcm_token=fcm_token,
-                naslov="Opomnik za prevzem!",
-                vsebina=f"Vaše naročilo v paketniku #{box_id} vas čaka že 2 dni. Na voljo imate še 1 dan za prevzem."
+                naslov=f"Opomnik za prevzem! #{box_id} 📦",
+                vsebina=f"Vaše naročilo v paketniku #{box_id} vas čaka že 2 dni."
             )
             if uspeh: 
                 narocila_collection.update_one(
                     {"_id": doc["_id"]}, 
                     {"$set": {"opomnik_2_dan_poslan": True}}
-                    )
+                )
+                time.sleep(1.5)
 
-        elif preteklo_dni >= 3 and not doc.get("opomnik_3_dan_poslan", False): 
-            uspeh = poslju_push_notification(
+        if not doc.get("opomnik_3_dan_poslan", False): 
+            logger.info(f"[Scheduler] TESTNO pošiljam opomnik za naročilo {doc['_id']}")
+            uspeh = poslji_push_notification(
                 fcm_token=fcm_token,
-                naslov="Čas za prevzem je potekel!",
-                vsebina=f"Zamudili ste 3-dnevni rok za prevzem naročila iz paketnika. Prosimo, kontaktirajte cvetličarno."
+                naslov=f"TEST: Potekel rok! #{box_id} 📦",
+                vsebina=f"Uporabnik ima aktivno naročilo v paketniku #{box_id}."
             )
             if uspeh: 
                 narocila_collection.update_one(
                     {"_id": doc["_id"]}, 
-                    {"$set": {"opomnik_3_dni_poslan": True, "status": "poteklo"}}
+                    {"$set": {"opomnik_3_dan_poslan": True, "status": "poteklo"}} 
                 )
+                time.sleep(1.5)
         
         
 scheduler.add_job(preveri_in_poslji_casovni_opomnik, 'interval', seconds=30)
@@ -457,7 +488,7 @@ def open_box(request: OpenBoxRequest):
     try:
             user = uporabniki_collection.find_one({"_id": ObjectId(input_user_id)})
             if user and "fcm_token" in user:
-                poslju_push_notification(
+                poslji_push_notification(
                     fcm_token=user["fcm_token"],
                     naslov="Paketnik odprt!",
                     vsebina=f"Paketnik #{input_box_id} je bil uspešno odprt."
@@ -478,20 +509,22 @@ class FCMTokenRequest(BaseModel):
 
 @app.post("/update-fcm-token")
 def update_fcm_token(request: FCMTokenRequest): 
+    user_id_raw = request.userId.strip()
+    token = request.fcmToken.strip()
+
     try:
-        user_id = ObjectId(request.userId.strip())
-        token = request.fcmToken.strip() 
-
-        result = uporabniki_collection.update_one(
-            {"_id": user_id},
-            {"$set": {"fcm_token": token}}
-        )
-
-        if result.modified_count > 0 or result.matched_count > 0:
-            logger.info(f"FCM Token uspešno posodobljen za uporabnika {request.userId}")
-            return {"success": True, "message": "Žeton uspešno shranjen."}
-        else:
-            raise HTTPException(404, "Uporabnik ni bil najden.")
+        user_id = ObjectId(user_id_raw)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Neveljaven ID uporabnika")
     
-    except Exception as e:
-        raise HTTPException(500, f"Napaka pri shranjevanju žetona: {e}")
+
+    result = uporabniki_collection.update_one(
+        {"_id": user_id},
+        {"$set": {"fcm_token": token}}
+    )
+
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Uporabnik ni bil najden")
+        
+    logging.info(f"[Firebase] Uspešno posodobljen FCM žeton za uporabnika {user_id_raw}")
+    return {"success": True, "message": "FCM žeton uspešno shranjen."}
