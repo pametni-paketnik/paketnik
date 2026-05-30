@@ -2,6 +2,7 @@ import io
 import os
 import logging
 import time
+import re
 from pathlib import Path
 from PIL import Image, ImageOps
 
@@ -118,12 +119,32 @@ async def verify(file: UploadFile = File(...)):
         result["verified"] = surovo_verified
 
     result["face_detected"] = obraz_najden
-    result["message"] = (
-        f"Oseba '{result['label']}' uspešno prepoznana."
-        if result["verified"] and obraz_najden
-        else "Avtentikacija zavrnjena — stopnja zaupanja je prenizka ali oseba ni prepoznana."
-    )
-    
+
+
+    if result["verified"] and obraz_najden and surova_oznaka != "Neznan obraz":
+        result["message"] = f"Oseba '{result['label']}' uspešno prepoznana."
+        
+        iskano_ime = surova_oznaka.strip()
+        regex_ime = re.compile(f"^{iskano_ime}$", re.IGNORECASE)
+
+        user = uporabniki_collection.find_one({
+            "$or": [
+                {"ime": regex_ime},
+                {"ime ": regex_ime}
+            ]
+        })
+
+        if user: 
+            result["userId"] = str(user["_id"])
+            vloga = user.get("vloga") if "vloga" in user else user.get("vloga", "user")
+            result["role"] = str(vloga).strip()
+            logger.info(f"Face ID Povezava uspešna! Najden: {iskano_ime}, ID: {result['userId']}, Vloga: {result['role']}")
+        else:
+            logger.warning(f"Model je prepoznal '{iskano_ime}', vendar ta oseba ne obstaja v MongoDB!")
+            result["message"] = f"Prepoznan obraz '{iskano_ime}', ampak uporabnik ni nastavljen v bazi."
+    else:
+        result["message"] = "Avtentikacija zavrnjena — stopnja zaupanja je prenizka ali oseba ni prepoznana."
+
     return result
 
 @app.post("/classify")
@@ -280,16 +301,16 @@ def get__user_orders(userId: str):
         ime_izdelka = "Neznan izdelek"
         naslov_paketnika = "Neznana lokacija"
 
-    izdelki = doc.get("izdelki", [])
-    if isinstance(izdelki, list) and len(izdelki) > 0: 
-        prvi_izdelek = izdelki[0]
+        izdelki = doc.get("izdelki", [])
+        if isinstance(izdelki, list) and len(izdelki) > 0: 
+            prvi_izdelek = izdelki[0]
 
-        if isinstance(prvi_izdelek, dict): 
-            ime_izdelka = prvi_izdelek.get("ime_izdelka", "Neznan izdelek")
-            paketnik = prvi_izdelek.get("paketnik", {})
+            if isinstance(prvi_izdelek, dict): 
+                ime_izdelka = prvi_izdelek.get("ime_izdelka", "Neznan izdelek")
+                paketnik = prvi_izdelek.get("paketnik", {})
 
-            if isinstance(paketnik, dict): 
-                naslov_paketnika = paketnik.get("naslov", "")
+                if isinstance(paketnik, dict): 
+                    naslov_paketnika = paketnik.get("naslov", "")
 
         order_list.append({
             "id": str(doc["_id"]),

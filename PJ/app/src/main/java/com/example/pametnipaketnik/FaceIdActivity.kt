@@ -1,5 +1,6 @@
 package com.example.pametnipaketnik
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -159,8 +160,19 @@ class FaceIdActivity : AppCompatActivity() {
                         if (result.verified) {
                             Toast.makeText(this@FaceIdActivity, "Prijava uspešna! Zaznana oseba ${result.label}", Toast.LENGTH_SHORT).show()
 
+                            val prejetUserId = result.userId ?: ""
+                            val prejetaVloga = result.role ?: "user"
+                            val prejetoIme = result.label
+
+                            val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+                            sharedPreferences.edit().apply {
+                                putString("LOGGED_IN_USER_ID", prejetUserId)
+                                putString("USER_ROLE", prejetaVloga)
+                            }.apply()
+
                             val intent = Intent(this@FaceIdActivity, MainActivity::class.java)
-                            intent.putExtra("prijavljen_uporabnik", result.label)
+                            intent.putExtra("prijavljen_uporabnik", prejetoIme)
+                            intent.putExtra("USER_ID", prejetUserId) // Posredujemo ID, da MainActivity ve, čigava naročila potegniti iz baze
                             startActivity(intent)
                             finish()
                         } else {

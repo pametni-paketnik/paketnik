@@ -102,15 +102,10 @@ class LoginActivity : AppCompatActivity() {
                             putString("USER_ROLE", prejetaVloga)
                         }.apply()
 
-                        if (prejetaVloga == "admin") {
-                            val intent = Intent(this@LoginActivity, HistoryActivity::class.java)
-                            startActivity(intent)
-                        } else {
-                            val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                            intent.putExtra("prijavljen_uporabnik", prejetoIme)
-                            intent.putExtra("USER_ID", prejetUserId)
-                            startActivity(intent)
-                        }
+                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                        intent.putExtra("prijavljen_uporabnik", prejetoIme)
+                        intent.putExtra("USER_ID", prejetUserId)
+                        startActivity(intent)
                         finish()
                     } else {
                         Toast.makeText(this@LoginActivity, logingRes?.message, Toast.LENGTH_SHORT).show()

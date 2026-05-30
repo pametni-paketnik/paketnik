@@ -38,7 +38,10 @@ data class FaceVerifyResponse(
     val confidence: Double,
     val label: String,
     val face_detected: Boolean,
-    val message: String
+    val message: String,
+
+    @SerializedName("userId") val userId: String?,
+    @SerializedName("role") val role: String?
 )
 
 data class OpenBoxRequest(
