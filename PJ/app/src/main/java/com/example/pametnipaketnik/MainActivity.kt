@@ -82,6 +82,7 @@ class MainActivity : AppCompatActivity() {
         }
         binding.buttonHistory.setOnClickListener {
             val intent = Intent(this, HistoryActivity::class.java)
+            intent.putExtra("USER_ID", currentUserId)
             startActivity(intent)
         }
         binding.btnBack.setOnClickListener {
@@ -221,6 +222,9 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
     private fun saveHistory(boxId: String, opened: Boolean) {
+        val userIdKey = if (currentUserId.isNotEmpty()) currentUserId else "Unknown"
+        val historyKey = "item_$userIdKey"
+
         val prefs = getSharedPreferences("history", MODE_PRIVATE)
         val oldHistory = prefs.getString("items", "[]") ?: "[]"
 
@@ -236,7 +240,7 @@ class MainActivity : AppCompatActivity() {
 
         jsonArray.put(item)
         prefs.edit()
-            .putString("items", jsonArray.toString())
+            .putString(historyKey, jsonArray.toString())
             .apply()
     }
 }

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pametnipaketnik.databinding.ActivityHistoryBinding
 import org.json.JSONArray
 import android.graphics.Typeface
+import android.util.Log
 import android.util.TypedValue
 
 class HistoryActivity : AppCompatActivity() {
@@ -60,8 +61,31 @@ class HistoryActivity : AppCompatActivity() {
         }
     }
     private fun loadHistory(): List<HistoryItem> {
+        var currentUserId = intent.getStringExtra("USER_ID") ?: ""
+
+        if (currentUserId.isEmpty()) {
+            val userPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+            currentUserId = userPrefs.getString("LOGGED_IN_USER_ID", "") ?: ""
+        }
+
+        if (currentUserId.isEmpty()) {
+            Log.e("HistoryActivity", "NAPAKA: ID uporabnika je prazen v zgodovini!")
+            return emptyList()
+        }
+
+        val historyKey = "items_$currentUserId"
         val prefs = getSharedPreferences("history", MODE_PRIVATE)
-        val historyString = prefs.getString("items", "[]") ?: "[]"
+
+        val oldGeneralHistory = prefs.getString("items", null)
+        if (oldGeneralHistory != null && oldGeneralHistory != "[]") {
+            prefs.edit()
+                .putString(historyKey, oldGeneralHistory)
+                .remove("items")
+                .apply()
+        }
+
+        val historyString = prefs.getString(historyKey, "[]") ?: "[]"
+        Log.d("HistoryActivity", "Nalagam zgodovino za ključ: $historyKey | Vsebina: $historyString")
 
         val list = mutableListOf<HistoryItem>()
 
