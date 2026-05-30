@@ -37,5 +37,8 @@
     <string name="go_to_login_link">Prijavi se tukaj</string>
     <string name="nazaj">Nazaj</string>
     <string name="domov">Domov</string>
+    <string name="smart_flower_locker">Smart Flower Locker</string>
+    <string name="moja_narocila">moja naročila</string>
+    <string name="nastavi_face_id">Nastavi Face ID</string>
 
 </resources>

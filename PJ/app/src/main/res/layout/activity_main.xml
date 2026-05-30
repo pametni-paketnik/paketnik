@@ -12,7 +12,7 @@
         android:id="@+id/orderTitleHeading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="moja naročila"
+        android:text="@string/moja_narocila"
         android:textAllCaps="true"
         android:letterSpacing="0.2"
         android:textColor="@color/history_text_primary"

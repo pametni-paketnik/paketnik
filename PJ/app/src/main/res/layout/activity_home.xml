@@ -25,7 +25,7 @@
         android:id="@+id/homeTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Smart Flower Locker"
+        android:text="@string/smart_flower_locker"
         android:textStyle="bold"
         android:textSize="24sp"
         android:letterSpacing="0.1"
