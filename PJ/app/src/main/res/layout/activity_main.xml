@@ -48,36 +48,22 @@
         android:layout_marginEnd="20dp"
         android:scrollbars="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/order_items"
-<<<<<<< Updated upstream
         app:layout_constraintTop_toBottomOf="@id/orderTitleHeading"
-=======
-        app:layout_constraintTop_toBottomOf="@id/buttonSettings"
->>>>>>> Stashed changes
         app:layout_constraintBottom_toTopOf="@id/buttonOpenBox"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/order_items"/>
 
     <ImageView
         android:id="@+id/buttonOpenBox"
-<<<<<<< Updated upstream
         android:layout_width="70dp"
         android:layout_height="70dp"
-=======
-        android:layout_width="60dp"
-        android:layout_height="60dp"
->>>>>>> Stashed changes
         android:src="@drawable/qrcode"
         android:tint="@color/history_accept"
         android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-<<<<<<< Updated upstream
         app:layout_constraintStart_toStartOf="parent" />
-=======
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="24dp" />
->>>>>>> Stashed changes
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnBack"
@@ -105,34 +91,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:fabSize="normal" />
 
-<<<<<<< Updated upstream
-=======
-    <!--<ImageButton
-        android:id="@+id/btnHome"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginBottom="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/domov"
-        android:padding="12dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_home_black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/history_text_primary" />-->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginBottom="24dp"
-        android:src="@drawable/ic_back_black"
-        app:tint="@color/background"
-        app:backgroundTint="@color/history_text_primary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:fabSize="normal" />
-
->>>>>>> Stashed changes
 </androidx.constraintlayout.widget.ConstraintLayout>
