@@ -12,7 +12,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-<<<<<<< Updated upstream
         android:padding="16dp">
 
         <ImageView
@@ -26,24 +25,6 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-=======
-        android:orientation="horizontal"
-        android:padding="16dp">
-
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/monstera"
-            />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
->>>>>>> Stashed changes
             android:id="@+id/textOrderId"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -55,7 +36,7 @@
             app:layout_constraintStart_toEndOf="@+id/imageProduct"
             app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+        <TextView
             android:id="@+id/textLocation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -67,7 +48,7 @@
             app:layout_constraintStart_toEndOf="@+id/imageProduct"
             app:layout_constraintTop_toBottomOf="@+id/textOrderId" />
 
-            <TextView
+        <TextView
             android:id="@+id/textStatus"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -81,17 +62,5 @@
             app:layout_constraintTop_toBottomOf="@+id/textLocation"
             app:layout_constraintVertical_bias="1.0" />
 
-<<<<<<< Updated upstream
     </androidx.constraintlayout.widget.ConstraintLayout>
-=======
-            <TextView
-                android:id="@+id/textName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textSize="14sp"
-                android:textStyle="italic"/>
-        </LinearLayout>
-    </LinearLayout>
->>>>>>> Stashed changes
 </androidx.cardview.widget.CardView>
