@@ -181,6 +181,10 @@ class RegisterRequest(BaseModel):
     email: str
     password: str
 
+class OpenBoxRequest(BaseModel): 
+    boxId: str
+    userId: str
+
 @app.post("/login")
 def login(request: LoginRequest):
     vnesen_email = request.email.strip()
@@ -255,7 +259,7 @@ def register(request: RegisterRequest):
             "message": "Uporabnik s tem e-naslovom je že registriran!"
         }
 
-    # Ustvarjanje Bcrypt hleša za novo geslo pred shranjevanjem
+    # Ustvarjanje Bcrypt heša za novo geslo pred shranjevanjem
     sol = bcrypt.gensalt()
     sifrirano_geslo = bcrypt.hashpw(request.password.strip().encode('utf-8'), sol).decode('utf-8')
 
@@ -322,3 +326,15 @@ def get__user_orders(userId: str):
         })
 
     return order_list
+
+@app.post("/open-box")
+def open_box(request: OpenBoxRequest): 
+    input_box_id = request.boxId.strip()
+    input_user_id = request.userId.strip()
+
+    logger.info(f"Zahteva ta odpiranje paketnika '{input_box_id}' s strani uporabnika '{input_user_id}'")
+
+    return{
+        "success": True, 
+        "message": f"Paketnik {input_box_id} odprt"
+    }

@@ -223,12 +223,12 @@ class MainActivity : AppCompatActivity() {
     }
     private fun saveHistory(boxId: String, opened: Boolean) {
         val userIdKey = if (currentUserId.isNotEmpty()) currentUserId else "Unknown"
-        val historyKey = "item_$userIdKey"
+        val historyKey = "items_$userIdKey"
 
         val prefs = getSharedPreferences("history", MODE_PRIVATE)
-        val oldHistory = prefs.getString("items", "[]") ?: "[]"
+        val currentHistoryString = prefs.getString(historyKey, "[]") ?: "[]"
 
-        val jsonArray = org.json.JSONArray(oldHistory)
+        val jsonArray = org.json.JSONArray(currentHistoryString)
 
         val status = if (opened) "Odprto" else "Ni bilo odprto"
         val date = java.text.SimpleDateFormat("dd.MM.yyyy HH:mm", java.util.Locale.getDefault()).format(java.util.Date())

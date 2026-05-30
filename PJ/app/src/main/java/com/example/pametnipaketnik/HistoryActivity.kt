@@ -29,27 +29,30 @@ class HistoryActivity : AppCompatActivity() {
             insets
         }
 
-        allItems = loadHistory()
         adapter = HistoryAdapter(allItems)
         binding.recyclerViewHistory.layoutManager = LinearLayoutManager(this)
         binding.recyclerViewHistory.adapter = adapter
 
         binding.tabVse.setOnClickListener {
             updateTabs(binding.tabVse)
+            allItems = loadHistory()
             adapter.updateItems(allItems)
         }
         binding.tabUspesno.setOnClickListener {
             updateTabs(binding.tabUspesno)
+            allItems = loadHistory()
             val filtred = allItems.filter { it.status == "Odprto" }
             adapter.updateItems(filtred)
         }
         binding.tabNeuspesno.setOnClickListener {
             updateTabs(binding.tabNeuspesno)
+            allItems = loadHistory()
             val filtred = allItems.filter { it.status == "Ni bilo odprto"}
             adapter.updateItems(filtred)
         }
         binding.tabDanes.setOnClickListener {
             updateTabs(binding.tabDanes)
+            allItems = loadHistory()
             val today = java.text.SimpleDateFormat("dd.MM.yyyy", java.util.Locale.getDefault()).format(java.util.Date())
             val filtred = allItems.filter { it.date.startsWith(today)}
             adapter.updateItems(filtred)
@@ -60,16 +63,24 @@ class HistoryActivity : AppCompatActivity() {
             finish()
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        allItems = loadHistory()
+        adapter.updateItems(allItems)
+        updateTabs(binding.tabVse)
+    }
     private fun loadHistory(): List<HistoryItem> {
-        var currentUserId = intent.getStringExtra("USER_ID") ?: ""
+        val userPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        var currentUserId = userPrefs.getString("LOGGED_IN_USER_ID", "") ?: ""
 
         if (currentUserId.isEmpty()) {
-            val userPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-            currentUserId = userPrefs.getString("LOGGED_IN_USER_ID", "") ?: ""
+            currentUserId = intent.getStringExtra("USER_ID") ?: ""
         }
 
         if (currentUserId.isEmpty()) {
-            Log.e("HistoryActivity", "NAPAKA: ID uporabnika je prazen v zgodovini!")
+            Log.e("HistoryActivity", "NAPAKA: ID uporabnika je popolnoma prazen! Zgodovina se ne more naložiti.")
             return emptyList()
         }
 
@@ -104,7 +115,7 @@ class HistoryActivity : AppCompatActivity() {
             }
         } catch (e: Exception) {
             prefs.edit()
-                .putString("items", "[]")
+                .putString(historyKey, "[]")
                 .apply()
         }
 
