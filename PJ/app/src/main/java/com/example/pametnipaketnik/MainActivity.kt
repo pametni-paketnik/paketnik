@@ -82,6 +82,25 @@ class MainActivity : AppCompatActivity() {
             }
             val token = task.result
             Log.d("FCM_Token", "TRENUTNI ZETON NAPRAVE: $token")
+
+            if (currentUserId.isNotEmpty() && token != null) {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    try {
+                        val requestModel = FCMTokenRequest(userId = currentUserId, fcmToken = token)
+                        val response = ApiClient.apiService.updateFcmToken(requestModel)
+
+                        withContext(Dispatchers.Main) {
+                            if (response.isSuccessful) {
+                                Log.d("MainActivity_Debug", "FCM Žeton uspešno posodobljen na strežniku.")
+                            } else {
+                                Log.e("MainActivity_Debug", "API javlja napako pri shranjevanju žetona: ${response.code()}")
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.e("MainActivity_Debug", "Komunikacija s strežnikom za FCM žeton ni uspela", e)
+                    }
+                }
+            }
         }
 
         currentUserId = intent.getStringExtra("USER_ID") ?: ""
