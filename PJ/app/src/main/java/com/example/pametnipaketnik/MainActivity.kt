@@ -56,6 +56,34 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val requestPermissionLauncher = registerForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { isGranted: Boolean ->
+                if (isGranted) {
+                    Log.d("MainActivity_Debug", "Uporabnik je odobril obvestila!")
+                } else {
+                    Toast.makeText(this, "Brez dovoljenja ne boste prejemali obvestil o paketih!", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            if (androidx.core.content.ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.POST_NOTIFICATIONS
+                ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+
+        com.google.firebase.messaging.FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("MainActivity_Debug", "Pridobivanje FCM žetona ni uspelo", task.exception)
+                return@addOnCompleteListener
+            }
+            val token = task.result
+            Log.d("FCM_Token", "TRENUTNI ZETON NAPRAVE: $token")
+        }
+
         currentUserId = intent.getStringExtra("USER_ID") ?: ""
 
         if (currentUserId.isEmpty()) {
