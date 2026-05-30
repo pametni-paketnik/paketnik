@@ -8,10 +8,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.pametnipaketnik.databinding.ActivityMainBinding
 import android.Manifest
-import android.R
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import com.google.firebase.messaging.FirebaseMessaging
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -75,36 +75,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        com.google.firebase.messaging.FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w("MainActivity_Debug", "Pridobivanje FCM žetona ni uspelo", task.exception)
-                return@addOnCompleteListener
-            }
-            val token = task.result
-            Log.d("FCM_Token", "TRENUTNI ZETON NAPRAVE: $token")
-
-            if (currentUserId.isNotEmpty() && token != null) {
-                lifecycleScope.launch(Dispatchers.IO) {
-                    try {
-                        val requestModel = FCMTokenRequest(userId = currentUserId, fcmToken = token)
-                        val response = ApiClient.apiService.updateFcmToken(requestModel)
-
-                        withContext(Dispatchers.Main) {
-                            if (response.isSuccessful) {
-                                Log.d("MainActivity_Debug", "FCM Žeton uspešno posodobljen na strežniku.")
-                            } else {
-                                Log.e("MainActivity_Debug", "API javlja napako pri shranjevanju žetona: ${response.code()}")
-                            }
-                        }
-                    } catch (e: Exception) {
-                        Log.e("MainActivity_Debug", "Komunikacija s strežnikom za FCM žeton ni uspela", e)
-                    }
-                }
-            }
-        }
-
         currentUserId = intent.getStringExtra("USER_ID") ?: ""
-
         if (currentUserId.isEmpty()) {
             val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
             currentUserId = sharedPreferences.getString("LOGGED_IN_USER_ID", "") ?: ""
@@ -114,7 +85,39 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerViewOrders.layoutManager = LinearLayoutManager(this)
 
         if (currentUserId.isNotEmpty()) {
-            loadOrders()
+            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w("MainActivity_Debug", "Pridobivanje FCM žetona ni uspelo", task.exception)
+                    loadOrders()
+                    return@addOnCompleteListener
+                }
+
+                val token = task.result
+                Log.d("FCM_Token", "TRENUTNI ZETON NAPRAVE: $token")
+
+                if (token != null) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        try {
+                            val requestModel = FCMTokenRequest(userId = currentUserId, fcmToken = token)
+                            val response = ApiClient.apiService.updateFcmToken(requestModel)
+
+                            withContext(Dispatchers.Main) {
+                                if (response.isSuccessful) {
+                                    Log.d("MainActivity_Debug", "FCM Žeton uspešno posodobljen na strežniku.")
+                                } else {
+                                    Log.e("MainActivity_Debug", "API javlja napako pri shranjevanju žetona: ${response.code()}")
+                                }
+                                loadOrders()
+                            }
+                        } catch (e: Exception) {
+                            Log.e("MainActivity_Debug", "Komunikacija s strežnikom za FCM žeton ni uspela", e)
+                            withContext(Dispatchers.Main) { loadOrders() }
+                        }
+                    }
+                } else {
+                    loadOrders()
+                }
+            }
         } else {
             Toast.makeText(this, "Napaka: ID uporabnika ni zaznan!", Toast.LENGTH_LONG).show()
         }

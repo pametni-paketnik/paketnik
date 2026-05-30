@@ -16,17 +16,17 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
-        val title = message.notification?.title ?: "Novo obvestilo"
-        val content = message.notification?.body ?: "Dostavljalec je posodobil stanje vašega paketnika"
+        val title = message.data["title"] ?: message.notification?.title ?: "Novo obvestilo"
+        val content = message.data["body"] ?: message.notification?.body ?: "Dostavljalec je posodobil stanje vašega paketnika"
 
-        showLOcalNotification(title, content)
+        showLocalNotification(title, content)
     }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Log.d("FCM_Token", "Ustvarjen je nov žeton naprave: $token")
 
-        val sharedPreferences = getSharedPreferences("USerPrefs", Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val savedUserId = sharedPreferences.getString("LOGGED_IN_USER_ID", "") ?: ""
 
         if(savedUserId.isNotEmpty()){
@@ -43,14 +43,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
     }
 
-    private fun showLOcalNotification(title: String, content: String) {
+    private fun showLocalNotification(title: String, content: String) {
         val intent = Intent(this, MainActivity::class.java).apply {
          addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
 
         val pendingIntent = PendingIntent.getActivity(
             this, 0, intent,
-            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val channelId = "paketnik_notification_channel"
@@ -59,6 +59,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setContentTitle(title)
             .setContentText(content)
             .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setContentIntent(pendingIntent)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -67,10 +69,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             val channel = NotificationChannel(
                 channelId,
                 "Obvestila o paketnikih",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Kanal za nujna obvestila o prevzemu paketov"
+                enableLights(true)
+                enableVibration(true)
+            }
             notificationManager.createNotificationChannel(channel)
         }
-        notificationManager.notify(0, notificationBuilder.build())
+        val uniqueNotificationId = System.currentTimeMillis().toInt()
+        notificationManager.notify(uniqueNotificationId, notificationBuilder.build())
     }
 }

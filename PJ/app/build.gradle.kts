@@ -96,4 +96,5 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     implementation("com.google.firebase:firebase-messaging-ktx:24.0.0")
+    implementation("com.google.firebase:firebase-analytics-ktx:21.5.1")
 }
