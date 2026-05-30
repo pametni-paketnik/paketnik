@@ -24,9 +24,9 @@ const NarociloSchema = new mongoose.Schema({
         validate: [
             {
                 validator: function(izdelki) {
-                    return izdelki.length >= 1 && izdelki.length <= 2;
+                    return izdelki.length === 1;
                 },
-                message: 'Na eno naročilo lahko najmanj 1 in največ 2 izdelka.'
+                message: 'V enem naročilu je lahko samo 1 izdelek.'
             }
         ]
     }, 
