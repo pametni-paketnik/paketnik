@@ -71,8 +71,15 @@ data class Order(
     @SerializedName("status") val status: String,
     @SerializedName("date") val date: String,
     @SerializedName("address") val address: String,
-    @SerializedName("description") val description: String
+    @SerializedName("description") val description: String,
+    @SerializedName("products") val products: List<OrderProduct>
 ): TimelineItem
+
+data class OrderProduct(
+    @SerializedName("productId") val productId: String,
+    @SerializedName("name") val name: String,
+    @SerializedName("path") val path: String
+)
 
 interface ApiService {
     @Multipart
@@ -115,4 +122,9 @@ interface ApiService {
     suspend fun updateFcmToken(
         @Body request: FCMTokenRequest
     ): Response<FCMTokenResponse>
+
+    @GET("products/{productId}")
+    suspend fun getProducts(
+        @Path("productId") productId: String
+    ): Response<OrderProduct>
 }

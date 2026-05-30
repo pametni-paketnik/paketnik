@@ -216,8 +216,9 @@ class MainActivity : AppCompatActivity() {
                         timelineItems.add(HeaderItem("OLDER ORDERS"))
                         timelineItems.addAll(groupOlder)
                     }
+                    val serverBaseUrl = getString(R.string.api_base_url)
 
-                    val adapter = OrderAdapter(timelineItems)
+                    val adapter = OrderAdapter(timelineItems, serverBaseUrl)
                     binding.recyclerViewOrders.adapter = adapter
                 } else {
                     Toast.makeText(this@MainActivity, "Napaka pri prenosu naročil: ${res.code()}",
