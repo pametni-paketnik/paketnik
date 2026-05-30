@@ -47,11 +47,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-<<<<<<< Updated upstream
-=======
-        //ApiClient.initBackend(getString(R.string.api))
-
->>>>>>> Stashed changes
         currentUserName = intent.getStringExtra("prijavljen_uporabnik") ?: "Gost"
         Toast.makeText(this, "Hello $currentUserName!", Toast.LENGTH_SHORT).show()
 
@@ -140,12 +135,6 @@ class MainActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener {
             finish()
         }
-<<<<<<< Updated upstream
-=======
-        /*binding.btnHome.setOnClickListener {
-            Toast.makeText(this, "Ste že na domači strani :)", Toast.LENGTH_SHORT).show()
-        }*/
->>>>>>> Stashed changes
     }
 
     private fun loadOrders(){
