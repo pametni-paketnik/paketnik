@@ -97,16 +97,16 @@ class LoginActivity : AppCompatActivity() {
                             val prejetUserId = logingRes.userId ?: ""
                             var prejetaVloga = logingRes.role ?: ""
                             var prejetoIme = logingRes.name ?: "Uporabnik"
-                            val prejetPriimek = logingRes.surname ?: ""
-                            val prejetEmail = logingRes.email ?: email
+                            //val prejetPriimek = logingRes.surname ?: ""
+                            //val prejetEmail = logingRes.email ?: email
 
                         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
                         sharedPreferences.edit().apply {
                             putString("LOGGED_IN_USER_ID", prejetUserId)
                             putString("USER_ROLE", prejetaVloga)
                             putString("USERNAME", prejetoIme)
-                            putString("USER_SURNAME", prejetPriimek)
-                            putString("USER_EMAIL", prejetEmail)
+                            //putString("USER_SURNAME", prejetPriimek)
+                            //putString("USER_EMAIL", prejetEmail)
                         }.apply()
 
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
