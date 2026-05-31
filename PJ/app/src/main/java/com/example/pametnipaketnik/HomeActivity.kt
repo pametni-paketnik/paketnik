@@ -1,6 +1,7 @@
 package com.example.pametnipaketnik
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Build
@@ -9,6 +10,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,6 +21,7 @@ import com.example.pametnipaketnik.databinding.ActivityHomeBinding
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
+    private var isLoggedIn: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,14 +41,58 @@ class HomeActivity : AppCompatActivity() {
         setUpGoToRegisterText()
 
         binding.btnLogin.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+            if(isLoggedIn){
+                makeLogout()
+            } else{
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+            }
         }
-
         binding.goToRegister.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }
+        binding.buttonBackText.setOnClickListener {
+            val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+            val savedUserId = sharedPreferences.getString("LOGGED_IN_USER_ID", "")
+            val savedName = sharedPreferences.getString("USERNAME", "Uporabnik")
+
+            val intent = Intent(this, MainActivity::class.java).apply {
+                putExtra("USER_ID", savedUserId)
+                putExtra("prijavljen_uporabnik", savedName)
+            }
+            startActivity(intent)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshSession()
+    }
+
+    private fun refreshSession(){
+        val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val userId = sharedPreferences.getString("LOGGED_IN_USER_ID", null)
+
+        if(!userId.isNullOrEmpty()){
+            isLoggedIn = true
+            binding.btnLogin.text = getString(R.string.odjavi_se)
+            binding.goToRegister.visibility = View.GONE
+            binding.buttonBackText.visibility = View.VISIBLE
+        } else {
+            isLoggedIn = false
+            binding.btnLogin.text = getString(R.string.prijavi_se_tukaj)
+            binding.goToRegister.visibility = View.VISIBLE
+            binding.buttonBackText.visibility = View.GONE
+        }
+    }
+
+    private fun makeLogout() {
+        val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().clear().apply()
+
+        Toast.makeText(this, "Odjava uspešna", Toast.LENGTH_SHORT).show()
+        refreshSession()
     }
     private fun setUpGoToRegisterText() {
         val linkText = getString(R.string.go_to_register_link)
