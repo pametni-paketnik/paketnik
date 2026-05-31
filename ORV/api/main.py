@@ -487,29 +487,38 @@ def get__user_orders(userId: str):
                 prod_name = izdelek.get("ime_izdelka", "Neznan izdelek")
                 prod_path = ""
 
-                try:
+                try: 
                     if prod_id != "0":
                         prava_rastlina = izdelki_collection.find_one({"_id": ObjectId(prod_id)})
-                        if not prava_rastlina:  # <-- TUKAJ JE BILA NAPAKA (bilo je: if not ...)
+                        if not prava_rastlina: 
                             prava_rastlina = izdelki_collection.find_one({"_id": prod_id})
-                        
-                        if prava_rastlina:
-                            ime_roze_v_bazi = prava_rastlina.get("ime_izdelka", prava_rastlina.get("ime", prod_name))
-                            ime_cista_slika = str(ime_roze_v_bazi).strip().lower()
-                            
-                            if os.path.exists(f"images/{ime_cista_slika}.png"):
-                                prod_path = f"images/{ime_cista_slika}.png"
-                            elif os.path.exists(f"images/{ime_cista_slika}.jpg"):
-                                prod_path = f"images/{ime_cista_slika}.jpg"
-                            elif os.path.exists(f"images/{ime_cista_slika}.jpeg"):
-                                prod_path = f"images/{ime_cista_slika}.jpeg"
-                            else:
-                                prod_path = prava_rastlina.get("path", prava_rastlina.get("slika_path", ""))
-                except Exception as e:
-                    logger.error(f"Napaka pri iskanju lokalne slike za {prod_id}: {e}")
 
-                if not prod_path:
-                    prod_path = izdelek.get("slika_path", izdelek.get("path", ""))
+                        if rastlina := prava_rastlina:
+                            ime_roze = prava_rastlina.get("name", prod_name)
+                        else:
+                            ime_roze = prod_name
+
+                        ime_ciste_slike = str(ime_roze).strip().lower().replace(" ", "_")
+                        ime_ciste_slike = ime_ciste_slike.replace("č", "c").replace("š", "s").replace("ž", "z")
+
+                        if os.path.exists(f"images/{ime_ciste_slike}.png"):
+                            prod_path = f"images/{ime_ciste_slike}.png"
+                        elif os.path.exists(f"images/{ime_ciste_slike}.jpg"):
+                            prod_path = f"images/{ime_ciste_slike}.jpg"
+                        elif os.path.exists(f"images/{ime_ciste_slike}.jpeg"):
+                            prod_path = f"images/{ime_ciste_slike}.jpeg"
+                        else:
+                            baza_path = prava_rastlina.get("path", "") if prava_rastlina else ""
+                            baza_path_clean = str(baza_path).replace("/images/", "").replace("images/", "").strip("/")
+
+                            if baza_path_clean and os.path.exists(f"images/{baza_path_clean}"):
+                                prod_path = f"images/{baza_path_clean}"
+                            else:
+                                prod_path = "images/coffee.png"
+                                logger.warning(f"[Opozorilo] Slika za '{ime_roze}' (images/{ime_ciste_slike}.png/.jpg) ne obstaja. Uporabljena privzeta slika.") 
+                except Exception as e:
+                    logger.error(f"Napaka pri avtomatskem generiranju poti za sliko {prod_id}: {e}")
+                    prod_path = "images/coffee.png"
 
                 if prod_path and not prod_path.startswith("images/"):
                     prod_path = f"images/{prod_path}"
@@ -517,7 +526,7 @@ def get__user_orders(userId: str):
                 products.append({
                     "productId": prod_id,
                     "name": prod_name,
-                    "path": str(prod_path).strip()
+                    "path": prod_path
                 })
 
         order_list.append({
