@@ -95,7 +95,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginBottom="24dp"
         android:src="@drawable/ic_back_black"
-        app:tint="@color/background"
+        app:tint="@color/home_page_background"
         app:backgroundTint="@color/history_text_primary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
