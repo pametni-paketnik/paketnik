@@ -17,6 +17,8 @@
     <string name="settings">Nastavitve</string>
     <string name="select_language_text">"Izbira jezika "</string>
     <string name="prijavi_se_tukaj">Prijavi se tukaj</string>
+    <string name="odjavi_se">Odjava</string>
+    <string name="nazaj_v_app">Nazaj v aplikacijo</string>
     <string name="go_to_register_text">Nimaš računa? Registriraj se tukaj</string>
     <string name="register_title">Registracija</string>
     <string name="registriraj_se">Registriraj se</string>
