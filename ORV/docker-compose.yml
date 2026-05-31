@@ -19,7 +19,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./model:/app/model:ro
+      - ./api/model:/app/model:ro
     environment:
       - MODEL_PATH=model/resnet18_prepoznava_obrazov.pth
       - AUTH_THRESHOLD=0.80
