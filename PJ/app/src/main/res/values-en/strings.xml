@@ -22,6 +22,12 @@
     <string name="open_the_box">OPEN THE BOX</string>
     <string name="stevilka_paketnika">Box number</string>
     <string name="settings_title">SETTINGS</string>
+    <string name="profile_info_title">Profile</string>
+    <string name="profile_name_value">Name: %1$s</string>
+    <string name="profile_role_value">Role: %1$s</string>
+    <string name="profile_surname_value">Surname: %1$s</string>
+    <string name="profile_email_value">Email: %1$s</string>
+    <string name="profile_unknown_value">Unknown</string>
     <string name="select_language_text">Select Language</string>
     <string name="language_hint">Language</string>
     <string name="put_face_in_frame_text">Place your face in the oval frame</string>

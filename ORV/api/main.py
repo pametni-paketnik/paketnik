@@ -353,7 +353,7 @@ def login(request: LoginRequest):
         return {
             "success": False,
             "message": "Napačen e-naslov ali geslo",
-            "userId": "", "name": "", "role": ""
+            "userId": "", "name": "", "surname": "", "email": "", "role": ""
         }
         
     baza_geslo_surovo = user.get("geslo") if "geslo" in user else user.get("geslo ")
@@ -361,7 +361,7 @@ def login(request: LoginRequest):
         return {
             "success": False,
             "message": "Napačen e-naslov ali geslo",
-            "userId": "", "name": "", "role": ""
+            "userId": "", "name": "", "surname": "", "email": "", "role": ""
         }
 
     baza_hash_str = str(baza_geslo_surovo).strip()
@@ -372,23 +372,25 @@ def login(request: LoginRequest):
                 return {
                     "success": False,
                     "message": "Napačen e-naslov ali geslo",
-                    "userId": "", "name": "", "role": ""
+                    "userId": "", "name": "", "surname": "", "email": "", "role": ""
                 }
         else:
             if baza_hash_str != vneseno_geslo:
                 return {
                     "success": False,
                     "message": "Napačen e-naslov ali geslo",
-                    "userId": "", "name": "", "role": ""
+                    "userId": "", "name": "", "surname": "", "email": "", "role": ""
                 }
     except Exception:
         return {
             "success": False,
             "message": "Napaka pri preverjanju gesla",
-            "userId": "", "name": "", "role": ""
+            "userId": "", "name": "", "surname": "", "email": "", "role": ""
         }
         
     ime = user.get("ime") if "ime" in user else user.get("ime ", "uporabnik")
+    priimek = user.get("priimek") if "priimek" in user else user.get("priimek ", "")
+    email = user.get("email") if "email" in user else user.get("email ", "")
     vloga = user.get("vloga") if "vloga" in user else user.get("vloga ", "user")
     
     return {
@@ -396,6 +398,8 @@ def login(request: LoginRequest):
         "message": "Prijava uspešna",
         "userId": str(user["_id"]), 
         "name": str(ime).strip(),
+        "surname": str(priimek).strip(),
+        "email": str(email).strip(),
         "role": str(vloga).strip()  
     }
 
@@ -431,6 +435,32 @@ def register(request: RegisterRequest):
     return {
         "success": True,
         "message": "Registracija uspešna! Sedaj se lahko prijavite."
+    }
+
+
+@app.get("/users/{userId}")
+def get_user_profile(userId: str):
+    query_conditions = [{"_id": userId}]
+    try:
+        query_conditions.append({"_id": ObjectId(userId)})
+    except Exception:
+        pass
+
+    user = uporabniki_collection.find_one({"$or": query_conditions})
+    if not user:
+        raise HTTPException(status_code=404, detail="Uporabnik ni najden")
+
+    ime = user.get("ime") if "ime" in user else user.get("ime ", "")
+    priimek = user.get("priimek") if "priimek" in user else user.get("priimek ", "")
+    email = user.get("email") if "email" in user else user.get("email ", "")
+    vloga = user.get("vloga") if "vloga" in user else user.get("vloga ", "user")
+
+    return {
+        "userId": str(user.get("_id", "")),
+        "name": str(ime).strip(),
+        "surname": str(priimek).strip(),
+        "email": str(email).strip(),
+        "role": str(vloga).strip()
     }
 
 class OrderProductModel(BaseModel): 
