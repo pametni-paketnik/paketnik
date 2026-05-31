@@ -94,15 +94,19 @@ class LoginActivity : AppCompatActivity() {
                     if (logingRes?.success == true) {
                         Toast.makeText(this@LoginActivity, "Prijava uspešna!", Toast.LENGTH_SHORT).show()
 
-                        val prejetUserId = logingRes.userId ?: ""
-                        val prejetaVloga = logingRes.role ?: ""
-                        val prejetoIme = logingRes.name ?: "Uporabnik"
+                            val prejetUserId = logingRes.userId ?: ""
+                            var prejetaVloga = logingRes.role ?: ""
+                            var prejetoIme = logingRes.name ?: "Uporabnik"
+                            val prejetPriimek = logingRes.surname ?: ""
+                            val prejetEmail = logingRes.email ?: email
 
                         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
                         sharedPreferences.edit().apply {
                             putString("LOGGED_IN_USER_ID", prejetUserId)
                             putString("USER_ROLE", prejetaVloga)
                             putString("USERNAME", prejetoIme)
+                            putString("USER_SURNAME", prejetPriimek)
+                            putString("USER_EMAIL", prejetEmail)
                         }.apply()
 
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
@@ -121,5 +125,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
+    
 }
 

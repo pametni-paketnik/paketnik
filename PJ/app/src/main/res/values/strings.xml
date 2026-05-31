@@ -26,6 +26,12 @@
     <string name="open_the_box">OPEN THE BOX</string>
     <string name="stevilka_paketnika">Številka paketnika</string>
     <string name="settings_title">NASTAVITVE</string>
+    <string name="profile_info_title">Profil</string>
+    <string name="profile_name_value">Ime: %1$s</string>
+    <string name="profile_role_value">Vloga: %1$s</string>
+    <string name="profile_surname_value">Priimek: %1$s</string>
+    <string name="profile_email_value">E-pošta: %1$s</string>
+    <string name="profile_unknown_value">Ni podatka</string>
     <string name="select_language_text">Izbira jezika / Select Language</string>
     <string name="language_hint">Jezik / Language</string>
     <string name="put_face_in_frame_text">Postavi obraz v okvir</string>

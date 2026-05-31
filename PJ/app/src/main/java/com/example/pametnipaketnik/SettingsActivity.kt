@@ -69,6 +69,8 @@ class SettingsActivity : AppCompatActivity() {
         }
         binding.autoCompleteLanguage.setAdapter(adapter)
 
+        loadProfileInfo()
+
         // 3. Poslušalec za klik na izbiro v meniju
         binding.autoCompleteLanguage.setOnItemClickListener { _, _, position, _ ->
             val selectedLangCode = langCodes[position]
@@ -88,7 +90,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.btnLogout.setOnClickListener {
-            // Clear stored user preferences and return to Login
+            // Clear stored user preferences and return to home screen
             val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
             sharedPreferences.edit().clear().apply()
 
@@ -101,5 +103,26 @@ class SettingsActivity : AppCompatActivity() {
     private fun changeLanguage(langCode: String) {
         val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(langCode)
         AppCompatDelegate.setApplicationLocales(appLocale)
+    }
+
+    private fun loadProfileInfo() {
+        val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val username = sharedPreferences.getString("USERNAME", null)
+            ?.takeIf { it.isNotBlank() }
+            ?: getString(R.string.profile_unknown_value)
+        val userRole = sharedPreferences.getString("USER_ROLE", null)
+            ?.takeIf { it.isNotBlank() }
+            ?: getString(R.string.profile_unknown_value)
+        val userSurname = sharedPreferences.getString("USER_SURNAME", null)
+            ?.takeIf { it.isNotBlank() }
+            ?: getString(R.string.profile_unknown_value)
+        val userEmail = sharedPreferences.getString("USER_EMAIL", null)
+            ?.takeIf { it.isNotBlank() }
+            ?: getString(R.string.profile_unknown_value)
+
+        binding.profileName.text = getString(R.string.profile_name_value, username)
+        binding.profileRole.text = getString(R.string.profile_role_value, userRole)
+        binding.profileSurname.text = getString(R.string.profile_surname_value, userSurname)
+        binding.profileEmail.text = getString(R.string.profile_email_value, userEmail)
     }
 }
