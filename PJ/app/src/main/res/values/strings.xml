@@ -40,5 +40,13 @@
     <string name="smart_flower_locker">Smart Flower Locker</string>
     <string name="moja_narocila">moja naročila</string>
     <string name="nastavi_face_id">Nastavi Face ID</string>
+    <string name="narocilo">Naročilo: #%1$s</string>
+    <string name="lokacija">Lokacija: %1$s</string>
+    <string name="status">Status: %1$s</string>
+    <string name="odprto">Odprto</string>
+    <string name="ni_bilo_odprto">Ni bilo odprto</string>
+    <string name="today">TODAY</string>
+    <string name="yesterday">YESTERDAY</string>
+    <string name="older_orders">OLDER ORDERS</string>
 
 </resources>

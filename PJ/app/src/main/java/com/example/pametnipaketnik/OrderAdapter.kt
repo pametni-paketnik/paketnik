@@ -41,9 +41,13 @@ class OrderAdapter(
             }
             is Order -> {
                 val orderHolder = holder as OrderViewHolder
-                orderHolder.binding.textOrderId.text = "Naročilo: #${item.boxId}"
-                orderHolder.binding.textLocation.text = "Lokacija: ${item.address}"
-                orderHolder.binding.textStatus.text = "Status: ${item.status}"
+                val itemContext = orderHolder.itemView.context
+                orderHolder.binding.textOrderId.text =
+                    itemContext.getString(R.string.narocilo, item.boxId)
+                orderHolder.binding.textLocation.text =
+                    itemContext.getString(R.string.lokacija, item.address)
+                orderHolder.binding.textStatus.text =
+                    itemContext.getString(R.string.status, item.status)
 
                 val firstProduct = item.products.firstOrNull()
                 if (firstProduct != null && firstProduct.path.isNotEmpty()) {

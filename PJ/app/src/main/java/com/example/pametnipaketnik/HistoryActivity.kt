@@ -41,13 +41,13 @@ class HistoryActivity : AppCompatActivity() {
         binding.tabUspesno.setOnClickListener {
             updateTabs(binding.tabUspesno)
             allItems = loadHistory()
-            val filtred = allItems.filter { it.status == "Odprto" }
+            val filtred = allItems.filter { it.status == getString(R.string.odprto) }
             adapter.updateItems(filtred)
         }
         binding.tabNeuspesno.setOnClickListener {
             updateTabs(binding.tabNeuspesno)
             allItems = loadHistory()
-            val filtred = allItems.filter { it.status == "Ni bilo odprto"}
+            val filtred = allItems.filter { it.status == getString(R.string.ni_bilo_odprto)}
             adapter.updateItems(filtred)
         }
         binding.tabDanes.setOnClickListener {

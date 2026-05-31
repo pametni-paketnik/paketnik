@@ -205,15 +205,15 @@ class MainActivity : AppCompatActivity() {
                     val timelineItems = mutableListOf<TimelineItem>()
 
                     if (groupToday.isNotEmpty()) {
-                        timelineItems.add(HeaderItem("TODAY"))
+                        timelineItems.add(HeaderItem(getString(R.string.today)))
                         timelineItems.addAll(groupToday)
                     }
                     if (groupYesterday.isNotEmpty()) {
-                        timelineItems.add(HeaderItem("YESTERDAY"))
+                        timelineItems.add(HeaderItem(getString(R.string.yesterday)))
                         timelineItems.addAll(groupYesterday)
                     }
                     if (groupOlder.isNotEmpty()) {
-                        timelineItems.add(HeaderItem("OLDER ORDERS"))
+                        timelineItems.add(HeaderItem(getString(R.string.older_orders)))
                         timelineItems.addAll(groupOlder)
                     }
                     val serverBaseUrl = getString(R.string.api_base_url)

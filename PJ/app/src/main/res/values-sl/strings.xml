@@ -16,7 +16,7 @@
     <string name="prijava_z_obrazom">Prijava z obrazom</string>
     <string name="settings">Nastavitve</string>
     <string name="select_language_text">"Izbira jezika "</string>
-    <string name="prijavi_se_tukaj">Login here</string>
+    <string name="prijavi_se_tukaj">Prijavi se tukaj</string>
     <string name="go_to_register_text">Nimaš računa? Registriraj se tukaj</string>
     <string name="register_title">Registracija</string>
     <string name="registriraj_se">Registriraj se</string>
@@ -34,6 +34,14 @@
     <string name="go_to_login_text">Že imaš račun? Prijavi se tukaj</string>
     <string name="domov">Domov</string>
     <string name="smart_flower_locker">Smart Flower Locker</string>
-    <string name="moja_narocila">my orders</string>
-    <string name="nastavi_face_id">Set Face ID</string>
+    <string name="moja_narocila">moja naročila</string>
+    <string name="nastavi_face_id">Nastavi Face ID</string>
+    <string name="narocilo">Naročilo: #%1$s</string>
+    <string name="lokacija">Lokacija: %1$s</string>
+    <string name="status">Status: %1$s</string>
+    <string name="odprto">Odprto</string>
+    <string name="ni_bilo_odprto">Ni bilo odprto</string>
+    <string name="today">DANES</string>
+    <string name="yesterday">VČERAJ</string>
+    <string name="older_orders">STAREJŠA NAROČILA</string>
 </resources>
