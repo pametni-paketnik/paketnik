@@ -3,6 +3,7 @@ package com.example.pametnipaketnik
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import android.widget.Filter
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -24,10 +25,10 @@ class SettingsActivity : AppCompatActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-            // Izračunamo 24dp v piksle, da bo odmik enak na vseh telefonih
+            // Izračuna 24dp v piksle, da bo odmik enak na vseh telefonih
             val dp24 = (24 * resources.displayMetrics.density).toInt()
 
-            // Nastavimo padding: sistemski rob + tvojih 24dp
+            // Nastavimo padding: sistemski rob + 24dp
             v.setPadding(
                 systemBars.left + dp24,
                 systemBars.top + dp24,
@@ -43,7 +44,28 @@ class SettingsActivity : AppCompatActivity() {
         val langCodes = arrayOf("sl", "en")
 
         // 2. Nastavitev adapterja za dropdown
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, languages)
+        val adapter = object : ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_list_item_1,
+            languages.toMutableList()
+        ) {
+            override fun getFilter(): Filter {
+                return object : Filter() {
+                    override fun performFiltering(constraint: CharSequence?): FilterResults {
+                        return FilterResults().apply {
+                            values = languages.toList()
+                            count = languages.size
+                        }
+                    }
+
+                    override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                        clear()
+                        addAll(languages.toList())
+                        notifyDataSetChanged()
+                    }
+                }
+            }
+        }
         binding.autoCompleteLanguage.setAdapter(adapter)
 
         // 3. Poslušalec za klik na izbiro v meniju
