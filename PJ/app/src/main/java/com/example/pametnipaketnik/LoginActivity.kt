@@ -1,5 +1,6 @@
 package com.example.pametnipaketnik
 
+import android.content.Context
 import android.os.Bundle
 import android.content.Intent
 import android.graphics.Typeface
@@ -18,6 +19,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         window.statusBarColor = androidx.core.content.ContextCompat.getColor(this, R.color.home_page_background)
         androidx.core.view.WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -100,6 +102,7 @@ class LoginActivity : AppCompatActivity() {
                         sharedPreferences.edit().apply {
                             putString("LOGGED_IN_USER_ID", prejetUserId)
                             putString("USER_ROLE", prejetaVloga)
+                            putString("USERNAME", prejetoIme)
                         }.apply()
 
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)

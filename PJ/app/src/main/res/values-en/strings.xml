@@ -4,6 +4,8 @@
     <string name="app_name">SmartLocker</string>
     <string name="login_title">Login</string>
     <string name="prijavi_se">Login</string>
+    <string name="odjavi_se">Logout</string>
+    <string name="nazaj_v_app">Back to app</string>
     <string name="prijavi_se_tukaj">Login here</string>
     <string name="go_to_register_text">Don\'t have an account? Register here</string>
     <string name="register_title">Registration</string>
