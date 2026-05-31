@@ -1,6 +1,7 @@
 package com.example.pametnipaketnik
 
 import android.content.Intent
+import android.content.Context
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Filter
@@ -84,6 +85,16 @@ class SettingsActivity : AppCompatActivity() {
 
         binding.btnBack.setOnClickListener {
             finish()
+        }
+
+        binding.btnLogout.setOnClickListener {
+            // Clear stored user preferences and return to Login
+            val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+            sharedPreferences.edit().clear().apply()
+
+            val intent = Intent(this, HomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
         }
     }
 
