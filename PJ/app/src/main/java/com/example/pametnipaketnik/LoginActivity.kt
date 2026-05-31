@@ -94,19 +94,19 @@ class LoginActivity : AppCompatActivity() {
                     if (logingRes?.success == true) {
                         Toast.makeText(this@LoginActivity, "Prijava uspešna!", Toast.LENGTH_SHORT).show()
 
-                            val prejetUserId = logingRes.userId ?: ""
-                            var prejetaVloga = logingRes.role ?: ""
-                            var prejetoIme = logingRes.name ?: "Uporabnik"
-                            //val prejetPriimek = logingRes.surname ?: ""
-                            //val prejetEmail = logingRes.email ?: email
+                        val prejetUserId = logingRes.userId ?: ""
+                        val prejetaVloga = logingRes.role ?: ""
+                        val prejetoIme = logingRes.name ?: "Uporabnik"
+                        val prejetPriimek = logingRes.getSurnameValue() ?: ""
+                        val prejetEmail = logingRes.getEmailValue() ?: email
 
                         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
                         sharedPreferences.edit().apply {
                             putString("LOGGED_IN_USER_ID", prejetUserId)
                             putString("USER_ROLE", prejetaVloga)
                             putString("USERNAME", prejetoIme)
-                            //putString("USER_SURNAME", prejetPriimek)
-                            //putString("USER_EMAIL", prejetEmail)
+                            putString("USER_SURNAME", prejetPriimek)
+                            putString("USER_EMAIL", prejetEmail)
                         }.apply()
 
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
@@ -127,5 +127,19 @@ class LoginActivity : AppCompatActivity() {
     }
 
     
+}
+
+private fun LoginResponse.getSurnameValue(): String? {
+    return runCatching {
+        val getter = javaClass.methods.firstOrNull { it.name == "getSurname" && it.parameterCount == 0 }
+        getter?.invoke(this) as? String
+    }.getOrNull()
+}
+
+private fun LoginResponse.getEmailValue(): String? {
+    return runCatching {
+        val getter = javaClass.methods.firstOrNull { it.name == "getEmail" && it.parameterCount == 0 }
+        getter?.invoke(this) as? String
+    }.getOrNull()
 }
 
