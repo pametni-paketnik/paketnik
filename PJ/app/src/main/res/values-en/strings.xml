@@ -4,6 +4,7 @@
     <string name="app_name">SmartLocker</string>
     <string name="login_title">Login</string>
     <string name="prijavi_se">Login</string>
+    <string name="prijavi_se_tukaj">Prijavi se tukaj</string>
     <string name="go_to_register_text">Don\'t have an account? Register here</string>
     <string name="register_title">Registration</string>
     <string name="registriraj_se">Register</string>
@@ -14,7 +15,7 @@
     <string name="zgodovina_paketnika">LOCKER HISTORY</string>
     <string name="vse">All</string>
     <string name="uspesno">Successful</string>
-    <string name="neuspesno">Unsuccessful</string>
+    <string name="neuspesno">Failed</string>
     <string name="danes">Today</string>
     <string name="open_the_box">OPEN THE BOX</string>
     <string name="stevilka_paketnika">Box number</string>
@@ -32,5 +33,8 @@
     <string name="go_to_login_link">Login here</string>
     <string name="nazaj">Back</string>
     <string name="domov">Home</string>
+    <string name="smart_flower_locker">Smart Flower Locker</string>
+    <string name="moja_narocila">moja naročila</string>
+    <string name="nastavi_face_id">Nastavi Face ID</string>
 
 </resources>
