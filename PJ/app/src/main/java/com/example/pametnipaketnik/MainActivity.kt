@@ -135,9 +135,9 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("USER_ID", currentUserId)
             startActivity(intent)
         }
-        /*binding.btnBack.setOnClickListener {
+        binding.btnBack.setOnClickListener {
             finish()
-        }*/
+        }
     }
 
     private fun loadOrders(){

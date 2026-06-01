@@ -133,7 +133,7 @@ class HistoryActivity : AppCompatActivity() {
             if(tab == selected){
                 tab.setTextColor(primary)
                 tab.setTypeface(null, Typeface.BOLD)
-                tab.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+                tab.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
             } else{
                 tab.setTextColor(secondary)
                 tab.setTypeface(null, Typeface.NORMAL)
