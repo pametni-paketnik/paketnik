@@ -23,22 +23,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-
-    <ImageButton
-        android:id="@+id/btnLogout"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/settings"
-        android:padding="8dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/logout"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/history_text_primary" />
-
     <TextView
         android:id="@+id/languageLabel"
         android:layout_width="wrap_content"
