@@ -12,6 +12,7 @@ import androidx.core.os.LocaleListCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.pametnipaketnik.databinding.ActivitySettingsBinding
+import android.content.res.Configuration
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
@@ -100,9 +101,52 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        refreshTexts()
+
+        val languages = arrayOf("Slovenščina", "English")
+        val currentLang = AppCompatDelegate.getApplicationLocales().toLanguageTags()
+
+        if (currentLang.contains("en")) {
+            binding.autoCompleteLanguage.setText(languages[1], false)
+        } else {
+            binding.autoCompleteLanguage.setText(languages[0], false)
+        }
+    }
+
     private fun changeLanguage(langCode: String) {
-        val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(langCode)
+        val currentLang = AppCompatDelegate
+            .getApplicationLocales()
+            .toLanguageTags()
+            .substringBefore("-")
+
+        if (currentLang == langCode) {
+            return
+        }
+
+        binding.autoCompleteLanguage.clearFocus()
+        binding.autoCompleteLanguage.dismissDropDown()
+
+        val appLocale = LocaleListCompat.forLanguageTags(langCode)
         AppCompatDelegate.setApplicationLocales(appLocale)
+
+        refreshTexts()
+    }
+
+    private fun refreshTexts() {
+        binding.languageLabel.text = getString(R.string.select_language_text)
+
+        val currentLang = AppCompatDelegate.getApplicationLocales().toLanguageTags()
+
+        if (currentLang.contains("en")) {
+            binding.autoCompleteLanguage.setText("English", false)
+        } else {
+            binding.autoCompleteLanguage.setText("Slovenščina", false)
+        }
+
+        loadProfileInfo()
     }
 
     private fun loadProfileInfo() {
@@ -119,10 +163,5 @@ class SettingsActivity : AppCompatActivity() {
         val userEmail = sharedPreferences.getString("USER_EMAIL", null)
             ?.takeIf { it.isNotBlank() }
             ?: getString(R.string.profile_unknown_value)
-
-        binding.profileName.text = getString(R.string.profile_name_value, username)
-        binding.profileRole.text = getString(R.string.profile_role_value, userRole)
-        binding.profileSurname.text = getString(R.string.profile_surname_value, userSurname)
-        binding.profileEmail.text = getString(R.string.profile_email_value, userEmail)
     }
 }
