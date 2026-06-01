@@ -137,6 +137,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun refreshTexts() {
         binding.languageLabel.text = getString(R.string.select_language_text)
+        binding.settingsTitle.text = getString(R.string.settings_title)
 
         val currentLang = AppCompatDelegate.getApplicationLocales().toLanguageTags()
 

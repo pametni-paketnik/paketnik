@@ -47,8 +47,8 @@
     <string name="narocilo">Order: #%1$s</string>
     <string name="lokacija">Location: %1$s</string>
     <string name="status">Status: %1$s</string>
-    <string name="odprto">Open</string>
-    <string name="ni_bilo_odprto">Didn\'t open</string>
+    <string name="odprto">Odprto</string>
+    <string name="ni_bilo_odprto">Ni bilo odprto</string>
     <string name="today">TODAY</string>
     <string name="yesterday">YESTERDAY</string>
     <string name="older_orders">OLDER ORDERS</string>
