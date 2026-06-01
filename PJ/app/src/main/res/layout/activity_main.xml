@@ -59,13 +59,13 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:src="@drawable/qrcode"
-        android:tint="@color/history_accept"
+        app:tint="@color/history_accept"
         android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!--<com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -77,7 +77,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:fabSize="normal" />
-    -->
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/buttonHistory"
         android:layout_width="wrap_content"
