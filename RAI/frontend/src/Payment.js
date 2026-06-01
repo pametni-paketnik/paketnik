@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from "./userContext";
 import './index.css'; 
 
-const PaymentForm = ({ onCardDataChange }) => {
+const PaymentForm = ({ onCardDataChange, initialData}) => {
   const { user } = useContext(UserContext);
   const [formData, setFormData] = useState({
       cardholder: '',
@@ -13,24 +13,34 @@ const PaymentForm = ({ onCardDataChange }) => {
   }); 
 
   useEffect(() => {
-    if (user) {
+    if(initialData && (initialData.cardNumber || initialData.cardholder)) {
+      setFormData({
+      cardholder: initialData.cardholder || '',
+      cardNumber: initialData.cardNumber || '',
+      month: initialData.month || '',
+      year: initialData.year || '',
+      cvv: initialData.cvv || ''
+      });
+    }
+
+    else if (user && !formData.cardNumber) {
       const datumPoteka = user.datum_poteka || '';
       const parts = datumPoteka.split('/');
       const month = parts[0] || '';
       const year = parts[1] ? `20${parts[1]}` : '';
 
-      const initialData = {
+      const userProfileData = {
         cardholder: user.ime_na_kartici || '',
         cardNumber: user.stevilka_kartice || '',
         month: month,
         year: year,
         cvv: user.cvv || ''
       };
-      setFormData(initialData); 
+      setFormData(userProfileData); 
 
-      if(onCardDataChange) onCardDataChange(initialData); 
+      if(onCardDataChange) onCardDataChange(userProfileData); 
     }
-  }, [user]);
+  }, [user, initialData]);
 
   const updateFormData = (newData) => {
     setFormData(newData);

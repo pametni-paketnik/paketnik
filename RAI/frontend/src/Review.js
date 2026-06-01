@@ -56,6 +56,7 @@ const ReviewForm = () => {
             })
             .catch(err=> {
                 setFinalOrder(storedOrder); 
+                localStorage.setItem('final_orders', JSON.stringify(storedOrder)); 
             })
             .finally(() => {
                 setLoading(false); 

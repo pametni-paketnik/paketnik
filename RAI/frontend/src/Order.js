@@ -23,9 +23,48 @@ const OrderForm = () =>{
     useEffect(() => {
         const storedCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
         setCart(storedCart.slice(0, 1)); 
+
+        const storedFinalOrder = JSON.parse(localStorage.getItem('final_orders'));
+        if (storedFinalOrder) {
+            if (storedFinalOrder.items && storedFinalOrder.items.length > 0) {
+                setProcessedOrders(storedFinalOrder.items);
+                    
+                    setCurrentIndex(0); 
+
+                    const currentPaketnik = storedFinalOrder.items[0]?.selectedLocker; 
+                    if (currentPaketnik && currentPaketnik._id) {
+                    setSelectedLocker({
+                        _id: currentPaketnik._id,
+                        id: currentPaketnik._id,
+                        ime: currentPaketnik.name || currentPaketnik.ime,
+                        name: currentPaketnik.name || currentPaketnik.ime,
+                        lokacija: currentPaketnik.address || currentPaketnik.lokacija,
+                        naslov: currentPaketnik.address || currentPaketnik.naslov
+                    });
+                }
+            }
+            if(storedFinalOrder.payment) {
+                setPaymentData(storedFinalOrder.payment); 
+            }
+        }
     }, []); 
 
-    const currentProduct = cart[currentIndex]; 
+    useEffect(() => {
+        if (processedOrders[currentIndex]) {
+            const loker = processedOrders[currentIndex].selectedLocker;
+            if (loker && loker._id) {
+                setSelectedLocker({
+                    _id: loker._id,
+                    id: loker._id,
+                    ime: loker.name || loker.ime,
+                    naslov: loker.address || loker.naslov
+                });
+                return;
+            }
+        }
+    }, [currentIndex, processedOrders]);
+
+    const currentProduct = cart[currentIndex];
 
     const handleNextProduct = () => {
         const lockerPayload = {
@@ -39,7 +78,8 @@ const OrderForm = () =>{
             selectedLocker: lockerPayload
         }; 
 
-        const updatedProcessed = [...processedOrders, newOrderEntry];
+        const updatedProcessed = [];
+        updatedProcessed[0] = newOrderEntry;
         setProcessedOrders(updatedProcessed);
 
         if (currentIndex < cart.length - 2) {
@@ -137,7 +177,7 @@ return (
 
                     <section className="checkout-form-section">
                         <h3 className="checkout-section-title">2. PAYMENT METHOD</h3>
-                        <PaymentForm onCardDataChange={setPaymentData} />
+                        <PaymentForm onCardDataChange={setPaymentData} initialData={paymentData} />
                     </section>
 
                     <div className="checkout-footer-action">
