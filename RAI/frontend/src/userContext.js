@@ -13,6 +13,8 @@ export const UserContext = createContext();
             localStorage.setItem("uporabnik", JSON.stringify(userInfo)); 
         }else{
             localStorage.removeItem("uporabnik"); 
+            localStorage.removeItem("cart"); 
+            localStorage.removeItem("final_orders"); 
         }
         setUser(userInfo); 
     };
