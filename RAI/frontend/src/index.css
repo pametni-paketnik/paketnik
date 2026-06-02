@@ -2124,6 +2124,13 @@ nav {
   margin-bottom: 25px;
 }
 
+.flower-order-card-date-order {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+}
+
 .flower-order-badge {
   display: inline-flex;
   align-items: center;
@@ -2138,6 +2145,19 @@ nav {
 }
 
 .flower-order-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(54, 80, 22, 0.12);
+  color: rgb(54, 80, 22);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.flower-order-createdAt {
   display: inline-flex;
   align-items: center;
   padding: 8px 16px;

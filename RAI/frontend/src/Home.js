@@ -41,6 +41,7 @@ function Home({ orderFilter = "oddano" }) {
                 const res = await api.get('/narocilo');
 
                 const currentUserId = user ? (user._id || user.id) : null;
+                
                 const filteredOrders = res.data.filter((order) => {
                     if (orderFilter === 'oddano') {
                         return order.status === 'oddano';
@@ -49,7 +50,11 @@ function Home({ orderFilter = "oddano" }) {
                     }
                 });
 
-                setOrders(filteredOrders);
+                const sortedOrders = [...filteredOrders].sort(
+                    (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+                );
+
+                setOrders(sortedOrders);
             } catch (err) {
                 console.error("Napaka pri pridobivanju naročil:", err);
             }
@@ -134,15 +139,20 @@ function Home({ orderFilter = "oddano" }) {
             });
     };
 
-    const handleAcceptOrder = async (orderId) => {
+    const handleAcceptOrder = async (order) => {
+        const confirmed = window.confirm(
+            `Are you sure you want to accept order #${order._id.slice(-6)}?`
+        );
+
+        if (!confirmed) return;
         try {
-            await api.put(`/narocilo/${orderId}/status`, {
+            await api.put(`/narocilo/${order._id}/status`, {
                 status: 'v_dostavi',
                 cvetlicarna_id: user ? (user._id || user.id) : null
             });
 
             setOrders((prevOrders) =>
-                prevOrders.filter((order) => order._id !== orderId)
+                prevOrders.filter((o) => o._id !== order._id)
             );
 
             alert('Naročilo je bilo uspešno sprejeto.');
@@ -152,16 +162,21 @@ function Home({ orderFilter = "oddano" }) {
         }
     };
     
-    const handleDeliveredOrder = async (orderId) => {
+    const handleDeliveredOrder = async (order) => {
+        const confirmed = window.confirm(
+            `Are you sure you want to mark order #${order._id.slice(-6)} as delivered?`
+        );
+
+        if (!confirmed) return;
         try {
-            const response = await api.put(`/narocilo/${orderId}/status`, {
+            const response = await api.put(`/narocilo/${order._id}/status`, {
                 status: 'dostavljeno'
             });
 
             console.log("Posodobljeno naročilo:", response.data);
 
             setOrders((prevOrders) =>
-                prevOrders.filter((order) => order._id !== orderId)
+                prevOrders.filter((o) => o._id !== order._id)
             );
 
             alert('Naročilo je označeno kot dostavljeno.');
@@ -183,6 +198,24 @@ function Home({ orderFilter = "oddano" }) {
         }
 
         return date.toLocaleDateString('sl-SI');
+    };
+
+    const formatDateTime = (value) => {
+        if (!value) return "Ni podatka";
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) return "Ni podatka";
+
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+
+        return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
     };
 
     const [outOfStock, setOutOfStock] = useState([]); 
@@ -324,7 +357,7 @@ function Home({ orderFilter = "oddano" }) {
 
     if (isFlowerShop) {
         const pageTitle =
-        orderFilter === 'oddano' ? 'ALL ORDERS' : orderFilter === 'v_dostavi' ? 'TAKEN ORDERS' : 'DELIVERED ORDERS';
+        orderFilter === 'oddano' ? 'AVAILABLE ORDERS' : orderFilter === 'v_dostavi' ? 'TAKEN ORDERS' : 'DELIVERED ORDERS';
         return (
             <div className="flower-orders-page">
                 <div className="flower-orders-wrapper">
@@ -383,6 +416,12 @@ function Home({ orderFilter = "oddano" }) {
                                                     <span className="flower-order-price">{formatDeliveryDate(order.datum_dostave)}</span>
                                                 </div>
                                             )} 
+
+                                            <div className="flower-order-card-date-order">
+                                                <span className="flower-order-createdAt">
+                                                    {formatDateTime(order.createdAt)}
+                                                </span>
+                                            </div>
                                         </div>
 
                                         {order.status !== 'dostavljeno' && (
@@ -390,8 +429,8 @@ function Home({ orderFilter = "oddano" }) {
                                                 className="flower-order-accept-btn"
                                                 onClick={() =>
                                                     order.status === 'v_dostavi'
-                                                        ? handleDeliveredOrder(order._id)
-                                                        : handleAcceptOrder(order._id)
+                                                        ? handleDeliveredOrder(order)
+                                                        : handleAcceptOrder(order)
                                                 }
                                             >
                                                 {order.status === 'v_dostavi'

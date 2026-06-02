@@ -40,7 +40,7 @@ function AppContent() {
           {/* NAVIGACIJA ZA CVETLIČARNO */}
           {user && user.vloga === "cvetlicarna" ? (
             <>
-              <Link to="/allOrders" className="navbar-text">All</Link>
+              <Link to="/allOrders" className="navbar-text">Available</Link>
               <Link to="/takenOrders" className="navbar-text">Taken</Link>
               <Link to="/deliveredOrders" className="navbar-text">Delivered</Link>
               <Link to="/profile" className="navbar-text">Profile</Link>
