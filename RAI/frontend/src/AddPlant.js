@@ -54,16 +54,16 @@ function AddPlant() {
             <div className="publish-card">
                 <div className="publish-header">
                     <FaCloudUploadAlt className="publish-icon" />
-                    <h1>Dodaj rastlino</h1>
+                    <h1 className='uppercase-text'>Add plant</h1>
                 </div>
 
                 <form className="publish-form" onSubmit={onSubmit}>
                     {/* IME RASTLINE */}
                     <div className="input-group-modern">
-                        <label><FaFileSignature className="meta-icon" /> Ime rastline</label>
+                        <label><FaFileSignature className="meta-icon" /> Plant name</label>
                         <input 
                             type="text" 
-                            placeholder="VNESI IME..." 
+                            placeholder="WRITE NAME..." 
                             className="uppercase-input" 
                             value={name} 
                             onChange={(e) => setName(e.target.value.toUpperCase())}
@@ -73,10 +73,10 @@ function AddPlant() {
 
                     {/* CENA */}
                     <div className="input-group-modern">
-                        <label><FaEuroSign className="meta-icon" /> Cena</label>
+                        <label><FaEuroSign className="meta-icon" /> Price</label>
                         <input 
                             type="text" 
-                            placeholder="NPR. 15.00 €" 
+                            placeholder="15.00 €" 
                             value={price} 
                             onChange={(e) => setPrice(e.target.value)}
                             required 
@@ -85,10 +85,10 @@ function AddPlant() {
 
                     {/* OPIS (Description v modelu) */}
                     <div className="input-group-modern">
-                        <label><FaCommentAlt className="meta-icon" /> Opis</label>
+                        <label><FaCommentAlt className="meta-icon" /> Description</label>
                         <input 
                             type="text" 
-                            placeholder="Povej kaj o tej rastlini..." 
+                            placeholder="Tell me something about this plant..." 
                             value={description} 
                             onChange={(e) => setDescription(e.target.value)}
                             required 
@@ -97,10 +97,10 @@ function AddPlant() {
 
                     {/* VZDRZEVANJE */}
                     <div className="input-group-modern">
-                        <label><FaCommentAlt className="meta-icon" /> Vzdrzevanje</label>
+                        <label><FaCommentAlt className="meta-icon" /> Care</label>
                         <input 
                             type="text" 
-                            placeholder="Povej kako se vzdrzuje to raztlino..." 
+                            placeholder="Tell me how this plant is maintained..." 
                             value={care} 
                             onChange={(e) => setCare(e.target.value)}
                             required 
@@ -109,7 +109,7 @@ function AddPlant() {
 
                     {/* SLIKA */}
                     <div className="input-group-modern">
-                        <label><FaCommentAlt className="meta-icon" /> IZBERI FOTOGRAFIJO:</label>
+                        <label><FaCommentAlt className="meta-icon" /> CHOOSE PHOTO:</label>
                         <input 
                             type="file" 
                             id="file-upload"
@@ -120,7 +120,7 @@ function AddPlant() {
 
                     <div className="profile-footer">
                         <button className="submit-btn uppercase-text" type="submit">
-                            DODAJ NA SEZNAM
+                            ADD TO LIST
                         </button>
                     </div>
                 </form>
