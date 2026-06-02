@@ -7,7 +7,8 @@ import json
 from pathlib import Path
 from PIL import Image, ImageOps
 from datetime import datetime, timedelta
-from apscheduler.schedulers.background import BackgroundScheduler
+
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi.staticfiles import StaticFiles
 
 import cv2
@@ -100,7 +101,7 @@ model = None
 # Ta ukaz pove FastAPI-ju: Vse kar pride na /images, poišči v mapi "images" na disku
 app.mount("/images", StaticFiles(directory="images"), name="images")
 
-scheduler = BackgroundScheduler()
+scheduler = AsyncIOScheduler()
 
 def pretvori_v_datetime(datum_iz_baze): 
     if isinstance(datum_iz_baze, datetime): 
@@ -115,14 +116,26 @@ def pretvori_v_datetime(datum_iz_baze):
         except ValueError: 
             pass
         
-        if " " in datum_str: 
-            return datetime.strptime(str(datum_iz_baze).strip(), "%Y-%m-%d %H:%M:%S")
+        try: 
+            return datetime.strptime(le_datum, "%Y.%m.%d")
+        except ValueError: 
+            pass
+        
+        try:
+            return datetime.strptime(datum_str, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            pass
+
+        try:
+            return datetime.strptime(datum_str, "%Y.%m.%d %H:%M:%S")
+        except ValueError:
+            pass
+            
         raise ValueError("Noben znan format datuma ne ustreza.")
     
     except Exception as e: 
-        logging.error(f"[Scheduler] Napaka pri pretvorbi datuma '{datum_iz_baze}': {e}")
-        return None
-    
+        logger.error(f"[Scheduler] Napaka pri pretvorbi datuma '{datum_iz_baze}': {e}")
+        return None   
 
 def preveri_in_poslji_casovni_opomnik():
     """Funkcija ki teče v ozadju ijn preverja pogoje za 2 in 3 dni - časovna omejitev naročila v paketniku"""
@@ -130,7 +143,9 @@ def preveri_in_poslji_casovni_opomnik():
     trenutni_cas = datetime.now()
 
     try:
-        aktivna_narocila = list(narocila_collection.find({"status": "za prevzem"}))
+        aktivna_narocila = list(narocila_collection.find({
+            "status": {"$in": ["oddano", "prevzeto"]}
+        }))
     except Exception as e:
         logger.error(f"[Scheduler] Napaka pri branju iz MongoDB: {e}")
         return
@@ -149,10 +164,11 @@ def preveri_in_poslji_casovni_opomnik():
             continue
 
         razlika = trenutni_cas - datum_dostave
-        preteklo_dni = razlika.days
+        preteklo_sekund = razlika.total_seconds()
 
         raw_user_id = doc.get("uporabnik_id")
         if not raw_user_id:
+            logger.warning(f"[Scheduler] Naročilo {doc['_id']} nima nastavljenega uporabnik_id.")
             continue
 
         try: 
@@ -162,53 +178,62 @@ def preveri_in_poslji_casovni_opomnik():
             logger.error(f"[Scheduler] Napaka pri iskanju uporabnika {raw_user_id}: {e}")
             continue
 
-        if not user or "fcm_token" not in user: 
+        if not user:
+            logger.warning(f"[Scheduler] Uporabnik z ID {raw_user_id} ne obstaja v zbirki 'uporabniki'.")
             continue
 
-        fcm_token = user["fcm_token"]
+        fcm_token = user.get("fcm_token")
+        if not fcm_token:
+            logger.warning(f"[Scheduler] Uporabnik {user.get('email', raw_user_id)} nima shranjenega FCM žetona!")
+            continue
+
         box_id = doc.get("Koda_za_odpiranje", doc.get("koda_za_odpiranje", "Neznan"))
-
-        # po 2 dneh brez prevzema naročila 
-        if preteklo_dni == 2 and not doc.get("opomnik_2_dan_poslan", False):
+        trenutni_status = doc.get("status")
+        
+        if trenutni_status == "oddano": 
             uspeh = poslji_push_notification(
-                fcm_token=fcm_token,
-                naslov=f"Opomnik za prevzem! #{box_id} 📦",
+                fcm_token=fcm_token, 
+                naslov=f"Opozorilo pred pretekom! #{box_id} ⚠️", 
                 vsebina=f"Vaše naročilo v paketniku #{box_id} vas čaka že 2 dni."
-            )
-            if uspeh: 
+            ) 
+            if uspeh:
                 narocila_collection.update_one(
                     {"_id": doc["_id"]}, 
-                    {"$set": {"opomnik_2_dan_poslan": True}}
+                    {"$set": {"status": "obvesceno_oddano"}}
                 )
-                time.sleep(1.5)
+                logger.info(f"[Scheduler] Status naročila {doc['_id']} posodobljen v 'obvesceno_oddano'.")
+       
+            elif trenutni_status == "prevzeto": 
+                logger.info(f"[Scheduler] Naročilo prevzeto pred >30s. Pošiljam zahvalo za {doc['_id']}")
+                uspeh = poslji_push_notification(
+                    fcm_token=fcm_token,
+                    naslov=f"Hvala za nakup! 😊",
+                    vsebina=f"Hvala za vaše naročilo, se vidimo kmalu!"
+                )
+                if uspeh:
+                    narocila_collection.update_one(
+                        {"_id": doc["_id"]}, 
+                        {"$set": {"status": "zakljuceno"}}
+                    )
 
-        if preteklo_dni >= 3 and not doc.get("opomnik_3_dan_poslan", False): 
-            logger.info(f"[Scheduler] Rok potekel. Pošiljam opomnik za naročilo {doc['_id']}")
-            uspeh = poslji_push_notification(
-                fcm_token=fcm_token,
-                naslov=f"Potekel rok! #{box_id} 📦",
-                vsebina=f"Rok za prevzem naročila v paketniku #{box_id} je potekel."
-            )
-            if uspeh: 
-                narocila_collection.update_one(
-                    {"_id": doc["_id"]}, 
-                    {"$set": {"opomnik_3_dan_poslan": True, "status": "poteklo"}} 
-                )
-                time.sleep(1.5)
-        
-        
-scheduler.add_job(preveri_in_poslji_casovni_opomnik, 'interval', seconds=30)
 
 @app.on_event("startup")
 async def startup():
     global model
+
+    try: 
+        scheduler.remove_all_jobs()
+    except Exception: 
+        pass
+
+    scheduler.add_job(preveri_in_poslji_casovni_opomnik, 'interval', seconds=5)
+    scheduler.start()
+
+    print("[USPEH] AsyncIOScheduler uspešno zagnan v ozadju!", flush=True)
+    
     logger.info("Nalagam model...")
     model = load_model()
     logger.info("Model naložen.")
-
-    scheduler.start()
-    logging.info("[Scheduler] Avtomatsko preverjanje opomnikov je zagnano v ozadju.")
-
 
 @app.get("/")
 def root():

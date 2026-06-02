@@ -125,8 +125,6 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-
-    
 }
 
 private fun LoginResponse.getSurnameValue(): String? {
