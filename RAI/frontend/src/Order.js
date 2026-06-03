@@ -7,6 +7,7 @@ import PaketnikMap from './PaketnikMap';
 import DodajPaketnik from './DodajPaketnik';
 import paketnikImg from './images/pametni_paketnik_open.png';
 import './index.css';
+import './index-dark.css';
 
 const OrderForm = () =>{
     const { user } = useContext(UserContext); 

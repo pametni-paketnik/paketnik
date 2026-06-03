@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { CheckCircle } from 'lucide-react';
 import api from './api';
 import './index.css';
+import './index-dark.css';
 import jsPDF from "jspdf";
 
 const formatPhone = (value) => {

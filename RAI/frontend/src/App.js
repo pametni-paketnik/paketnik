@@ -1,7 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { UserContext, UserProvider } from './userContext.js';
 import './index.css';
+import './index-dark.css';
+import './App.css';
 import Login from './Login';
 import Logout from './Logout';
 import Profile from './Profile';
@@ -14,6 +16,34 @@ import ReviewForm from './Review.js';
 
 function AppContent() {
   const { user } = useContext(UserContext);
+   // Stanje za temo
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === 'undefined') {
+      return 'light';
+    }
+    return window.localStorage.getItem('theme') || 'light';
+  });
+
+  useEffect(() => {
+    if (theme === 'dark') {
+    document.body.classList.add('dark-mode');
+    } else {
+    document.body.classList.remove('dark-mode');
+    }
+    window.localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((currentTheme) => (currentTheme === 'dark' ? 'light' : 'dark'));
+  };
+
+  const themeButtonLabel = theme === 'dark' ? 'Light mode' : 'Dark mode';
+
+  const themeButton = (
+    <button type="button" className="theme-toggle-button" onClick={toggleTheme}>
+      {themeButtonLabel}
+    </button>
+  );
 
   return (
     <>
@@ -28,7 +58,7 @@ function AppContent() {
         <div
           className="logo uppercase-text"
           style={{
-            color: "#000",
+            color: theme === 'dark' ? "#fff" : "#000",
             fontWeight: "900",
             fontSize: "1.2rem"
           }}
@@ -36,7 +66,7 @@ function AppContent() {
           InPlant
         </div>
 
-        <div style={{ display: "flex", gap: "20px" }}>
+        <div className="nav-actions" style={{ display: "flex", gap: "20px", alignItems: "center" }}>
           {/* NAVIGACIJA ZA CVETLIČARNO */}
           {user && user.vloga === "cvetlicarna" ? (
             <>
@@ -45,6 +75,7 @@ function AppContent() {
               <Link to="/deliveredOrders" className="navbar-text">Delivered</Link>
               <Link to="/profile" className="navbar-text">Profile</Link>
               <Link to="/logout" className="navbar-text">Logout</Link>
+              {themeButton}
             </>
           ) : (
             <>
@@ -60,11 +91,13 @@ function AppContent() {
                   <Link to="/profile" className="navbar-text">Profile</Link>
                   <Link to="/order" className="navbar-text">Order</Link>
                   <Link to="/logout" className="navbar-text">Logout</Link>
+                  {themeButton}
                 </>
               ) : (
                 <>
                   <Link to="/login" className="navbar-text">Login</Link>
                   <Link to="/register" className="navbar-text">Registration</Link>
+                  {themeButton}
                 </>
               )}
             </>

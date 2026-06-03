@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react"; 
 import { UserContext } from "./userContext";
 import './index.css'; 
+import './index-dark.css';
 
 const PaymentForm = ({ onCardDataChange, initialData}) => {
   const { user } = useContext(UserContext);
