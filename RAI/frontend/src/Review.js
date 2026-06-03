@@ -5,6 +5,13 @@ import api from './api';
 import './index.css';
 import jsPDF from "jspdf";
 
+const formatPhone = (value) => {
+    if (!value || value === "/") return "/";
+    const cleaned = String(value).replace(/\D/g, "").slice(0, 9);
+    if (!cleaned) return "/";
+    return cleaned.match(/.{1,3}/g)?.join(' ') || "/";
+};
+
 const ReviewForm = () => {
     const navigate = useNavigate(); 
     const [finalOrder, setFinalOrder] = useState(null); 
@@ -13,6 +20,8 @@ const ReviewForm = () => {
 
     useEffect (() => {
         const storedOrder = JSON.parse(localStorage.getItem('final_orders')); 
+
+        console.log("RAW storedOrder:", storedOrder);
         
         if (!storedOrder) {
             setLoading(false);
@@ -45,7 +54,11 @@ const ReviewForm = () => {
                             ime: storedOrder.customer?.ime || storedOrder.customer?.firstName || podatkiUporabnika.ime || "",
                             priimek: storedOrder.customer?.priimek || storedOrder.customer?.lastName || podatkiUporabnika.priimek || "",
                             email: storedOrder.customer?.email || podatkiUporabnika.email || "",
-                            telefon: storedOrder.customer?.telefon || storedOrder.customer?.telefon || ""
+                            telefonska_stevilka: (storedOrder.customer?.phone && storedOrder.customer.phone !== "/") 
+                                ? storedOrder.customer.phone 
+                                : (storedOrder.customer?.telefonska_stevilka && storedOrder.customer.telefonska_stevilka !== "/") 
+                                    ? storedOrder.customer.telefonska_stevilka 
+                                    : (podatkiUporabnika.telefonska_stevilka || "")
                         },
                         payment: posodobljenoPlacilo
                     }; 
@@ -92,7 +105,11 @@ const ReviewForm = () => {
                     ime: finalOrder.customer?.firstName || finalOrder.customer?.ime || "", 
                     priimek: finalOrder.customer?.lastName || finalOrder.customer?.priimek || "", 
                     email: finalOrder.customer?.email, 
-                    telefon: finalOrder.customer?.telefon
+                    telefonska_stevilka: (finalOrder.customer?.phone && finalOrder.customer.phone !== "/") 
+                        ? finalOrder.customer.phone 
+                        : (finalOrder.customer?.telefonska_stevilka && finalOrder.customer.telefonska_stevilka !== "/") 
+                            ? finalOrder.customer.telefonska_stevilka 
+                            : ""
                 }, 
                 izdelki: finalOrder.items?.map(item => ({
                     izdelek_id: item._id, 
@@ -160,7 +177,8 @@ const ReviewForm = () => {
         y += 7;
         doc.text(`E-mail: ${stranka.email || ""}`, 14, y);
         y += 7;
-        doc.text(`Telefon: ${stranka.telefon || ""}`, 14, y);
+        const formattedPdfPhone = formatPhone(stranka.telefonska_stevilka);
+        doc.text(`Telefon: ${formattedPdfPhone === "/" ? "" : formattedPdfPhone}`, 14, y);
 
         y += 14;
         doc.setFontSize(14);
@@ -285,7 +303,13 @@ const ReviewForm = () => {
                             </div>
                             <div className="input-group-static">
                                 <label>Phone number</label>
-                                <p>{finalOrder.customer?.telefonska_stevilka || finalOrder.customer?.phone}</p>
+                                <p>
+                                    {formatPhone(
+                                        (finalOrder.customer?.phone && finalOrder.customer.phone !== "/") 
+                                            ? finalOrder.customer.phone 
+                                            : finalOrder.customer?.telefonska_stevilka
+                                    )}
+                                </p>
                             </div>
                         </div>
 

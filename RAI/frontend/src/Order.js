@@ -93,7 +93,7 @@ const OrderForm = () =>{
                     firstName: user?.ime || "Unknown", 
                     lastName: user?.priimek || "Unknown", 
                     email: user?.email || "", 
-                    phone: user?.telefon || "/"
+                    phone: user?.telefonska_stevilka || user?.telefon || "/"
                 }, 
                 items: updatedProcessed, 
                 locker: updatedProcessed[0]?.selectedLocker, 

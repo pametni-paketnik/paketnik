@@ -6,7 +6,7 @@ const NarociloSchema = new mongoose.Schema({
         ime: { type: String, required: true },
         priimek: { type: String, required: true },
         email: { type: String, required: true },
-        telefon: { type: String, required: false }
+        telefonska_stevilka: { type: String, required: false }
     },
     izdelki: { 
         type: [
