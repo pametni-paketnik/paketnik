@@ -152,6 +152,7 @@
         text-transform: uppercase;
         letter-spacing: 1.5px;
         margin-left: 20px;
+        color: #000000 !important;
     }
     
     .dark-mode .plant-details-view {
@@ -940,7 +941,7 @@
     }
     
     .dark-mode .checkout-submit-btn:hover {
-        transform: translateY(-2px);
+        transform: translate(-2px);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
     }
     
@@ -1931,11 +1932,13 @@
         font-size: 1.3rem;
         font-weight: 700;
         letter-spacing: 1px;
+        color: #ffffff !important;
     }
     
     .dark-mode .item-price-custom {
         font-size: 1rem;
         font-weight: 700;
+        color: #ffffff !important;
     }
     
     .dark-mode .item-meta-custom {
@@ -1947,7 +1950,7 @@
     .dark-mode .item-subtext-custom {
         margin: 6px 0 0 0;
         font-size: 14px;
-        color: #555;
+        color: #888;
     }
     
     .dark-mode .price-breakdown-custom {
@@ -1964,7 +1967,7 @@
     }
     
     .dark-mode .free-text-custom {
-        color: #000;
+        color: #ffffff;
         font-weight: 700;
         text-transform: uppercase;
         font-size: 11px;
@@ -1978,7 +1981,7 @@
     }
     
     .dark-mode .total-row-custom {
-        color: #000;
+        color: #ffffff !important;
         font-size: 1.5rem;
         text-transform: uppercase;
         letter-spacing: 1px;
@@ -2245,4 +2248,62 @@
     .dark-mode input:-webkit-autofill {
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
         border-bottom: 2px solid #8dbd5e !important;
+    }
+    /* --- REVIEW PAGE DARK MODE --- */
+    /* Glavna kartica */
+    
+    .dark-mode .checkout-details-review {
+        background: rgba(35, 35, 35) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+    }
+    /* Naslov ORDER REVIEW */
+    
+    .dark-mode .checkout-product-name-review {
+        color: #ffffff;
+    }
+    
+    y
+    /* Podnapis pod naslovom */
+    
+    .dark-mode .checkout-description-review {
+        color: #bbbbbb;
+    }
+    /* Naslovi sekcij */
+    
+    .dark-mode .checkout-section-title-review {
+        color: #ffffff;
+        border-bottom: 1px solid #555;
+        /* Temnejša črta */
+    }
+    /* Majhni sivi napisi */
+    
+    .dark-mode .input-group-static label {
+        color: #8dbd5e;
+        /* Tvoja zelena, da se loči od podatkov */
+        font-weight: 800;
+    }
+    /* Dejanski podatki */
+    
+    .dark-mode .input-group-static p {
+        color: #ffffff;
+    }
+    /* Sekcija za paketnik */
+    
+    .dark-mode .locker-review-item {
+        border-bottom: 1px solid #444 !important;
+    }
+    
+    .dark-mode .locker-item-title {
+        color: #ffffff;
+        font-weight: 700;
+    }
+    
+    .dark-mode .locker-item-address {
+        color: #cccccc;
+    }
+    /* "Home" gumb "Back" gumb */
+    
+    .dark-mode .checkout-back-btn {
+        color: #8dbd5e;
     }
