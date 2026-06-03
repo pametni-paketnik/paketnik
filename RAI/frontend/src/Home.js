@@ -4,6 +4,7 @@ import { ArrowLeft, ShoppingCart, Trash, Heart, ArrowRight, Bold, Sun, Droplet, 
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { UserContext } from './userContext'
 import './index.css';
+import './index-dark.css';
 import paketnikImg from './images/pametni_paketnik_open.png';
 import axios from 'axios';
 
