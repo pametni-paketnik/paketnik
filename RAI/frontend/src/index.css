@@ -2292,3 +2292,9 @@ nav {
     transform: scale(1.1);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
+
+.theme-toggle-button svg {
+    width: 28px !important;
+    height: 28px !important;
+    display: block;
+}

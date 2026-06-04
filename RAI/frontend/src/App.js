@@ -42,7 +42,7 @@ function AppContent() {
 
   const themeButton = (
     <button type="button" className="theme-toggle-button" onClick={toggleTheme} title="Preklopi temo">
-      {theme === 'dark' ? <Sun size={20} /> : <Moon size={20}/>}
+      {theme === 'dark' ? <Sun size={26} /> : <Moon size={26}/>}
     </button>
   );
 
