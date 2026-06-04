@@ -394,12 +394,12 @@ function Home({ orderFilter = "oddano" }) {
     if (isFlowerShop) {
         const pageTitle =
             orderFilter === 'oddano'
-                ? 'NOVA NAROČILA'
+                ? 'NEW ORDERS'
                 : orderFilter === 'v_pripravi'
-                ? 'V PRIPRAVI'
+                ? 'IN PREPARATION'
                 : orderFilter === 'caka_na_prevzem'
-                ? 'PRIPRAVLJENA ZA PREVZEM'
-                : 'PREVZETA NAROČILA';
+                ? 'READY FOR PICKUP'
+                : 'ACCEPTED ORDERS';
         return (
             <div className="flower-orders-page">
                 <div className="flower-orders-wrapper">
