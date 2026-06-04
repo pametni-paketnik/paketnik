@@ -219,6 +219,7 @@
         background: rgba(0, 0, 0, 0.7);
         font-size: 15px;
         outline: none;
+        color: #ffffff !important;
     }
     
     .dark-mode .edit-plant-textarea {
@@ -342,8 +343,8 @@
         width: 60px;
         height: 60px;
         border-radius: 50%;
-        border: 2px solid rgba(54, 80, 22, 0.2);
-        color: rgba(54, 80, 22, 0.7);
+        border: 2px solid rgba(141, 189, 94, 0.3) !important;
+        color: #8dbd5e !important;
         background-color: transparent;
         display: flex;
         align-items: center;
@@ -352,13 +353,14 @@
     }
     
     .dark-mode .feature-item.highlight .feature-icon-circle {
-        border: 2px solid rgb(54, 80, 22);
-        color: rgb(54, 80, 22);
-        background-color: rgba(54, 80, 22, 0.05);
+        border: 2px solid #8dbd5e !important;
+        color: #8dbd5e !important;
+        background-color: rgba(141, 189, 94, 0.2) !important;
+        box-shadow: 0 0 15px rgba(141, 189, 94, 0.3);
     }
     
     .dark-mode .feature-item.highlight span {
-        color: #ffffff;
+        color: #8dbd5e !important;
         font-weight: 700;
     }
     
@@ -383,7 +385,7 @@
     }
     
     .dark-mode .graph-path {
-        stroke: rgb(54, 80, 22);
+        stroke: #8dbd5e !important;
         stroke-width: 2.5;
         stroke-linecap: round;
         transition: d 0.5s ease-in-out;
@@ -419,7 +421,7 @@
     }
     
     .dark-mode .graph-days span.active-day {
-        color: rgb(54, 80, 22);
+        color: #8dbd5e !important;
         font-weight: 800;
         transition: color 0.3s ease;
     }
@@ -613,11 +615,11 @@
     
     .dark-mode .register-visual {
         padding: 20px 40px;
-        color: rgb(54, 80, 22);
+        color: #8dbd5e;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        background: #1B2E14 !important;
+        background: #1b2e1450 !important;
     }
     
     .dark-mode .visual-title {
@@ -673,7 +675,7 @@
         text-transform: uppercase;
         font-weight: 800;
         margin-bottom: 5px;
-        color: rgb(54, 80, 22);
+        color: #8dbd5e !important;
         letter-spacing: 1px;
     }
     
@@ -689,7 +691,7 @@
     
     .dark-mode .input-group-modern input:focus {
         outline: none;
-        border-bottom-color: rgb(54, 80, 22);
+        border-bottom-color: #8dbd5e !important;
     }
     
     .dark-mode .submit-btn {
@@ -698,8 +700,8 @@
         margin-left: auto;
         margin-right: auto;
         width: 70%;
-        background: rgb(54, 80, 22);
-        color: white;
+        background-color: #8dbd5e !important;
+        color: #1a1a1a !important;
         padding: 16px;
         border: none;
         border-radius: 12px;
@@ -724,7 +726,7 @@
     }
     
     .dark-mode .login-link a {
-        color: rgb(54, 80, 22);
+        color: #8dbd5e;
         text-decoration: none;
         font-weight: 800;
         margin-left: 5px;
@@ -1166,8 +1168,8 @@
     .dark-mode .location-item.selected,
     .dark-mode .location-item.active,
     .dark-mode .location-item:active {
-        background-color: #4a4a4a !important;
-        border: 1px solid #364921 !important;
+        background-color: rgba(141, 189, 94, 0.15) !important;
+        border: 1px solid #8dbd5e !important;
         box-shadow: inset 0 0 15px rgba(54, 80, 22, 0.2)
     }
     
@@ -1387,9 +1389,9 @@
         letter-spacing: 1px;
     }
     
-    .dark-mode.profile-header-text p {
+    .dark-mode .profile-header-text p {
         font-size: 0.85rem;
-        color: #bebebe;
+        color: #ffffff;
         margin: 0;
         line-height: 1.5;
     }
@@ -1403,7 +1405,7 @@
         height: 85px;
         border-radius: 50%;
         object-fit: cover;
-        box-shadow: 0 10px 20px rgba(54, 80, 22, 0.15);
+        box-shadow: 0 10px 20px #8dbd5e46;
     }
     
     .dark-mode .full-width {
@@ -1431,7 +1433,7 @@
         font-size: 0.7rem;
         text-transform: uppercase;
         font-weight: 800;
-        color: rgb(54, 80, 22);
+        color: #8dbd5e;
         letter-spacing: 1px;
     }
     
@@ -1439,7 +1441,7 @@
         width: 100%;
         padding: 12px 0;
         border: none;
-        border-bottom: 2px solid rgba(54, 80, 22, 0.08);
+        border-bottom: 2px solid #8dbd5e;
         background: transparent;
         font-size: 0.9rem;
         font-weight: 600;
@@ -1458,7 +1460,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #777;
+        color: #bbbbbb;
         font-size: 14px;
     }
     
@@ -1473,12 +1475,12 @@
     }
     
     .dark-mode .order-history-list.scroll-area::-webkit-scrollbar-thumb {
-        background: #4B7337;
+        background: #8dbd5e;
         border-radius: 10px;
     }
     
     .dark-mode .order-history-list.scroll-area::-webkit-scrollbar-track {
-        background: #eee;
+        background: #292929;
     }
     
     .dark-mode .profile-message {
@@ -1510,7 +1512,7 @@
     }
     
     .dark-mode .order-details {
-        color: rgb(54, 80, 22);
+        color: #8dbd5e;
         text-transform: uppercase;
     }
     
@@ -1519,21 +1521,35 @@
         border-radius: 12px;
         font-size: 12px;
         text-transform: uppercase;
+        border: 1px solid #8dbd5e4a;
     }
     
     .dark-mode .status.oddano {
-        background: rgba(54, 80, 22, 0.12);
-        color: rgb(54, 80, 22);
+        background-color: #ffffff15;
+        color: #ffffff95;
+        border: 1px solid #ffffff5c;
+    }
+    
+    .status.v_obdelavi {
+        background-color: #f1f5f953;
+        color: #64748b;
+        border: 1px solid #cbd5e16c;
+    }
+    
+    .status.v_pripravi {
+        background-color: rgba(75, 115, 55, 0.1);
+        color: #4B7337;
+        border: 1px solid rgba(75, 115, 55, 0.2);
     }
     
     .dark-mode .status.dostavljeno {
-        background: rgba(54, 80, 22, 0.12);
-        color: rgb(54, 80, 22);
+        background: rgb(54, 80, 22);
+        color: #8dbd5e;
     }
     
     .dark-mode .status.v_dostavi {
-        background: rgba(54, 80, 22, 0.12);
-        color: rgb(54, 80, 22);
+        background: rgb(54, 80, 22);
+        color: #8dbd5e;
     }
     
     .dark-mode .order-products {
@@ -1542,6 +1558,30 @@
         flex-direction: column;
         gap: 5px;
         font-weight: bold;
+    }
+    
+    .dark-mode .status.v_pripravi {
+        background: rgb(54, 80, 22) !important;
+        color: #8dbd5e !important;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+    
+    .status.caka_na_prevzem {
+        background: rgb(54, 80, 22);
+        color: #8dbd5e;
+    }
+    
+    .status.prevzeto {
+        background: rgb(54, 80, 22);
+        color: #8dbd5e;
+    }
+    
+    .status.preklicano {
+        background-color: #dc262617;
+        color: #dc2626;
     }
     
     .dark-mode .order-product {
@@ -2053,16 +2093,16 @@
             scrollbar-width: none !important;
         }
     }
-    /* CVETLICARNE - LIST OF PLANTS */
+    /* --- PROFIL CVETLIČARNE (UPRAVLJANJE NAROČIL) --- */
     
     .dark-mode .flower-order-card {
-        border: none !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
         outline: none !important;
-        background: rgba(255, 255, 255, 0.6);
+        background: rgba(45, 45, 45, 0.6) !important;
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border-radius: 30px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
         overflow: hidden;
         width: 100%;
         box-sizing: border-box;
@@ -2070,6 +2110,7 @@
         display: flex;
         flex-direction: column;
         transition: all 0.3s ease;
+        color: #ffffff;
     }
     
     .dark-mode .flower-orders-grid {
@@ -2103,8 +2144,8 @@
         align-items: center;
         padding: 8px 16px;
         border-radius: 999px;
-        background: rgba(111, 78, 55, 0.08);
-        color: #6F4E37;
+        background: #ff6a002b !important;
+        color: #ff6a00;
         font-size: 0.75rem;
         font-weight: 800;
         letter-spacing: 1px;
@@ -2116,8 +2157,8 @@
         align-items: center;
         padding: 8px 16px;
         border-radius: 999px;
-        background: rgba(54, 80, 22, 0.12);
-        color: rgb(54, 80, 22);
+        background: rgba(141, 189, 94, 0.15) !important;
+        color: #8dbd5e !important;
         font-size: 0.75rem;
         font-weight: 800;
         letter-spacing: 1px;
@@ -2129,8 +2170,8 @@
         align-items: center;
         padding: 8px 16px;
         border-radius: 999px;
-        background: rgba(54, 80, 22, 0.12);
-        color: rgb(54, 80, 22);
+        background: rgba(141, 189, 94, 0.15) !important;
+        color: #8dbd5e !important;
         font-size: 0.75rem;
         font-weight: 800;
         letter-spacing: 1px;
@@ -2140,14 +2181,14 @@
     .dark-mode .flower-order-customer {
         font-size: 1.8rem;
         font-weight: 800;
-        color: #1a1a1a;
+        color: #ffffff !important;
         margin: 0 0 8px 0;
         letter-spacing: 1px;
     }
     
     .dark-mode .flower-order-email {
         font-size: 0.9rem;
-        color: #444;
+        color: #aaaaaa !important;
         margin: 0 0 30px 0;
         line-height: 1.6;
     }
@@ -2165,7 +2206,7 @@
         align-items: center;
         gap: 15px;
         padding-bottom: 10px;
-        border-bottom: 1px solid rgba(54, 80, 22, 0.08);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
     }
     
     .dark-mode .flower-order-label {
@@ -2173,19 +2214,19 @@
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 1px;
-        color: rgb(54, 80, 22);
+        color: #8dbd5e !important;
     }
     
     .dark-mode .flower-order-value {
         font-size: 0.95rem;
         font-weight: 700;
-        color: #1a1a1a;
+        color: #ffffff !important;
     }
     
     .dark-mode .flower-order-price {
         font-size: 1.15rem;
         font-weight: 800;
-        color: #6F4E37;
+        color: #ff6a00;
     }
     
     .dark-mode .flower-order-accept-btn {
@@ -2194,8 +2235,8 @@
         border: none;
         border-radius: 14px;
         padding: 15px 20px;
-        background: rgb(54, 80, 22);
-        color: #ffffff;
+        background-color: #8dbd5e !important;
+        color: #1a1a1a !important;
         font-size: 0.85rem;
         font-weight: 800;
         text-transform: uppercase;
@@ -2314,4 +2355,44 @@
         background-color: #ffffff !important;
         color: #2a2a2a !important;
         box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+    /* ---FACEID IMAGE GUMB --- */
+    
+    .dark-mode .upload-btn-style {
+        background-color: #1b2e14 !important;
+        color: #8dbd5e !important;
+        border: 1px solid rgba(141, 189, 94, 0.3) !important;
+        font-weight: 800;
+        text-transform: uppercase;
+        padding: 16px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .dark-mode .upload-btn-style:hover {
+        background-color: #243b1b !important;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .dark-mode .upload-btn-style svg {
+        color: #8dbd5e !important;
+        margin-right: 10px;
+    }
+    
+    .dark-mode .locker-search-input {
+        background: rgba(255, 255, 255, 0.05) !important;
+        color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    /*SVINČINIK*/
+    
+    .dark-mode .lucide-pencil {
+        color: #ff6a00 !important;
+    }
+    
+    .theme-toggle-button svg {
+        width: 28pxpx !important;
+        height: 28pxpx !important;
+        display: block;
     }

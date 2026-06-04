@@ -267,7 +267,7 @@ function Login() {
                                     </button>
                                 )}
 
-                                <button className="submit-btn" style={{ background: '#3a3a38' }}
+                                <button className="submit-btn upload-btn-style" style={{ background: '#3a3a38' }}
                                     onClick={() => fileInputRef.current.click()}>
                                     <Upload size={18} style={{ marginRight: 8 }} /> Upload image
                                 </button>

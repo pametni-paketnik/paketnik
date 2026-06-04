@@ -565,40 +565,43 @@ function Home({ orderFilter = "oddano" }) {
                             ) : (
                                 <>
                                     {isAdmin && (
-                                        <button 
-                                            className="admin-delete-top-btn" 
-                                            onClick={() => deletePlant(selectedPlant._id)}
-                                            style={{
-                                                position: 'absolute', top: '5px', right: '10px', border: 'none',
-                                                background: 'transparent', color: '#ff4d4d', padding: '10px',
-                                                width: '90px', cursor: 'pointer', display: 'flex',
-                                                alignItems: 'center', gap: '8px', fontWeight: 'bold', transition: '0.3s'
-                                            }}
-                                        > 
-                                            <Trash size={20} />
-                                        </button>
-                                    )}
-                                    
-                                    {isAdmin && (
-                                        <button 
-                                            className="admin-delete-top-btn" 
-                                            onClick={() => {
-                                                setIsEditing(true);
+                                        <div style={{ position: 'absolute', top: '5px', right: '10px', display: 'flex', gap: '5px' }}>
+                                            {/* GUMB ZA UREJANJE - Pencil */}
+                                            <button 
+                                                className="admin-delete-top-btn" 
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setIsEditing(true);
+                                                    setEditName(selectedPlant.name);
+                                                    setEditPrice(selectedPlant.price);
+                                                    setEditDescription(selectedPlant.description);
+                                                    setEditCare(selectedPlant.care);
+                                                }}  
+                                                style={{
+                                                    border: 'none', background: 'transparent', color: '#8dbd5e', 
+                                                    padding: '10px', cursor: 'pointer', transition: '0.3s'
+                                                }}
+                                                title="Edit plant"
+                                            > 
+                                                <Pencil size={20} />
+                                            </button>
 
-                                                setEditName(selectedPlant.name);
-                                                setEditPrice(selectedPlant.price);
-                                                setEditDescription(selectedPlant.description);
-                                                setEditCare(selectedPlant.care);
-                                            }}  
-                                            style={{
-                                                position: 'absolute', top: '5px', right: '50px', border: 'none',
-                                                background: 'transparent', color: '#643f13', padding: '10px',
-                                                width: '90px', cursor: 'pointer', display: 'flex',
-                                                alignItems: 'center', gap: '8px', fontWeight: 'bold', transition: '0.3s'
-                                            }}
-                                        > 
-                                            <Pencil size={20} />
-                                        </button>
+                                            {/* GUMB ZA BRISANJE - Trash */}
+                                            <button 
+                                                className="admin-delete-top-btn" 
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    deletePlant(selectedPlant._id);
+                                                }}
+                                                style={{
+                                                    border: 'none', background: 'transparent', color: '#ff4d4d', 
+                                                    padding: '10px', cursor: 'pointer', transition: '0.3s'
+                                                }}
+                                                title="Delete plant"
+                                            > 
+                                                <Trash size={20} />
+                                            </button>
+                                        </div>
                                     )}
                                     <h2 className="details-title">{selectedPlant.name}</h2>
                                     <p className="details-price">{selectedPlant.price}€</p>
