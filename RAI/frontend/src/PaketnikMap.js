@@ -39,7 +39,7 @@ const customIcon = L.icon({
   popupAnchor: [0, -45]
 }); 
 
-function PaketnikMap({ onSelect, user, selectedLocker }) {
+function PaketnikMap({ onSelect, user, selectedLocker, searchQuery }) {
   const [paketniki, setPaketniki] = useState([]); 
   const [loading, setLoading] = useState(true);
 
@@ -106,6 +106,17 @@ function PaketnikMap({ onSelect, user, selectedLocker }) {
         setFocusedCenter([parseFloat(p.lat), parseFloat(p.lng)]); 
     }; 
 
+    const filteredLockers = paketniki.filter (p => {
+        if(isAdmin) return true; 
+        if (!searchQuery) return true;
+
+        const query = searchQuery.toLowerCase(); 
+        const ime = (p.ime || "").toLowerCase(); 
+        const lokacija = (p.lokacija || "").toLowerCase(); 
+
+        return ime.includes(query) || lokacija.includes(query); 
+    }); 
+
   return (
         <div className="map-and-content-wrapper"> 
             <div className="map-frame">
@@ -121,7 +132,7 @@ function PaketnikMap({ onSelect, user, selectedLocker }) {
                       />
                     )}
 
-                    {paketniki
+                    {filteredLockers
                         .filter(p => p.lat && p.lng && !isNaN(parseFloat(p.lat)) && !isNaN(parseFloat(p.lng)))
                         .map((p) => {
                             const pId = p._id || p.id;
@@ -196,7 +207,7 @@ function PaketnikMap({ onSelect, user, selectedLocker }) {
                 <div className="location-list-container">
                     <h4>{isAdmin ? "Overview of all parcels:" : "Select pickup location:"}</h4>
                     <div className="location-list" style={{ maxHeight: isAdmin ? '200px' : '400px', overflowY: 'auto' }}>
-                        {paketniki.map((p) => {
+                        {filteredLockers.map((p) => {
                             const pId = p._id || p.id;
                             const isSelected = selectedLocker?._id === pId;
                             const isFocused = activePopupId === pId;
