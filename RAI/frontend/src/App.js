@@ -89,7 +89,7 @@ function AppContent() {
                   )}
 
                   <Link to="/profile" className="navbar-text">Profile</Link>
-                  <Link to="/order" className="navbar-text">Order</Link>
+                  <Link to="/order" className="navbar-text">Cart</Link>
                   <Link to="/logout" className="navbar-text">Logout</Link>
                   {themeButton}
                 </>
@@ -118,8 +118,8 @@ function AppContent() {
             <Route path="/review" element={<ReviewForm/>}/>
             
             <Route path="/allOrders" element={<Home orderFilter="oddano" />} />
-            <Route path="/takenOrders" element={<Home orderFilter="v_dostavi" />} />
-            <Route path="/deliveredOrders" element={<Home orderFilter="dostavljeno" />} />
+            <Route path="/takenOrders" element={<Home orderFilter="v_pripravi" />} />
+            <Route path="/deliveredOrders" element={<Home orderFilter="prevzeto" />} />
 
             {user && user.vloga === 'admin' && (
                 <Route path="/addImage" element={<AddPlant />} />

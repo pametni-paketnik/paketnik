@@ -1,6 +1,7 @@
 const { json } = require('express');
 const Narocilo = require('../models/Narocilo');
 const Paketnik = require('../models/Paketnik');
+const { set } = require('mongoose');
 
 // ustvari novo narocilo 
 exports.dodajNarocilo = async (req, res) => {
@@ -13,10 +14,8 @@ exports.dodajNarocilo = async (req, res) => {
             skupna_cena
         } = req.body;
 
-        if (!izdelki || izdelki.length < 1 || izdelki.length > 2) {
-            return res.status(400).json({
-                sporocilo: 'Na eno naročilo lahko dodate najmanj 1 in največ 2 izdelka.'
-            });
+        if (!izdelki || izdelki.length < 1) {
+            return res.status(400).json({ message: "Naročilo mora vsebovati vsaj en izdelek." });
         }
 
         if (!uporabnik_id) {
@@ -123,19 +122,38 @@ exports.posodobiStatusNarocila = async (req, res) => {
 
         console.log("STATUS UPDATE BODY:", req.body);
 
-        const setData = {
-            status: status
-        };
+        const setData = {};
 
-        if (status === 'dostavljeno') {
-            setData.datum_dostave = new Date();
-        }
-
-        if (status === 'v_dostavi' && cvetlicarna_id) {
+        if (cvetlicarna_id) {
             setData.cvetlicarna_id = cvetlicarna_id;
         }
 
-        console.log("SET DATA:", setData);
+        switch (status) {
+
+            case 'v_pripravi':
+            case 'accept':
+                setData.status = 'v_pripravi';
+                break;
+
+            case 'caka_na_prevzem':
+            case 'delivered':
+                setData.status = 'caka_na_prevzem';
+                setData.datum_dostave = new Date();
+                break;
+
+            case 'prevzeto':
+                setData.status = 'prevzeto';
+                break;
+
+            case 'preklicano':
+                setData.status = 'preklicano';
+                break;
+
+            default:
+                return res.status(400).json({
+                    sporocilo: 'Neveljaven status'
+                });
+        }
 
         const narocilo = await Narocilo.findByIdAndUpdate(
             id,
@@ -169,10 +187,10 @@ exports.posodobiStatusNarocila = async (req, res) => {
 exports.posodobiPrevzem = async (req, res) => {
     try {
         const narocilo = await Narocilo.findByIdAndUpdate(
-            req.paramd.id,
+            req.params.id,
             {
                 prevzeto: true,
-                ststus: 'prevzeto',
+                status: 'prevzeto',
                 datum_prevzema: new Date()
             },
             { new: true }
