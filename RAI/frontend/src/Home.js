@@ -26,11 +26,27 @@ function Home({ orderFilter = "oddano" }) {
     const [editDescription, setEditDescription] = useState('');
     const [editCare, setEditCare] = useState('');
 
-    const statusiZaCvetlicarno = {
-        oddano: "New order (Pending acceptance)",
-        v_pripravi: "In preparation",
-        caka_na_prevzem: "Ready for pickup",
-        prevzeto: "Picked up by customer"
+    const ORDER_STATUS = {
+        oddano: {
+            flower: "New order",
+            user: "Order placed"
+        },
+        v_pripravi: {
+            flower: "In preparation",
+            user: "In process"
+        },
+        caka_na_prevzem: {
+            flower: "Delivered",
+            user: "Ready for pickup"
+        },
+        prevzeto: {
+            flower: "Delivered",
+            user: "Delivered"
+        },
+        aborting: {
+            flower: "Cancelled",
+            user: "Cancelled"
+        }
     };
 
     useEffect(() => {
@@ -49,27 +65,24 @@ function Home({ orderFilter = "oddano" }) {
                 const currentUserId = user ? (user._id || user.id) : null;
                 
                 const filteredOrders = res.data.filter((order) => {
+                    if (!isFlowerShop) return true;
+
                     if (orderFilter === 'oddano') {
                         return order.status === 'oddano';
                     }
+
                     if (orderFilter === 'v_pripravi') {
-                        return (
-                            order.status === 'v_pripravi' &&
-                            order.cvetlicarna_id?.toString() === currentUserId?.toString()
-                        );
+                        return order.status === 'v_pripravi';
                     }
+
                     if (orderFilter === 'caka_na_prevzem') {
-                        return (
-                            order.status === 'caka_na_prevzem' &&
-                            order.cvetlicarna_id?.toString() === currentUserId?.toString()
-                        );
+                        return order.status === 'caka_na_prevzem';
                     }
+
                     if (orderFilter === 'prevzeto') {
-                        return (
-                            order.status === 'prevzeto' &&
-                            order.cvetlicarna_id?.toString() === currentUserId?.toString()
-                        );
+                        return order.status === 'prevzeto';
                     }
+
                     return false;
                 });
 
@@ -193,7 +206,7 @@ function Home({ orderFilter = "oddano" }) {
         if (!confirmed) return;
         try {
             const response = await api.put(`/narocilo/${order._id}/status`, {
-                status: 'caka_na_prevzem'
+                status: 'prevzeto'
             });
 
             console.log("Posodobljeno naročilo:", response.data);
@@ -409,7 +422,7 @@ function Home({ orderFilter = "oddano" }) {
                                                 #{order._id.slice(-6)}
                                             </span>
                                             <span className="flower-order-status">
-                                                {order.status}
+                                                {ORDER_STATUS[order.status]?.flower || order.status}
                                             </span>
                                         </div>
                     
@@ -439,7 +452,7 @@ function Home({ orderFilter = "oddano" }) {
                                                 <span className="flower-order-price">{order.skupna_cena} €</span>
                                             </div>
 
-                                            {order.status == 'dostavljeno' && (
+                                            {order.status == 'prevzeto' && (
                                                 <div className="flower-order-info-row">
                                                     <span className="flower-order-label">Date of delivery</span>
                                                     <span className="flower-order-price">{formatDeliveryDate(order.datum_dostave)}</span>

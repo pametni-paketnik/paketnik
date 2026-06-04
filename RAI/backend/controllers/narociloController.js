@@ -122,37 +122,31 @@ exports.posodobiStatusNarocila = async (req, res) => {
 
         console.log("STATUS UPDATE BODY:", req.body);
 
-        const setData = {};
+         const allowedStatuses = [
+            'oddano',
+            'v_pripravi',
+            'caka_na_prevzem',
+            'prevzeto',
+            'preklicano',
+            'aborting'
+        ];
+
+        if (!allowedStatuses.includes(status)) {
+            return res.status(400).json({ sporocilo: 'Neveljaven status' });
+        }
+
+        const setData = { status };
 
         if (cvetlicarna_id) {
             setData.cvetlicarna_id = cvetlicarna_id;
         }
 
-        switch (status) {
+        if (status === 'caka_na_prevzem') {
+            setData.datum_dostave = new Date();
+        }
 
-            case 'v_pripravi':
-            case 'accept':
-                setData.status = 'v_pripravi';
-                break;
-
-            case 'caka_na_prevzem':
-            case 'delivered':
-                setData.status = 'caka_na_prevzem';
-                setData.datum_dostave = new Date();
-                break;
-
-            case 'prevzeto':
-                setData.status = 'prevzeto';
-                break;
-
-            case 'preklicano':
-                setData.status = 'preklicano';
-                break;
-
-            default:
-                return res.status(400).json({
-                    sporocilo: 'Neveljaven status'
-                });
+        if (status === 'prevzeto') {
+            setData.datum_prevzema = new Date();
         }
 
         const narocilo = await Narocilo.findByIdAndUpdate(
@@ -181,6 +175,23 @@ exports.posodobiStatusNarocila = async (req, res) => {
             napaka: error.message
         });
     }
+};
+
+exports.checkAbortingOrders = async () => {
+    const limit = 30 * 1000; 
+    const now = Date.now();
+
+    const result = await Narocilo.updateMany(
+        {
+            status: 'caka_na_prevzem',
+            updatedAt: { $lte: new Date(now - limit) }
+        },
+        {
+            $set: { status: 'aborting' }
+        }
+    );
+
+    console.log("Aborted (not picked up in time):", result.modifiedCount);
 };
 
 // Posodobi Prevzem
