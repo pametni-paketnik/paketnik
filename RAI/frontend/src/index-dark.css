@@ -219,6 +219,7 @@
         background: rgba(0, 0, 0, 0.7);
         font-size: 15px;
         outline: none;
+        color: #ffffff !important;
     }
     
     .dark-mode .edit-plant-textarea {
@@ -1520,11 +1521,25 @@
         border-radius: 12px;
         font-size: 12px;
         text-transform: uppercase;
+        border: 1px solid #8dbd5e4a;
     }
     
     .dark-mode .status.oddano {
-        background: rgb(54, 80, 22);
-        color: #8dbd5e;
+        background-color: #ffffff15;
+        color: #ffffff95;
+        border: 1px solid #ffffff5c;
+    }
+    
+    .status.v_obdelavi {
+        background-color: #f1f5f953;
+        color: #64748b;
+        border: 1px solid #cbd5e16c;
+    }
+    
+    .status.v_pripravi {
+        background-color: rgba(75, 115, 55, 0.1);
+        color: #4B7337;
+        border: 1px solid rgba(75, 115, 55, 0.2);
     }
     
     .dark-mode .status.dostavljeno {
@@ -1552,6 +1567,21 @@
         border-radius: 12px;
         font-size: 12px;
         text-transform: uppercase;
+    }
+    
+    .status.caka_na_prevzem {
+        background: rgb(54, 80, 22);
+        color: #8dbd5e;
+    }
+    
+    .status.prevzeto {
+        background: rgb(54, 80, 22);
+        color: #8dbd5e;
+    }
+    
+    .status.preklicano {
+        background-color: #dc262617;
+        color: #dc2626;
     }
     
     .dark-mode .order-product {
@@ -2063,16 +2093,16 @@
             scrollbar-width: none !important;
         }
     }
-    /* CVETLICARNE - LIST OF PLANTS */
+    /* --- PROFIL CVETLIČARNE (UPRAVLJANJE NAROČIL) --- */
     
     .dark-mode .flower-order-card {
-        border: none !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
         outline: none !important;
-        background: rgba(255, 255, 255, 0.6);
+        background: rgba(45, 45, 45, 0.6) !important;
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border-radius: 30px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
         overflow: hidden;
         width: 100%;
         box-sizing: border-box;
@@ -2080,6 +2110,7 @@
         display: flex;
         flex-direction: column;
         transition: all 0.3s ease;
+        color: #ffffff;
     }
     
     .dark-mode .flower-orders-grid {
@@ -2113,8 +2144,8 @@
         align-items: center;
         padding: 8px 16px;
         border-radius: 999px;
-        background: rgba(111, 78, 55, 0.08);
-        color: #6F4E37;
+        background: #ff6a002b !important;
+        color: #ff6a00;
         font-size: 0.75rem;
         font-weight: 800;
         letter-spacing: 1px;
@@ -2126,8 +2157,8 @@
         align-items: center;
         padding: 8px 16px;
         border-radius: 999px;
-        background: rgba(54, 80, 22, 0.12);
-        color: rgb(54, 80, 22);
+        background: rgba(141, 189, 94, 0.15) !important;
+        color: #8dbd5e !important;
         font-size: 0.75rem;
         font-weight: 800;
         letter-spacing: 1px;
@@ -2139,8 +2170,8 @@
         align-items: center;
         padding: 8px 16px;
         border-radius: 999px;
-        background: rgba(54, 80, 22, 0.12);
-        color: rgb(54, 80, 22);
+        background: rgba(141, 189, 94, 0.15) !important;
+        color: #8dbd5e !important;
         font-size: 0.75rem;
         font-weight: 800;
         letter-spacing: 1px;
@@ -2150,14 +2181,14 @@
     .dark-mode .flower-order-customer {
         font-size: 1.8rem;
         font-weight: 800;
-        color: #1a1a1a;
+        color: #ffffff !important;
         margin: 0 0 8px 0;
         letter-spacing: 1px;
     }
     
     .dark-mode .flower-order-email {
         font-size: 0.9rem;
-        color: #444;
+        color: #aaaaaa !important;
         margin: 0 0 30px 0;
         line-height: 1.6;
     }
@@ -2175,7 +2206,7 @@
         align-items: center;
         gap: 15px;
         padding-bottom: 10px;
-        border-bottom: 1px solid rgba(54, 80, 22, 0.08);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
     }
     
     .dark-mode .flower-order-label {
@@ -2183,19 +2214,19 @@
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 1px;
-        color: rgb(54, 80, 22);
+        color: #8dbd5e !important;
     }
     
     .dark-mode .flower-order-value {
         font-size: 0.95rem;
         font-weight: 700;
-        color: #1a1a1a;
+        color: #ffffff !important;
     }
     
     .dark-mode .flower-order-price {
         font-size: 1.15rem;
         font-weight: 800;
-        color: #6F4E37;
+        color: #ff6a00;
     }
     
     .dark-mode .flower-order-accept-btn {
@@ -2347,4 +2378,15 @@
     .dark-mode .upload-btn-style svg {
         color: #8dbd5e !important;
         margin-right: 10px;
+    }
+    
+    .dark-mode .locker-search-input {
+        background: rgba(255, 255, 255, 0.05) !important;
+        color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    /*SVINČINIK*/
+    
+    .dark-mode .lucide-pencil {
+        color: #ff6a00 !important;
     }
