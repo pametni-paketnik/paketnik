@@ -145,7 +145,6 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
-
     private fun loadOrders(){
         if(currentUserId.isEmpty()) {
             Toast.makeText(this, "Napaka: ID uporabnika ni najden", Toast.LENGTH_SHORT).show()

@@ -23,12 +23,17 @@ function Profile() {
   const [cvv, setCvv] = useState('');
 
   const [sporociloKartica, setSporociloKartica] = useState("");
-
   const fileInputRef = useRef(null);
-
   const [orders, setOrders] = useState([]);
-
   const isFlowerShop = user && user.vloga === 'cvetlicarna';
+
+  const statusi = {
+    oddano: "Oddano",
+    v_pripravi: "V pripravi",
+    caka_na_prevzem: "Čaka na prevzem",
+    prevzeto: "Prevzeto",
+    preklicano: "Preklicano"
+  };
 
   useEffect(() => {
     api.get('/uporabnik/profile')
@@ -53,6 +58,20 @@ function Profile() {
         setLoading(false);
       });
   }, []);
+
+  const handlePrevzemNarocila = async (narociloId) => {
+    try {
+      const res = await api.put(`/narocilo/prevzem/${narociloId}`); 
+      if(res.status === 200) {
+        setOrders(prevOrders => 
+          prevOrders.map(o => o._id === narociloId ? {...o, status: 'prevzeto', prevzeto: true} : o)
+        ); 
+        alert("Naročilo uspešno prevzeto"); 
+      }
+    } catch (err) {
+      alert("Naročila ni bilo mogoče prevzeti"); 
+    }
+  }
 
   useEffect(() => {
     if (!user?._id) return;
@@ -470,12 +489,12 @@ function Profile() {
                   ) : (
                     <div className="orders-grid">
                       {orders.map((order) => (
-                        <div key={order._id} className="order-card-modern">
+                        <div key={order._id} className="order-card-modern ${order.status}">
 
                           <div className="order-header">
                             <h3><span className="order-details">Order</span> #{order.koda_za_odpiranje}</h3>
                             <span className={`status ${order.status}`}>
-                              {order.status}
+                              {statusi[order.status] || order.status}
                             </span>
                           </div>
 

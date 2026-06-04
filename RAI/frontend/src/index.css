@@ -1549,19 +1549,32 @@ nav {
   text-transform: uppercase;
 }
 
-.status.oddano {
-  background: rgba(54, 80, 22, 0.12);
-  color: rgb(54, 80, 22);
+.status.v_obdelavi {
+  background-color: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
 }
 
-.status.dostavljeno {
-  background: rgba(54, 80, 22, 0.12);
-  color: rgb(54, 80, 22);
+.status.v_pripravi {
+  background-color: rgba(75, 115, 55, 0.1);
+  color: #4B7337;
+  border: 1px solid rgba(75, 115, 55, 0.2);
 }
 
-.status.v_dostavi {
-  background: rgba(54, 80, 22, 0.12);
-  color: rgb(54, 80, 22);
+.status.caka_na_prevzem {
+  background-color: #e2ebd9; 
+  color: #1e8100;
+  border: 1px solid #1e8100;
+}
+
+.status.prevzeto {
+  background-color: #e2ebd9;
+  color: #1e8100;
+}
+
+.status.preklicano {
+  background-color: #fee2e2;
+  color: #dc2626;
 }
 
 .order-products {

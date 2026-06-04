@@ -26,6 +26,12 @@ function Home({ orderFilter = "oddano" }) {
     const [editDescription, setEditDescription] = useState('');
     const [editCare, setEditCare] = useState('');
 
+    const statusiZaCvetlicarno = {
+        oddano: "Novo naročilo (Čaka na sprejem)",
+        v_pripravi: "V pripravi",
+        caka_na_prevzem: "Oddano za prevzem",
+        prevzeto: "Prevzeto s strani stranke"
+    };
 
     useEffect(() => {
         const fetchPlants = async () => {
@@ -40,15 +46,31 @@ function Home({ orderFilter = "oddano" }) {
         const fetchOrders = async () => {
             try {
                 const res = await api.get('/narocilo');
-
                 const currentUserId = user ? (user._id || user.id) : null;
                 
                 const filteredOrders = res.data.filter((order) => {
                     if (orderFilter === 'oddano') {
                         return order.status === 'oddano';
-                    } else {
-                        return order.status === orderFilter && order.cvetlicarna_id === currentUserId;
                     }
+                    if (orderFilter === 'v_pripravi') {
+                        return (
+                            order.status === 'v_pripravi' &&
+                            order.cvetlicarna_id?.toString() === currentUserId?.toString()
+                        );
+                    }
+                    if (orderFilter === 'caka_na_prevzem') {
+                        return (
+                            order.status === 'caka_na_prevzem' &&
+                            order.cvetlicarna_id?.toString() === currentUserId?.toString()
+                        );
+                    }
+                    if (orderFilter === 'prevzeto') {
+                        return (
+                            order.status === 'prevzeto' &&
+                            order.cvetlicarna_id?.toString() === currentUserId?.toString()
+                        );
+                    }
+                    return false;
                 });
 
                 const sortedOrders = [...filteredOrders].sort(
@@ -148,7 +170,7 @@ function Home({ orderFilter = "oddano" }) {
         if (!confirmed) return;
         try {
             await api.put(`/narocilo/${order._id}/status`, {
-                status: 'v_dostavi',
+                status: 'v_pripravi',
                 cvetlicarna_id: user ? (user._id || user.id) : null
             });
 
@@ -171,7 +193,7 @@ function Home({ orderFilter = "oddano" }) {
         if (!confirmed) return;
         try {
             const response = await api.put(`/narocilo/${order._id}/status`, {
-                status: 'dostavljeno'
+                status: 'caka_na_prevzem'
             });
 
             console.log("Posodobljeno naročilo:", response.data);
@@ -358,7 +380,13 @@ function Home({ orderFilter = "oddano" }) {
 
     if (isFlowerShop) {
         const pageTitle =
-        orderFilter === 'oddano' ? 'AVAILABLE ORDERS' : orderFilter === 'v_dostavi' ? 'TAKEN ORDERS' : 'DELIVERED ORDERS';
+            orderFilter === 'oddano'
+                ? 'NOVA NAROČILA'
+                : orderFilter === 'v_pripravi'
+                ? 'V PRIPRAVI'
+                : orderFilter === 'caka_na_prevzem'
+                ? 'PRIPRAVLJENA ZA PREVZEM'
+                : 'PREVZETA NAROČILA';
         return (
             <div className="flower-orders-page">
                 <div className="flower-orders-wrapper">
@@ -425,19 +453,17 @@ function Home({ orderFilter = "oddano" }) {
                                             </div>
                                         </div>
 
-                                        {order.status !== 'dostavljeno' && (
-                                            <button
-                                                className="flower-order-accept-btn"
-                                                onClick={() =>
-                                                    order.status === 'v_dostavi'
-                                                        ? handleDeliveredOrder(order)
-                                                        : handleAcceptOrder(order)
-                                                }
-                                            >
-                                                {order.status === 'v_dostavi'
-                                                    ? 'Delivered'
-                                                    : 'Accept order'}
-                                            </button>
+                                        {order.status !== 'caka_na_prevzem' && order.status !== 'prevzeto' && (
+                                        <button
+                                            className="flower-order-accept-btn"
+                                            onClick={() =>
+                                                order.status === 'v_pripravi'
+                                                    ? handleDeliveredOrder(order)
+                                                    : handleAcceptOrder(order)
+                                            }
+                                        >
+                                            {order.status === 'v_pripravi' ? 'Delivered' : 'Accept order'}
+                                        </button>
                                         )}
                                     </div>
                                 </div>
