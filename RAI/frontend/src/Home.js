@@ -27,10 +27,10 @@ function Home({ orderFilter = "oddano" }) {
     const [editCare, setEditCare] = useState('');
 
     const statusiZaCvetlicarno = {
-        oddano: "Novo naročilo (Čaka na sprejem)",
-        v_pripravi: "V pripravi",
-        caka_na_prevzem: "Oddano za prevzem",
-        prevzeto: "Prevzeto s strani stranke"
+        oddano: "New order (Pending acceptance)",
+        v_pripravi: "In preparation",
+        caka_na_prevzem: "Ready for pickup",
+        prevzeto: "Picked up by customer"
     };
 
     useEffect(() => {

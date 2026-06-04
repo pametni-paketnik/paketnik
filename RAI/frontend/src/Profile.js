@@ -28,11 +28,11 @@ function Profile() {
   const isFlowerShop = user && user.vloga === 'cvetlicarna';
 
   const statusi = {
-    oddano: "Oddano",
-    v_pripravi: "V pripravi",
-    caka_na_prevzem: "Čaka na prevzem",
-    prevzeto: "Prevzeto",
-    preklicano: "Preklicano"
+    oddano: "Ordered",
+    v_pripravi: "In preparation",
+    caka_na_prevzem: "Ready for pickup",
+    prevzeto: "Picked up",
+    preklicano: "Cancelled"
   };
 
   useEffect(() => {

@@ -39,7 +39,7 @@ const customIcon = L.icon({
   popupAnchor: [0, -45]
 }); 
 
-function PaketnikMap({ onSelect, user, selectedLocker, searchQuery }) {
+function PaketnikMap({ onSelect, user, selectedLocker }) {
   const [paketniki, setPaketniki] = useState([]); 
   const [loading, setLoading] = useState(true);
 
@@ -47,6 +47,7 @@ function PaketnikMap({ onSelect, user, selectedLocker, searchQuery }) {
   const [activePopupId, setActivePopupId] = useState(null);
 
   const markerRefs = useRef({}); 
+  const [searchQuery, setSearchQuery] = useState(""); 
 
   const [formData, setFormData] = useState({
         ime: "",
@@ -203,6 +204,20 @@ function PaketnikMap({ onSelect, user, selectedLocker, searchQuery }) {
                     </div>
                 )}
             </div>
+
+            {!isAdmin && (
+                <div className="input-group-modern" style={{ marginBottom: "15px" }}>
+                    <label>Search location</label>
+
+                    <input
+                        type="text"
+                        placeholder="Search by package name or address..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </div>
+            )}
+
             <div className="content-box-modern">
                 <div className="location-list-container">
                     <h4>{isAdmin ? "Overview of all parcels:" : "Select pickup location:"}</h4>
