@@ -2390,3 +2390,9 @@
     .dark-mode .lucide-pencil {
         color: #ff6a00 !important;
     }
+    
+    .theme-toggle-button svg {
+        width: 28pxpx !important;
+        height: 28pxpx !important;
+        display: block;
+    }
