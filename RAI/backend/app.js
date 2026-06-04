@@ -63,6 +63,7 @@ app.use('/images_no_background', express.static(path.join(__dirname, 'public/ima
 
 var session = require('express-session');
 var MongoStore = require('connect-mongo');
+const { checkAbortingOrders } = require('./controllers/narociloController');
 app.use(session({
   secret: 'work hard',
   resave: true,
@@ -82,6 +83,18 @@ app.use('/narocilo', narociloRouter);
 app.use('/paketnik', paketnikRouter); 
 app.use('/dnevnik', dnevnikRouter);
 app.use('/plant', plantRouter);
+
+setInterval(async () => {
+    try {
+        console.log("Checking for stale pickup orders...");
+
+        await checkAbortingOrders();
+
+        console.log("Check completed");
+    } catch (err) {
+        console.error("Error in aborting:", err);
+    }
+}, 30 * 1000);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

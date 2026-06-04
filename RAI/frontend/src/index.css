@@ -1549,6 +1549,10 @@ nav {
     background-color: #f1f5f9;
     color: #64748b;
     border: 1px solid #cbd5e1;
+.status.oddano {
+  background-color: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
 }
 
 .status.v_pripravi {
@@ -1558,6 +1562,7 @@ nav {
 }
 
 .status.caka_na_prevzem {
+
     background-color: #e2ebd9;
     color: #1e8100;
     border: 1px solid #1e8100;
@@ -1571,6 +1576,12 @@ nav {
 .status.preklicano {
     background-color: #fee2e2;
     color: #dc2626;
+  
+.status.aborting {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #dc2626;
+
 }
 
 .order-products {
@@ -1915,8 +1926,7 @@ nav {
 
 .checkout-summary-sticky {
     width: 100%;
-    max-width: 580px;
-    /* Povečano iz 450px, da se elementi lepo raztegnijo */
+    max-width: 580px; 
 }
 
 .summary-title {

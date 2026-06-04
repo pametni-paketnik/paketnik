@@ -20,9 +20,6 @@ const OrderForm = () =>{
 
     const [orderItems, setOrderItems] = useState([]);
     const [paymentData, setPaymentData] = useState(null);
-    const [searchQuery, setSearchQuery] = useState("");
-
-    const isAdmin = user?.vloga === 'admin' || user?.isAdmin === true; 
 
     useEffect(() => {
         const storedCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
@@ -179,25 +176,7 @@ return (
                                 onSelect={setSelectedLocker}
                                 user={user}
                                 selectedLocker={selectedLocker}
-                                searchQuery={searchQuery}
                             />
-                            {!isAdmin && (
-                                <div style={{ marginBottom: "12px" }}>
-                                    
-                                    <p style={{ fontWeight: "bold", marginBottom: "8px" }}>
-                                        Search for your smart box:
-                                    </p>
-
-                                    <input
-                                        type="text"
-                                        placeholder="Search by name or location..."
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="locker-search-input"
-                                    />
-
-                                </div>
-                            )}
                         </div>
                     </section>
 
