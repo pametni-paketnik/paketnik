@@ -1572,7 +1572,7 @@ nav {
   text-transform: uppercase;
 }
 
-.status.v_obdelavi {
+.status.oddano {
   background-color: #f1f5f9;
   color: #64748b;
   border: 1px solid #cbd5e1;
@@ -1939,7 +1939,7 @@ nav {
 
 .checkout-summary-sticky {
     width: 100%;
-    max-width: 580px; /* Povečano iz 450px, da se elementi lepo raztegnijo */
+    max-width: 580px; 
 }
 
 .summary-title {
