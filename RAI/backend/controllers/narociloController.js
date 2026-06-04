@@ -127,7 +127,6 @@ exports.posodobiStatusNarocila = async (req, res) => {
             'v_pripravi',
             'caka_na_prevzem',
             'prevzeto',
-            'preklicano',
             'aborting'
         ];
 
@@ -146,7 +145,7 @@ exports.posodobiStatusNarocila = async (req, res) => {
         }
 
         if (status === 'prevzeto') {
-            setData.datum_prevzema = new Date();
+            setData.datum_dostave = new Date();
         }
 
         const narocilo = await Narocilo.findByIdAndUpdate(

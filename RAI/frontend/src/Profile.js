@@ -337,7 +337,6 @@ function Profile() {
   return (
     <div className="register-container">
       <div className="profile-layout">
-        {/* ZAČETEK GRID-A KI DRŽI VSE 3 KARTICE V ENI VRSTI */}
         <div className="profile-top-grid">
           
           {/* 1. KARTICA: PROFIL */}
@@ -499,7 +498,7 @@ function Profile() {
                 <div className="order-history-list scroll-area">
                   {orders.length === 0 ? (
                     <div className="order-history-empty">
-                      Trenutno še nimate nobenega naročila.
+                      You currently do not have any orders. 
                     </div>
                   ) : (
                     <div className="orders-grid">
