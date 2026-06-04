@@ -27,12 +27,27 @@ function Profile() {
   const [orders, setOrders] = useState([]);
   const isFlowerShop = user && user.vloga === 'cvetlicarna';
 
-  const statusi = {
-    oddano: "Ordered",
-    v_pripravi: "In preparation",
-    caka_na_prevzem: "Ready for pickup",
-    prevzeto: "Picked up",
-    preklicano: "Cancelled"
+  const ORDER_STATUS = {
+    oddano: {
+      flower: "New order",
+      user: "Order placed"
+    },
+    v_pripravi: {
+      flower: "In preparation",
+      user: "In process"
+    },
+    caka_na_prevzem: {
+      flower: "Delivered",
+      user: "Ready for pickup"
+    },
+    prevzeto: {
+      flower: "Delivered",
+      user: "Ready for pickup"
+    },
+    aborting: {
+      flower: "Cancelled",
+      user: "Cancelled"
+    }
   };
 
   useEffect(() => {
@@ -494,7 +509,7 @@ function Profile() {
                           <div className="order-header">
                             <h3><span className="order-details">Order</span> #{order.koda_za_odpiranje}</h3>
                             <span className={`status ${order.status}`}>
-                              {statusi[order.status] || order.status}
+                              {ORDER_STATUS[order.status]?.user || order.status}
                             </span>
                           </div>
 
