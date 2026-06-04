@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { Sun, Moon } from 'lucide-react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { UserContext, UserProvider } from './userContext.js';
 import './index.css';
@@ -40,8 +41,8 @@ function AppContent() {
   const themeButtonLabel = theme === 'dark' ? 'Light mode' : 'Dark mode';
 
   const themeButton = (
-    <button type="button" className="theme-toggle-button" onClick={toggleTheme}>
-      {themeButtonLabel}
+    <button type="button" className="theme-toggle-button" onClick={toggleTheme} title="Preklopi temo">
+      {theme === 'dark' ? <Sun size={20} /> : <Moon size={20}/>}
     </button>
   );
 
@@ -55,15 +56,19 @@ function AppContent() {
           alignItems: "center"
         }}
       >
-        <div
-          className="logo uppercase-text"
-          style={{
-            color: theme === 'dark' ? "#fff" : "#000",
-            fontWeight: "900",
-            fontSize: "1.2rem"
-          }}
-        >
-          InPlant
+        <div style={{ display: "flex", alignItems: "center", gap: "25px" }}>
+          {themeButton}
+          <div
+            className="logo uppercase-text"
+            style={{
+              color: theme === 'dark' ? "#fff" : "#000",
+              fontWeight: "900",
+              fontSize: "1.2rem"
+            }}
+          >
+            InPlant
+          </div>
+          
         </div>
 
         <div className="nav-actions" style={{ display: "flex", gap: "20px", alignItems: "center" }}>
@@ -75,7 +80,6 @@ function AppContent() {
               <Link to="/deliveredOrders" className="navbar-text">Delivered</Link>
               <Link to="/profile" className="navbar-text">Profile</Link>
               <Link to="/logout" className="navbar-text">Logout</Link>
-              {themeButton}
             </>
           ) : (
             <>
@@ -91,13 +95,13 @@ function AppContent() {
                   <Link to="/profile" className="navbar-text">Profile</Link>
                   <Link to="/order" className="navbar-text">Cart</Link>
                   <Link to="/logout" className="navbar-text">Logout</Link>
-                  {themeButton}
+                  
                 </>
               ) : (
                 <>
                   <Link to="/login" className="navbar-text">Login</Link>
                   <Link to="/register" className="navbar-text">Registration</Link>
-                  {themeButton}
+                  
                 </>
               )}
             </>
