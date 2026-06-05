@@ -53,9 +53,9 @@ def zajemi_obraz():
         trenutni_obraz = []
 
         for (x, y, w, h) in faces:
-            # Doda 20% zamika (padding)
-            offset_w = int(w * 0.2)
-            offset_h = int(h * 0.2)
+            # Doda 30% zamika (padding)
+            offset_w = int(w * 0.3)
+            offset_h = int(h * 0.3)
             # Izračuna nove koordinate
             y1 = max(0, y - offset_h)
             y2 = min(frame.shape[0], y + h + offset_h)
