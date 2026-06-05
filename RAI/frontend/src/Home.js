@@ -198,6 +198,7 @@ function Home({ orderFilter = "oddano" }) {
         }
     };
     
+<<<<<<< Updated upstream
     const handleDeliveredOrder = async (order) => {
         const confirmed = window.confirm(
             `Are you sure you want to mark order #${order._id.slice(-6)} as delivered?`
@@ -207,6 +208,12 @@ function Home({ orderFilter = "oddano" }) {
         try {
             const response = await api.put(`/narocilo/${order._id}/status`, {
                 status: 'prevzeto'
+=======
+    const handleDeliveredOrder = async (orderId) => {
+        try {
+            const response = await api.put(`/narocilo/${orderId}/status`, {
+                status: 'dostavljeno'
+>>>>>>> Stashed changes
             });
 
             console.log("Posodobljeno naročilo:", response.data);
@@ -236,6 +243,7 @@ function Home({ orderFilter = "oddano" }) {
         return date.toLocaleDateString('sl-SI');
     };
 
+<<<<<<< Updated upstream
     const formatDateTime = (value) => {
         if (!value) return "Ni podatka";
 
@@ -254,6 +262,8 @@ function Home({ orderFilter = "oddano" }) {
         return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
     };
 
+=======
+>>>>>>> Stashed changes
     const [outOfStock, setOutOfStock] = useState([]); 
     const toggleStock = async (id, currentState) => {
         try {

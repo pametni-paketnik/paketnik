@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { CheckCircle } from 'lucide-react';
 import api from './api';
 import './index.css';
+<<<<<<< Updated upstream
 import './index-dark.css';
 import jsPDF from "jspdf";
 
@@ -12,6 +13,9 @@ const formatPhone = (value) => {
     if (!cleaned) return "/";
     return cleaned.match(/.{1,3}/g)?.join(' ') || "/";
 };
+=======
+import jsPDF from "jspdf";
+>>>>>>> Stashed changes
 
 const ReviewForm = () => {
     const navigate = useNavigate(); 
@@ -178,8 +182,12 @@ const ReviewForm = () => {
         y += 7;
         doc.text(`E-mail: ${stranka.email || ""}`, 14, y);
         y += 7;
+<<<<<<< Updated upstream
         const formattedPdfPhone = formatPhone(stranka.telefonska_stevilka);
         doc.text(`Telefon: ${formattedPdfPhone === "/" ? "" : formattedPdfPhone}`, 14, y);
+=======
+        doc.text(`Telefon: ${stranka.telefon || ""}`, 14, y);
+>>>>>>> Stashed changes
 
         y += 14;
         doc.setFontSize(14);
