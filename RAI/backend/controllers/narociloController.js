@@ -122,7 +122,6 @@ exports.posodobiStatusNarocila = async (req, res) => {
 
         console.log("STATUS UPDATE BODY:", req.body);
 
-<<<<<<< Updated upstream
          const allowedStatuses = [
             'oddano',
             'v_pripravi',
@@ -146,21 +145,8 @@ exports.posodobiStatusNarocila = async (req, res) => {
         }
 
         if (status === 'prevzeto') {
-=======
-        const setData = {
-            status: status
-        };
-
-        if (status === 'dostavljeno') {
->>>>>>> Stashed changes
             setData.datum_dostave = new Date();
         }
-
-        if (status === 'v_dostavi' && cvetlicarna_id) {
-            setData.cvetlicarna_id = cvetlicarna_id;
-        }
-
-        console.log("SET DATA:", setData);
 
         const narocilo = await Narocilo.findByIdAndUpdate(
             id,
@@ -189,7 +175,6 @@ exports.posodobiStatusNarocila = async (req, res) => {
         });
     }
 };
-<<<<<<< Updated upstream
 
 exports.checkAbortingOrders = async () => {
     const limit = 30 * 1000; 
@@ -207,8 +192,6 @@ exports.checkAbortingOrders = async () => {
 
     console.log("Aborted (not picked up in time):", result.modifiedCount);
 };
-=======
->>>>>>> Stashed changes
 
 // Posodobi Prevzem
 exports.posodobiPrevzem = async (req, res) => {
