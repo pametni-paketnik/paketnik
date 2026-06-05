@@ -1,0 +1,17 @@
+services:
+  android-build:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pametni-paketnik-build
+
+    volumes:
+      - gradle-cache:/root/.gradle
+      - ./outputs:/app/app/build/outputs
+
+    environment:
+      - BUILD_TYPE=debug
+
+volumes:
+  gradle-cache:
+    driver: local
