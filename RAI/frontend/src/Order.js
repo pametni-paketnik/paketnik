@@ -24,7 +24,6 @@ const OrderForm = () =>{
     useEffect(() => {
         const storedCart = JSON.parse(localStorage.getItem('cart') || '[]'); 
         setCart(storedCart.slice(0, 1)); 
-<<<<<<< Updated upstream
 
         const storedFinalOrder = JSON.parse(localStorage.getItem('final_orders'));
         if (storedFinalOrder) {
@@ -49,8 +48,6 @@ const OrderForm = () =>{
                 setPaymentData(storedFinalOrder.payment); 
             }
         }
-=======
->>>>>>> Stashed changes
     }, []); 
 
     useEffect(() => {
