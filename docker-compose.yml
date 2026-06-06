@@ -6,7 +6,7 @@ services:
   # ------------------------------------------
   # 1. BAZA PODATKOV
   baza-mongo: 
-    image: irisskledar/mongo:latest
+    image: mongo:latest
     container_name: paketnik_baza
     ports: 
       - "27017:27017"
@@ -83,6 +83,8 @@ services:
       context: ./PJ
     image: irisskledar/paketnik-android-apk-builder:latest 
     container_name: android_apk_builder
+    volumes:
+      - ./PJ/app/build/outputs/apk:/app/app/build/outputs/apk
     profiles: ["build"]
     restart: "no"
 
