@@ -30,13 +30,17 @@ services:
     container_name: paketnik_frontend
     ports: 
       - "3001:3001"
+    environment:          
+      - HOST=0.0.0.0
+    stdin_open: true
+    tty: true 
     depends_on:
       - glavni-backend
     restart: unless-stopped
 
   #-------------------------------------------------
   # 3. ORV - Prepoznava obrazov
-  ai-api-obraz:
+  model-api-obraz:
     build:
       context: ./ORV/api
     container_name: face2fa-api
@@ -53,18 +57,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-
-  # api frontend
-  # Port na 3002 da ni konflikta z Node.js backendom na 3000
-  ai-frontend-test:
-    build:
-      context: ./ORV/frontend
-    container_name: face2fa-frontend
-    ports:
-      - "3002:80" 
-    depends_on:
-      - ai-api-obraz
-    restart: unless-stopped
 
   predobdelava:
     build:
