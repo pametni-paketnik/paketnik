@@ -1,11 +1,12 @@
 version: "3.9"
 #NAVODILO: Postavi se v root mapo in run:docker compose up --build
 #za ugasnit pa ctrl + C
+#moram dati svoje ime ker ustvarjanje organizacije je plačljivo
 services:
   # ------------------------------------------
   # 1. BAZA PODATKOV
   baza-mongo: 
-    image: mongo:latest
+    image: irisskledar/mongo:latest
     container_name: paketnik_baza
     ports: 
       - "27017:27017"
@@ -18,6 +19,7 @@ services:
   backend: 
     build: 
       context: ./RAI/backend
+    image: irisskledar/paketnik-backend:latest 
     container_name: paketnik_api
     ports: 
       - "3000:3000"
@@ -28,6 +30,7 @@ services:
   glavna-spletna-stran: 
     build: 
       context: ./RAI/frontend
+    image: irisskledar/paketnik-frontend:latest
     container_name: paketnik_frontend
     ports: 
       - "3001:3001"
@@ -44,6 +47,7 @@ services:
   model-api-obraz:
     build:
       context: ./ORV/api
+    image: irisskledar/paketnik-model-api:latest 
     container_name: face2fa-api
     ports:
       - "8000:8000"
@@ -77,6 +81,7 @@ services:
   android-build:
     build:
       context: ./PJ
+    image: irisskledar/paketnik-android-apk-builder:latest 
     container_name: android_apk_builder
     profiles: ["build"]
     restart: "no"
