@@ -14,7 +14,7 @@ services:
 
   # ---------------------------------------------
   # 2. GLAVNI PROJEKT (RAI)
-  glavni-backend: 
+  backend: 
     build: 
       context: ./RAI/backend
     container_name: paketnik_api
@@ -35,7 +35,7 @@ services:
     stdin_open: true
     tty: true 
     depends_on:
-      - glavni-backend
+      - backend
     restart: unless-stopped
 
   #-------------------------------------------------
