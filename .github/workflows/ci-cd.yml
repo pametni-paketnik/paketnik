@@ -78,6 +78,11 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+
+      - name: Create secrets.xml for tests
+        run: |
+          mkdir -p PJ/app/src/main/res/values
+          echo '<?xml version="1.0" encoding="utf-8"?><resources><string name="api_base_url">${{ secrets.API_BASE_URL }}</string></resources>' > PJ/app/src/main/res/values/secrets.xml
       
       - name: Change wrapper permissions
         run: chmod +x PJ/gradlew
@@ -142,6 +147,11 @@ jobs:
         with:
             distribution: 'zulu'
             java-version: '17' 
+
+      - name: Create secrets.xml for build
+        run: |
+          mkdir -p PJ/app/src/main/res/values
+          echo '<?xml version="1.0" encoding="utf-8"?><resources><string name="api_base_url">${{ secrets.API_BASE_URL }}</string></resources>' > PJ/app/src/main/res/values/secrets.xml
       
       - name: Change wrapper permissions
         run: chmod +x PJ/gradlew
