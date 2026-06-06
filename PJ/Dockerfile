@@ -28,11 +28,11 @@ WORKDIR /app
 COPY gradle/wrapper/gradle-wrapper.properties gradle/wrapper/gradle-wrapper.properties
 COPY gradle/wrapper/gradle-wrapper.jar gradle/wrapper/gradle-wrapper.jar
 COPY gradlew .
-RUN chmod +x gradlew && ./gradlew --version
+RUN sed -i 's/\r$//' gradlew && chmod +x gradlew && ./gradlew --version
 
 COPY . .
 
-RUN chmod +x gradlew && ./gradlew assembleDebug \
+RUN sed -i 's/\r$//' gradlew && chmod +x gradlew && ./gradlew assembleDebug \
     --no-daemon \
     --stacktrace \
     -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g"
