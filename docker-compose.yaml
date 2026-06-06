@@ -1,0 +1,66 @@
+version: "3.9"
+
+services: 
+    baza-mongo: 
+        image: mongo:latest
+        container_name: paketnik_baza
+        ports: 
+            - "27017:27017"
+        volumes:
+            - mongo_data:/data/db
+        restart: unless-stopped
+
+    backend: 
+        build: 
+            context: ./RAI/backend
+        container_name: paketnik_api
+        ports: 
+            - "3000:3000"
+        depends_on:
+            - baza-mongo
+        restart: unless-stopped
+
+    frontend: 
+        build: 
+            context: ./RAI/frontend
+        container_name: paketnik_frontend
+        ports: 
+            - "3001:3001"
+        depends_on:
+            - backend
+        restart: unless-stopped
+
+
+    predobdelava:
+        build:
+            context: ./ORV
+            dockerfile: Dockerfile.predobdelava
+        container_name: face2fa-predobdelava
+        volumes:
+            - ./ORV:/app
+        command: ["python", "predobdelava.py"]
+        profiles: ["tools"]
+        restart: "no"
+
+    api:
+        build:
+            context: ./ORV/api
+        container_name: face2fa_api
+        ports:
+            - "8000:8000"
+        volumes:
+            - ./ORV/api/model:/app/model:ro
+        environment:
+            - MODEL_PATH=model/resnet18_prepoznava_obrazov.pth
+            - AUTH_THRESHOLD=0.80
+            - MONGO_URI=mongodb://baza-mongo:27017/face2fa
+        depends_on:
+            - baza-mongo
+        restart: unless-stopped
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+volumes:
+    mongo_data:
