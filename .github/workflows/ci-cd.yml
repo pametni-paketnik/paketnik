@@ -80,11 +80,11 @@ jobs:
           java-version: '17'
       
       - name: Change wrapper permissions
-        run: chmod +x android/gradlew
+        run: chmod +x PJ/gradlew
 
       - name: Run Android Unit Tests
         run: | 
-          cd android
+          cd PJ
           ./gradlew testDebugUnitTest
 
   build-and-deploy:
@@ -144,11 +144,11 @@ jobs:
             java-version: '17' 
       
       - name: Change wrapper permissions
-        run: chmod +x android/gradlew
+        run: chmod +x PJ/gradlew
 
       - name: Build Android Debug APK
         run: | 
-          cd android
+          cd PJ
           ./gradlew assembleDebug
 
       # --- Update APK to GitHub Actions Artifacts ---
@@ -156,7 +156,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
             name: paketnik-mobile-app
-            path: android/app/build/outputs/apk/debug/app-debug.apk
+            path: PJ/app/build/outputs/apk/debug/app-debug.apk
       
 
 
