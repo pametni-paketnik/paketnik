@@ -1,5 +1,6 @@
 version: "3.9"
-
+#NAVODILO: Postavi se v root mapo in run:docker compose up --build
+#za ugasnit pa ctrl + C
 services:
   # ------------------------------------------
   # 1. BAZA PODATKOV
