@@ -78,8 +78,9 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+      
       - name: Change wrapper permissions
-        run: chmod +x androdi/gradlew
+        run: chmod +x android/gradlew
 
       - name: Run Android Unit Tests
         run: | 
@@ -141,6 +142,7 @@ jobs:
         with:
             distribution: 'zulu'
             java-version: '17' 
+      
       - name: Change wrapper permissions
         run: chmod +x android/gradlew
 
@@ -154,7 +156,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
             name: paketnik-mobile-app
-            path: path: android/app/build/outputs/apk/debug/app-debug.apk
+            path: android/app/build/outputs/apk/debug/app-debug.apk
       
 
 
