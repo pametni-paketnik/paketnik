@@ -36,7 +36,7 @@ jobs:
 
       # --- 2. RAI BACKEND TESTS ---
       - name: Set up Node.js for Backend
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -54,7 +54,7 @@ jobs:
 
       # --- 3. RAI FRONTEND TESTS ---
       - name: Set up Node.js for Frontend
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -74,7 +74,7 @@ jobs:
 
        # --- 4. ANDROID APP TESTS ---
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
@@ -100,20 +100,20 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # --- Build & Push Backend ---
       - name: Build and Push Backend Image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: ./RAI/backend
           push: true
@@ -123,7 +123,7 @@ jobs:
 
       # --- Build & Push Frontend ---
       - name: Build and Push Frontend Image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: ./RAI/frontend
           push: true
@@ -133,7 +133,7 @@ jobs:
 
       # --- Build & Push ORV Api ---
       - name: Build and Push ORV API Image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: ./ORV/api
           push: true
@@ -143,7 +143,7 @@ jobs:
 
       # --- Build Android APK ---
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
             distribution: 'zulu'
             java-version: '17' 
@@ -163,7 +163,7 @@ jobs:
 
       # --- Update APK to GitHub Actions Artifacts ---
       - name: Update APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
             name: paketnik-mobile-app
             path: PJ/app/build/outputs/apk/debug/app-debug.apk
