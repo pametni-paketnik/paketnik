@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-ROOT_DIR = os.path.dirname(os.path.dirname(__file__))
+ROOT_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'api')
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 

@@ -1,0 +1,122 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  run-tests:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # --- 1. PYTHON (ORV) TESTS ---
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ORV/requirements.txt
+
+      - name: Run Python Unit Tests
+        run: |
+          python -m unittest discover -s ORV/tests
+
+      # --- 2. RAI BACKEND TESTS ---
+      - name: Set up Node.js for Backend
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: RAI/backend/package-lock.json
+
+      - name: Install Backend Dependencies
+        run: |
+          cd RAI/backend
+          npm ci
+
+      - name: Run Backend Unit Tests
+        run: |
+          cd RAI/backend
+          npm test
+
+      # --- 3. RAI FRONTEND TESTS ---
+      - name: Set up Node.js for Frontend
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: RAI/frontend/package-lock.json
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd RAI/frontend
+          npm ci
+
+      - name: Run Frontend Unit Tests
+        env:
+          CI: true
+        run: |
+          cd RAI/frontend
+          npm test -- --watchAll=false
+
+  build-and-deploy:
+    name: Build and Push Docker Images
+    needs: run-tests
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # --- Build & Push Backend ---
+      - name: Build and Push Backend Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./RAI/backend
+          push: true
+          tags: irisskledar/paketnik-backend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # --- Build & Push Frontend ---
+      - name: Build and Push Frontend Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./RAI/frontend
+          push: true
+          tags: irisskledar/paketnik-frontend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # --- Build & Push ORV Api ---
+      - name: Build and Push ORV API Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./ORV/api
+          push: true
+          tags: irisskledar/paketnik-model-api:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
