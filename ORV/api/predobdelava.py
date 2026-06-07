@@ -132,9 +132,6 @@ def predobdelaj_podatke():
 
             ime_osnova = os.path.splitext(img_name)[0]
             
-            # --- NORMALIZACIJA na [0,1] ---
-            img_norm_test = img.astype('float32') / 255.0
-
              # Pomožna funkcija za shranjevanje in sledenje za končni split
             def shrani_in_zabelezi(image, koncnica):
                 ime_datoteke = f"{ime_osnova}_{koncnica}.jpg"
